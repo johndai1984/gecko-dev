@@ -308,6 +308,7 @@ function registerTests() {
 }
 
 function getTestList(params, callback) {
+  dump("chrome-harness.js params:"+JSON.stringify(params));
   registerTests();
 
   var baseurl = 'chrome://mochitests/content';

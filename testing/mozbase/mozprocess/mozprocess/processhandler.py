@@ -697,6 +697,7 @@ falling back to not using job objects for managing child processes"""
         args.update(self.keywordargs)
 
         # launch the process
+        print "processhandler.py ", self.cmd, " ", self.args
         self.proc = self.Process([self.cmd] + self.args, **args)
 
         self.processOutput(timeout=timeout, outputTimeout=outputTimeout)

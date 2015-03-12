@@ -195,9 +195,9 @@ class B2GMochitest(MochitestUtilsMixin):
             self.test_script_args.append(not options.emulator)
             self.test_script_args.append(options.wifi)
             self.test_script_args.append(options.chrome)
-
+            print "Debug:self.runner.start start"
             self.runner.start(outputTimeout=timeout)
-
+            print "Debug:self.runner.start end"
             self.marionette.wait_for_port()
             self.marionette.start_session()
             self.marionette.set_context(self.marionette.CONTEXT_CHROME)

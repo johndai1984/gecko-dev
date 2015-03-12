@@ -961,6 +961,7 @@ SimpleTest.registerCleanupFunction = function(aFunc) {
  * SimpleTest.waitForExplicitFinish() has been invoked.
 **/
 SimpleTest.finish = function() {
+    dump('SimpleTest.finish called\n');
     if (SimpleTest._alreadyFinished) {
         var err = "[SimpleTest.finish()] this test already called finish!";
         if (parentRunner) {

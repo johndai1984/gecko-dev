@@ -2460,6 +2460,7 @@ class Mochitest(MochitestUtilsMixin):
             config.write(content)
 
     def getTestManifest(self, options):
+        print "runtests.py getTestManifest"
         if isinstance(options.manifestFile, TestManifest):
             manifest = options.manifestFile
         elif options.manifestFile and os.path.isfile(options.manifestFile):

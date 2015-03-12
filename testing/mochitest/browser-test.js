@@ -40,6 +40,7 @@ window.addEventListener("load", function testOnLoad() {
 });
 
 function b2gStart() {
+  dump("browser-test.b2gStart\n");
   let homescreen = document.getElementById('systemapp');
   var webNav = homescreen.contentWindow.QueryInterface(Ci.nsIInterfaceRequestor)
                                    .getInterface(Ci.nsIWebNavigation);
@@ -49,6 +50,7 @@ function b2gStart() {
 }
 
 function testInit() {
+  dump("browser-test.testInit\n");
   gConfig = readConfig();
   if (gConfig.testRoot == "browser" ||
       gConfig.testRoot == "metro" ||
@@ -98,6 +100,7 @@ function testInit() {
 }
 
 function Tester(aTests, aDumper, aCallback) {
+  dump("browser-test.Tester\n");
   this.dumper = aDumper;
   this.tests = aTests;
   this.callback = aCallback;
@@ -185,6 +188,7 @@ Tester.prototype = {
   },
 
   start: function Tester_start() {
+    dump("browser-test.start\n");
     //if testOnLoad was not called, then gConfig is not defined
     if (!gConfig)
       gConfig = readConfig();

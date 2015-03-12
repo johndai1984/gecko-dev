@@ -566,6 +566,7 @@ TestRunner.resetTests = function(listURLs) {
 }
 
 TestRunner.getNextUrl = function() {
+    dump("Debug:TestRunner.getNextUrl\n");
     var url = "";
     // sometimes we have a subtest/harness which doesn't use a manifest
     if ((TestRunner._urls[TestRunner._currentTest] instanceof Object) && ('test' in TestRunner._urls[TestRunner._currentTest])) {
@@ -583,6 +584,10 @@ TestRunner.getNextUrl = function() {
  **/
 TestRunner._haltTests = false;
 TestRunner.runNextTest = function() {
+    dump("Debug:TestRunner.runNextTest\n");
+    dump("Debug:TestRunner.onComplete start\n");
+    TestRunner.onComplete();
+    dump("Debug:TestRunner.onComplete end\n");
     if (TestRunner._currentTest < TestRunner._urls.length &&
         !TestRunner._haltTests)
     {
@@ -642,6 +647,7 @@ TestRunner.runNextTest = function() {
         }
 
         if (TestRunner.repeat === 0 && TestRunner.onComplete) {
+            dump("Debug:TestRunner.onComplete 1\n");
              TestRunner.onComplete();
          }
 
@@ -656,8 +662,11 @@ TestRunner.runNextTest = function() {
             TestRunner.structuredLogger.info("SimpleTest FINISHED");
           }
 
-          if (TestRunner.onComplete)
+          if (TestRunner.onComplete) {
+            dump("Debug:TestRunner.onComplete 2\n");
             TestRunner.onComplete();
+          }
+            
        }
        TestRunner.generateFailureList();
     }
@@ -671,6 +680,7 @@ TestRunner.expectChildProcessCrash = function() {
  * This stub is called by SimpleTest when a test is finished.
 **/
 TestRunner.testFinished = function(tests) {
+    dump("Debug:TestRunner.testFinished\n");
     // Prevent a test from calling finish() multiple times before we
     // have a chance to unload it.
     if (TestRunner._currentTest == TestRunner._lastTestFinished &&
@@ -720,6 +730,7 @@ TestRunner.testFinished = function(tests) {
     }
 
     function runNextTest() {
+        
         if (TestRunner.currentTestURL != TestRunner.getLoadedTestURL()) {
             TestRunner.structuredLogger.testStatus(TestRunner.currentTestURL,
                                                    TestRunner.getLoadedTestURL(),
@@ -783,6 +794,7 @@ TestRunner.testFinished = function(tests) {
 };
 
 TestRunner.testUnloaded = function() {
+    dump("Debug:TestRunner.testUnloaded\n");
     // If we're in a debug build, check assertion counts.  This code is
     // similar to the code in Tester_nextTest in browser-test.js used
     // for browser-chrome mochitests.

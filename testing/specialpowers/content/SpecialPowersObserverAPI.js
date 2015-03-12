@@ -101,6 +101,7 @@ SpecialPowersObserverAPI.prototype = {
     switch(aTopic) {
       case "plugin-crashed":
       case "ipc:content-shutdown":
+        dump("Debug: SpecialPowersObserverAPI.js "+aTopic+" call");
         var message = { type: "crash-observed", dumpIDs: [] };
         aSubject = aSubject.QueryInterface(Ci.nsIPropertyBag2);
         if (aTopic == "plugin-crashed") {

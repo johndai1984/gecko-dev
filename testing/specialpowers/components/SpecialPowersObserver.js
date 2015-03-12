@@ -61,6 +61,7 @@ SpecialPowersObserver.prototype = new SpecialPowersObserverAPI();
         break;
 
       case "xpcom-shutdown":
+        dump("Debug:SpecialPowers.xpcom-shutdown call\n");
         this.uninit();
         break;
 
@@ -164,6 +165,7 @@ SpecialPowersObserver.prototype = new SpecialPowersObserverAPI();
   SpecialPowersObserver.prototype.receiveMessage = function(aMessage) {
     switch(aMessage.name) {
       case "SPPingService":
+        dump("Debug:SpecialPowers.SPPingService call\n");
         if (aMessage.json.op == "ping") {
           aMessage.target
                   .QueryInterface(Ci.nsIFrameLoaderOwner)
@@ -173,10 +175,12 @@ SpecialPowersObserver.prototype = new SpecialPowersObserverAPI();
         }
         break;
       case "SpecialPowers.Quit":
+        dump("Debug:SpecialPowers.Quit call\n");
         let appStartup = Cc["@mozilla.org/toolkit/app-startup;1"].getService(Ci.nsIAppStartup);
         appStartup.quit(Ci.nsIAppStartup.eForceQuit);
         break;
       case "SpecialPowers.Focus":
+        dump("Debug:SpecialPowers.Focus call\n");
         aMessage.target.focus();
         break;
       default:

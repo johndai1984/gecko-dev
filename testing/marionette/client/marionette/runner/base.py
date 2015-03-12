@@ -750,6 +750,7 @@ setReq.onerror = function() {
             raise Exception("Could not launch test container app")
 
     def run_tests(self, tests):
+        print "marionette runner base.py run_tests()"
         self.reset_test_stats()
         self.start_time = time.time()
 

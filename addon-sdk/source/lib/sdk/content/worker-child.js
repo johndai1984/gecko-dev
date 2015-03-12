@@ -72,6 +72,7 @@ const WorkerChild = Class({
     }
     if (type === 'inner-window-destroyed' &&
         subject.QueryInterface(Ci.nsISupportsPRUint64).data === this.window) {
+      dump("Debug:worker-child.js observe inner-window-destroyed");
       this.destroy();
     }
   },

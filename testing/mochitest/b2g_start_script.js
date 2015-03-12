@@ -7,6 +7,7 @@ let mochitestUrl = __marionetteParams[1]
 let onDevice = __marionetteParams[2]
 let wifiSettings = __marionetteParams[3]
 let chrome = __marionetteParams[4]
+dump("b2g_start_script.js __marionetteParams:"+JSON.stringify(__marionetteParams)+"\n");
 let prefs = Components.classes["@mozilla.org/preferences-service;1"].
                             getService(Components.interfaces.nsIPrefBranch)
 let settings = window.navigator.mozSettings;
@@ -75,7 +76,7 @@ if (outOfProcess) {
 
   let mm = container.QueryInterface(Ci.nsIFrameLoaderOwner).frameLoader.messageManager;
   specialPowersObserver.init(mm);
-
+  
   //Workaround for bug 848411, once that bug is fixed, the following line can be removed
   function contentScript() {
     addEventListener("DOMWindowCreated", function listener(e) {

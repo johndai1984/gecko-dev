@@ -300,6 +300,7 @@ nsAppStartup::Run(void)
 NS_IMETHODIMP
 nsAppStartup::Quit(uint32_t aMode)
 {
+  NS_WARNING("Debug:nsAppStartup::Quit call");
   uint32_t ferocity = (aMode & 0xF);
 
   // Quit the application. We will asynchronously call the appshell's
@@ -433,6 +434,7 @@ nsAppStartup::Quit(uint32_t aMode)
            closed. */
         mediator->GetEnumerator(nullptr, getter_AddRefs(windowEnumerator));
         if (windowEnumerator) {
+          NS_WARNING("Debug:nsAppStartup.cpp windowEnumerator");
           bool more;
           while (windowEnumerator->HasMoreElements(&more), more) {
             /* we can't quit immediately. we'll try again as the last window
