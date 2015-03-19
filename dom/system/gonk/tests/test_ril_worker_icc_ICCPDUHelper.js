@@ -65,7 +65,7 @@ add_test(function test_write_icc_ucs2_string() {
                    "Fire \u694a\u69ca",
                    // 0x80 with boundary value
                    "Fire \u8000\u8001",
-                   "Fire \ufffe\uffff"]; 
+                   "\ufffd\ufffe"]; 
 
   for (let i = 0; i < test_data.length; i++) {
     let test = test_data[i];

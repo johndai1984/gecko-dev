@@ -10189,11 +10189,10 @@ ICCPDUHelperObject.prototype = {
         let code = alphaId.charCodeAt(i);
         if (DEBUG) this.context.debug("Debug: writeICCUCS2String code:" + code);
         if ((code & 0xFF00) != 0) {
-          
           if (DEBUG) {
               this.context.debug("Debug: writeICCUCS2String code over 0x8000:" + (code & 0x8000));
           }
-          //0x81 format can't compute 0x8000~0xFFFF, set range over 129
+          //0x81 format can't compute 0x8000~0xFFFF, set range over 128
           if(code & 0x8000) {
             max = min + 130;
             break;
@@ -10204,7 +10203,6 @@ ICCPDUHelperObject.prototype = {
           if (max < code) {
             max = code;
           }
-
         }
       }
     }
@@ -10213,11 +10211,12 @@ ICCPDUHelperObject.prototype = {
       this.context.debug("Debug: writeICCUCS2String max:" + max + ", min:"+ min);
     }
     //0x81 and 0x82 only support 'half-page', 128 characters.
-    if ((max - min) >= 0 && (max - min) <= 128) {
+    if ((max - min) >= 0 && (max - min) < 128) {
       let base_pointer;
       //0x81 offset : 0hhh hhhh h000 0000 , bits 15 to 8 need same value, 
       //ie, 128 characters, either XX00~XX7f(max and min bit 8 is 0) or XX80~XXff(max and min bit 8 is 1)
       if ((min & 0x80) == (max & 0x80)) {
+        this.context.debug("Debug: writeICCUCS2String  0x81");
         GsmPDUHelper.writeHexOctet(0x81);
 
         if (alphaId.length > (numOctets - 3)) {
@@ -10242,6 +10241,7 @@ ICCPDUHelperObject.prototype = {
       }
       else {
         //0x82
+        this.context.debug("Debug: writeICCUCS2String  0x82");
         GsmPDUHelper.writeHexOctet(0x82);
 
         if (alphaId.length > (numOctets - 4)) {
@@ -10257,7 +10257,7 @@ ICCPDUHelperObject.prototype = {
         }
         //base pointer is 2 bytes
         //set miniumn value as base pointer
-        base_pointer = min;
+        base_pointer = min & 0xFF8;
         if (DEBUG) {
           this.context.debug("Debug: writeICCUCS2String 0x82 base_pointer:" + base_pointer);
           this.context.debug("Debug: writeICCUCS2String 0x81 base_pointer col1:" + (base_pointer >> 8) & 0xff);
@@ -10296,6 +10296,7 @@ ICCPDUHelperObject.prototype = {
         }
       }
     } else {
+      this.context.debug("Debug: writeICCUCS2String  0x80");
       //0x80 encode, support UCS2 0000~ffff
       GsmPDUHelper.writeHexOctet(0x80);
       numOctets--;
