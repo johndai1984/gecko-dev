@@ -10163,8 +10163,128 @@ ICCPDUHelperObject.prototype = {
       GsmPDUHelper.writeHexOctet(0xff);
     }
   },
-
   /**
+   * Write UCS2 String on UICC.
+   *
+   * @see TS 101.221, Annex A.
+   * @param numOctets
+   *        Total number of octets to be written. This includes the length of
+   *        alphaId and the length of trailing unused octets(0xff).
+   * @param alphaId
+   *        Alpha Identifier to be written.
+   */
+  writeICCUCS2String: function(numOctets, alphaId) {
+    //Default use '81' and '82' encode, if not use '80' encode.
+    let GsmPDUHelper = this.context.GsmPDUHelper;
+    let min = 0x7FFF;
+    let max = 0;
+
+    //compute min and max value
+    for(let i = 0; i < alphaId.length; i++) {
+      let code = alphaId.charCodeAt(i);
+      if (DEBUG) this.context.debug("Debug: writeICCUCS2String code:" + code);
+      if (code != 0) {
+        //0x81, 0x82 format can't compute 0x8000~0xFFFF, set range over 129
+        if (DEBUG) {
+            this.context.debug("Debug: writeICCUCS2String code over 0x8000:" + (code & 0x8000));
+        }
+        if(code & 0x8000) {
+          max = min + 130;
+          break;
+        }
+        if (min > code) {
+          min = code;
+        }
+        if (max < code) {
+          max = code;
+        }
+
+      }
+    }
+
+    //0x81 and 0x82 only support 'half-page', 128 characters.
+    if ((max - min) < 129) {
+      let base_pointer;
+      //0x81 offset : 0hhh hhhh h000 0000 , bits 15 to 8 need same value, 
+      //ie, 128 characters, either XX00~XX7f(max and min bit 8 is 0) or XX80~XXff(max and min bit 8 is 1)
+      if ((min & 0x80) == (max & 0x80)) {
+        GsmPDUHelper.writeHexOctet(0x81);
+
+        if (alphaId.length > (numOctets -3)) {
+          alphaId = alphaId.substring(0, Math.floor(numOctets - 3));
+          if (DEBUG) {
+            this.context.debug("Debug: writeICCUCS2String 0x81 modified alphaId:" + alphaId);
+          }
+        }
+
+        //base pointer: 0hhh hhhh h000 0000 is 0x7F80
+        base_pointer = ((min & 0x7f80) >> 7) & 0x7f;
+        if (DEBUG) {
+            this.context.debug("Debug: writeICCUCS2String 0x81 base_pointer:" + base_pointer);
+        }
+        GsmPDUHelper.writeHexOctet(base_pointer);
+        numOctets-=3;
+      }
+      else {
+        //0x82
+        GsmPDUHelper.writeHexOctet(0x82);
+
+        if (alphaId.length > (numOctets -4)) {
+          alphaId = alphaId.substring(0, Math.floor(numOctets - 4));
+          if (DEBUG) {
+            this.context.debug("Debug: writeICCUCS2String 0x82 modified alphaId:" + alphaId);
+          }
+        }
+
+        //base pointer is 2 bytes
+        //set miniumn value as base pointer
+        base_pointer = min;
+        if (DEBUG) {
+            this.context.debug("Debug: writeICCUCS2String 0x82 base_pointer:" + base_pointer);
+        }
+        GsmPDUHelper.writeHexOctet((min >> 8) & 0xFF);
+        GsmPDUHelper.writeHexOctet(min & 0xFF);
+        numOctets-=4;
+      }
+
+      // Now the alphaId is UCS2 string, each character will take 1 octets.
+      for(let i = 0; i < alphaId.length; ++i) {
+        let code = alphaId.charCodeAt(i);
+        //bit 8 of the byte is set to zero,
+        //the remaining 7 bits of the byte contain a GSM Default Alphabet character
+        if(code >> 8 == 0) {
+          this.writeHexOctet(code & 0x7F);
+          if (DEBUG) {
+            this.context.debug("Debug: writeICCUCS2String writeHexOctet GSM:" + (code & 0x7F));
+          }
+        } else {
+          //if bit 8 of the byte is set to one,
+          //then the remaining seven bits are an offset value added to the 16 bit
+          this.writeHexOctet((code - base_pointer) | 0x80);
+          if (DEBUG) {
+            this.context.debug("Debug: writeICCUCS2String writeHexOctet UCS2:" + ((code - base_pointer) | 0x80));
+          }
+        }
+      }
+      for (let i = alphaId.length; i < numOctets; i++) {
+        GsmPDUHelper.writeHexOctet(0xff);
+      }
+    } else {
+      //0x80 encode, support UCS2 0000~ffff
+      GsmPDUHelper.writeHexOctet(0x80);
+      numOctets--;
+      // Now the alphaId is UCS2 string, each character will take 2 octets.
+      if (alphaId.length * 2 > numOctets) {
+        alphaId = alphaId.substring(0, Math.floor(numOctets / 2));
+      }
+      GsmPDUHelper.writeUCS2String(alphaId);
+      for (let i = alphaId.length * 2; i < numOctets; i++) {
+        GsmPDUHelper.writeHexOctet(0xff);
+      }
+    }
+  },
+
+ /**
    * Read UCS2 String on UICC.
    *
    * @see TS 101.221, Annex A.
@@ -10368,7 +10488,8 @@ ICCPDUHelperObject.prototype = {
     if (!alphaId || this.context.ICCUtilsHelper.isGsm8BitAlphabet(alphaId)) {
       this.writeStringTo8BitUnpacked(numOctets, alphaId);
     } else {
-      let GsmPDUHelper = this.context.GsmPDUHelper;
+      this.writeICCUCS2String(numOctets, alphaId);
+      /*let GsmPDUHelper = this.context.GsmPDUHelper;
 
       // Currently only support UCS2 coding scheme 0x80.
       GsmPDUHelper.writeHexOctet(0x80);
@@ -10380,7 +10501,7 @@ ICCPDUHelperObject.prototype = {
       GsmPDUHelper.writeUCS2String(alphaId);
       for (let i = alphaId.length * 2; i < numOctets; i++) {
         GsmPDUHelper.writeHexOctet(0xff);
-      }
+      }*/
     }
   },
 
