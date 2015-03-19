@@ -10163,8 +10163,10 @@ ICCPDUHelperObject.prototype = {
       GsmPDUHelper.writeHexOctet(0xff);
     }
   },
+
   /**
    * Write UCS2 String on UICC.
+   *
    *
    * @see TS 101.221, Annex A.
    * @param numOctets
@@ -10175,35 +10177,42 @@ ICCPDUHelperObject.prototype = {
    */
   writeICCUCS2String: function(numOctets, alphaId) {
     //Default use '81' and '82' encode, if not use '80' encode.
+    if(DEBUG) this.context.debug("Debug: writeICCUCS2String numOctets:" + numOctets + ", alphaId:" + alphaId);
     let GsmPDUHelper = this.context.GsmPDUHelper;
     let min = 0x7FFF;
     let max = 0;
 
-    //compute min and max value
-    for(let i = 0; i < alphaId.length; i++) {
-      let code = alphaId.charCodeAt(i);
-      if (DEBUG) this.context.debug("Debug: writeICCUCS2String code:" + code);
-      if (code != 0) {
-        //0x81, 0x82 format can't compute 0x8000~0xFFFF, set range over 129
-        if (DEBUG) {
-            this.context.debug("Debug: writeICCUCS2String code over 0x8000:" + (code & 0x8000));
-        }
-        if(code & 0x8000) {
-          max = min + 130;
-          break;
-        }
-        if (min > code) {
-          min = code;
-        }
-        if (max < code) {
-          max = code;
-        }
+    // When length more than 2 use 0x81 or 0x82 encode can save space.
+    if (alphaId.length > 2) {
+      //compute min and max value
+      for(let i = 0; i < alphaId.length; i++) {
+        let code = alphaId.charCodeAt(i);
+        if (DEBUG) this.context.debug("Debug: writeICCUCS2String code:" + code);
+        if ((code & 0xFF00) != 0) {
+          //0x81 format can't compute 0x8000~0xFFFF, set range over 129
+          if (DEBUG) {
+              this.context.debug("Debug: writeICCUCS2String code over 0x8000:" + (code & 0x8000));
+          }
+          if(code & 0x8000) {
+            max = min + 130;
+            break;
+          }
+          if (min > code) {
+            min = code;
+          }
+          if (max < code) {
+            max = code;
+          }
 
+        }
       }
     }
-
+    
+    if (DEBUG) {
+      this.context.debug("Debug: writeICCUCS2String max:" + max + ", min:"+ min);
+    }
     //0x81 and 0x82 only support 'half-page', 128 characters.
-    if ((max - min) < 129) {
+    if ((max - min) > 0 && (max - min) < 129) {
       let base_pointer;
       //0x81 offset : 0hhh hhhh h000 0000 , bits 15 to 8 need same value, 
       //ie, 128 characters, either XX00~XX7f(max and min bit 8 is 0) or XX80~XXff(max and min bit 8 is 1)
@@ -10211,18 +10220,23 @@ ICCPDUHelperObject.prototype = {
         GsmPDUHelper.writeHexOctet(0x81);
 
         if (alphaId.length > (numOctets -3)) {
-          alphaId = alphaId.substring(0, Math.floor(numOctets - 3));
+          alphaId = alphaId.substring(0, numOctets - 3);
           if (DEBUG) {
             this.context.debug("Debug: writeICCUCS2String 0x81 modified alphaId:" + alphaId);
           }
         }
-
+        //len
+        if (DEBUG) {
+          this.context.debug("Debug: writeICCUCS2String 0x81 len:" + alphaId.length);
+        }
+        GsmPDUHelper.writeHexOctet(alphaId.length);
         //base pointer: 0hhh hhhh h000 0000 is 0x7F80
-        base_pointer = ((min & 0x7f80) >> 7) & 0x7f;
+        base_pointer = min & 0x7f80;
         if (DEBUG) {
             this.context.debug("Debug: writeICCUCS2String 0x81 base_pointer:" + base_pointer);
+            this.context.debug("Debug: writeICCUCS2String 0x81 base_pointer col:" + (base_pointer >> 7) & 0xff);
         }
-        GsmPDUHelper.writeHexOctet(base_pointer);
+        GsmPDUHelper.writeHexOctet((base_pointer >> 7) & 0xff);
         numOctets-=3;
       }
       else {
@@ -10230,20 +10244,26 @@ ICCPDUHelperObject.prototype = {
         GsmPDUHelper.writeHexOctet(0x82);
 
         if (alphaId.length > (numOctets -4)) {
-          alphaId = alphaId.substring(0, Math.floor(numOctets - 4));
+          alphaId = alphaId.substring(0, numOctets - 4);
           if (DEBUG) {
             this.context.debug("Debug: writeICCUCS2String 0x82 modified alphaId:" + alphaId);
           }
         }
-
+        //len
+        GsmPDUHelper.writeHexOctet(alphaId.length);
+        if (DEBUG) {
+          this.context.debug("Debug: writeICCUCS2String 0x82 len:" + alphaId.length);
+        }
         //base pointer is 2 bytes
         //set miniumn value as base pointer
         base_pointer = min;
         if (DEBUG) {
-            this.context.debug("Debug: writeICCUCS2String 0x82 base_pointer:" + base_pointer);
+          this.context.debug("Debug: writeICCUCS2String 0x82 base_pointer:" + base_pointer);
+          this.context.debug("Debug: writeICCUCS2String 0x81 base_pointer col1:" + (base_pointer >> 8) & 0xff);
+          this.context.debug("Debug: writeICCUCS2String 0x81 base_pointer col2:" + base_pointer & 0xff);
         }
-        GsmPDUHelper.writeHexOctet((min >> 8) & 0xFF);
-        GsmPDUHelper.writeHexOctet(min & 0xFF);
+        GsmPDUHelper.writeHexOctet((base_pointer >> 8) & 0xff);
+        GsmPDUHelper.writeHexOctet(base_pointer & 0xff);
         numOctets-=4;
       }
 
@@ -10253,21 +10273,25 @@ ICCPDUHelperObject.prototype = {
         //bit 8 of the byte is set to zero,
         //the remaining 7 bits of the byte contain a GSM Default Alphabet character
         if(code >> 8 == 0) {
-          this.writeHexOctet(code & 0x7F);
+          GsmPDUHelper.writeHexOctet(code & 0x7F);
           if (DEBUG) {
             this.context.debug("Debug: writeICCUCS2String writeHexOctet GSM:" + (code & 0x7F));
           }
         } else {
           //if bit 8 of the byte is set to one,
           //then the remaining seven bits are an offset value added to the 16 bit
-          this.writeHexOctet((code - base_pointer) | 0x80);
+          GsmPDUHelper.writeHexOctet((code - base_pointer) | 0x80);
           if (DEBUG) {
             this.context.debug("Debug: writeICCUCS2String writeHexOctet UCS2:" + ((code - base_pointer) | 0x80));
           }
         }
       }
-      for (let i = alphaId.length; i < numOctets; i++) {
+      this.context.debug("Debug: writeICCUCS2String writeHexOctet rest:" + (numOctets - alphaId.length));
+      for (let i = 0; i < numOctets - alphaId.length; i++) {
         GsmPDUHelper.writeHexOctet(0xff);
+        if (DEBUG) {
+          this.context.debug("Debug: writeICCUCS2String writeHexOctet 0xff");
+        }
       }
     } else {
       //0x80 encode, support UCS2 0000~ffff
@@ -10296,7 +10320,7 @@ ICCPDUHelperObject.prototype = {
   readICCUCS2String: function(scheme, numOctets) {
     let Buf = this.context.Buf;
     let GsmPDUHelper = this.context.GsmPDUHelper;
-
+    this.context.debug("Debug: writeICCUCS2String readICCUCS2String start");
     let str = "";
     switch (scheme) {
       /**
@@ -10358,6 +10382,7 @@ ICCPDUHelperObject.prototype = {
           let ch = GsmPDUHelper.readHexOctet();
           if (ch & 0x80) {
             // UCS2
+            this.context.debug("Debug: readICCUCS2String UCS2 ch:" + ch + ", offset:"+ offset+", str:"+String.fromCharCode((ch & 0x7f) + offset));
             str += String.fromCharCode((ch & 0x7f) + offset);
           } else {
             // GSM 8bit

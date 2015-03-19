@@ -48,6 +48,40 @@ add_test(function test_read_icc_ucs2_string() {
 });
 
 /**
+ * Verify ICCPDUHelper#writeICCUCS2String()
+ */
+//TODO: add more error testcase, ex: over 0x8000~0xffff 
+add_test(function test_write_icc_ucs2_string() {
+  let worker = newUint8Worker();
+  let context = worker.ContextPool._contexts[0];
+  let helper = context.GsmPDUHelper;
+  let iccHelper = context.ICCPDUHelper;
+
+  // 0x80
+  // let text = "TEST";
+  // let ffLen = 2;
+  // iccHelper.writeICCUCS2String((2 * text.length) + ffLen, text);
+  // equal(iccHelper.readICCUCS2String(0x80, (2 * text.length) + ffLen), text);
+
+  // 0x81
+  // let array = [0x08, 0xd2, 0x4d, 0x6f, 0x7a, 0x69, 0x6c, 0x6c, 0x61, 0xca,
+  //              0xff, 0xff];
+  let alphaLen = 0x20 - 14;
+  iccHelper.writeICCUCS2String(alphaLen, "Mozilla\u694a");
+  let encode = helper.readHexOctet();
+  alphaLen--;
+  equal(iccHelper.readICCUCS2String(encode, alphaLen), "Mozilla\u694a");
+
+  // 0x82
+  // let array2 = [0x08, 0x69, 0x00, 0x4d, 0x6f, 0x7a, 0x69, 0x6c, 0x6c, 0x61,
+  //               0xca, 0xff, 0xff];
+
+  // iccHelper.writeICCUCS2String(alphaLen, "Mozilla\u694a");
+  // equal(iccHelper.readICCUCS2String(0x82, alphaLen), "Mozilla\u694a");
+
+  run_next_test();
+});
+/**
  * Verify ICCPDUHelper#readDiallingNumber
  */
 add_test(function test_read_dialling_number() {
