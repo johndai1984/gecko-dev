@@ -10189,10 +10189,11 @@ ICCPDUHelperObject.prototype = {
         let code = alphaId.charCodeAt(i);
         if (DEBUG) this.context.debug("Debug: writeICCUCS2String code:" + code);
         if ((code & 0xFF00) != 0) {
-          //0x81 format can't compute 0x8000~0xFFFF, set range over 129
+          
           if (DEBUG) {
               this.context.debug("Debug: writeICCUCS2String code over 0x8000:" + (code & 0x8000));
           }
+          //0x81 format can't compute 0x8000~0xFFFF, set range over 129
           if(code & 0x8000) {
             max = min + 130;
             break;
@@ -10212,14 +10213,14 @@ ICCPDUHelperObject.prototype = {
       this.context.debug("Debug: writeICCUCS2String max:" + max + ", min:"+ min);
     }
     //0x81 and 0x82 only support 'half-page', 128 characters.
-    if ((max - min) > 0 && (max - min) < 129) {
+    if ((max - min) >= 0 && (max - min) <= 128) {
       let base_pointer;
       //0x81 offset : 0hhh hhhh h000 0000 , bits 15 to 8 need same value, 
       //ie, 128 characters, either XX00~XX7f(max and min bit 8 is 0) or XX80~XXff(max and min bit 8 is 1)
       if ((min & 0x80) == (max & 0x80)) {
         GsmPDUHelper.writeHexOctet(0x81);
 
-        if (alphaId.length > (numOctets -3)) {
+        if (alphaId.length > (numOctets - 3)) {
           alphaId = alphaId.substring(0, numOctets - 3);
           if (DEBUG) {
             this.context.debug("Debug: writeICCUCS2String 0x81 modified alphaId:" + alphaId);
@@ -10237,13 +10238,13 @@ ICCPDUHelperObject.prototype = {
             this.context.debug("Debug: writeICCUCS2String 0x81 base_pointer col:" + (base_pointer >> 7) & 0xff);
         }
         GsmPDUHelper.writeHexOctet((base_pointer >> 7) & 0xff);
-        numOctets-=3;
+        numOctets -= 3;
       }
       else {
         //0x82
         GsmPDUHelper.writeHexOctet(0x82);
 
-        if (alphaId.length > (numOctets -4)) {
+        if (alphaId.length > (numOctets - 4)) {
           alphaId = alphaId.substring(0, numOctets - 4);
           if (DEBUG) {
             this.context.debug("Debug: writeICCUCS2String 0x82 modified alphaId:" + alphaId);
@@ -10264,12 +10265,13 @@ ICCPDUHelperObject.prototype = {
         }
         GsmPDUHelper.writeHexOctet((base_pointer >> 8) & 0xff);
         GsmPDUHelper.writeHexOctet(base_pointer & 0xff);
-        numOctets-=4;
+        numOctets -= 4;
       }
 
       // Now the alphaId is UCS2 string, each character will take 1 octets.
-      for(let i = 0; i < alphaId.length; ++i) {
+      for(let i = 0; i < alphaId.length; i++) {
         let code = alphaId.charCodeAt(i);
+        this.context.debug("Debug: writeICCUCS2String writeHexOctet code:" + code);
         //bit 8 of the byte is set to zero,
         //the remaining 7 bits of the byte contain a GSM Default Alphabet character
         if(code >> 8 == 0) {
