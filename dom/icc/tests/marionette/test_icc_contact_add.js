@@ -4,33 +4,6 @@
 MARIONETTE_TIMEOUT = 60000;
 MARIONETTE_HEAD_JS = "head.js";
 
-function testReadContacts(aIcc, aType) {
-  log("testReadContacts: type=" + aType);
-  let iccId = aIcc.iccInfo.iccid;
-  return aIcc.readContacts(aType)
-    .then((aResult) => {
-      is(Array.isArray(aResult), true);
-
-      is(aResult[0].name[0], "Mozilla");
-      is(aResult[0].tel[0].value, "15555218201");
-      is(aResult[0].id, iccId + "1");
-
-      is(aResult[1].name[0], "Saßê黃");
-      is(aResult[1].tel[0].value, "15555218202");
-      is(aResult[1].id, iccId + "2");
-
-      is(aResult[2].name[0], "Fire 火");
-      is(aResult[2].tel[0].value, "15555218203");
-      is(aResult[2].id, iccId + "3");
-
-      is(aResult[3].name[0], "Huang 黃");
-      is(aResult[3].tel[0].value, "15555218204");
-      is(aResult[3].id, iccId + "4");
-    }, (aError) => {
-      ok(false, "Cannot get " + aType + " contacts");
-    });
-}
-
 function testAddContact(aIcc, aType, aPin2) {
   log("testAddContact: type=" + aType + ", pin2=" + aPin2);
   let contact = new mozContact({
@@ -66,20 +39,43 @@ function testAddContact(aIcc, aType, aPin2) {
     });
 }
 
+function tearDownContact(aIcc, aContactId, aType, aPin2) {
+  log("tearDownContact: contactId=" + aContactId + ", type=" + aType + ", pin2=" + aPin2);
+  let contact = {
+    id: aIcc.iccInfo.iccid + aContactId,
+  };
+
+  return aIcc.updateContact(aType, contact, aPin2)
+    .then((aResult) => {
+      // Get ICC contact for checking new contact
+      return aIcc.readContacts(aType)
+        .then((aResult) => {
+          // There are 4 SIM contacts which are harded in emulator
+          is(aResult.length, 4);
+        }, (aError) => {
+          ok(false, "Cannot get " + aType + " contacts: " + aError.name);
+        })
+    }, (aError) => {
+      if (aType === "fdn" && aPin2 === undefined) {
+        ok(aError.name === "SimPin2",
+           "expected error when pin2 is not provided");
+      } else {
+        ok(false, "Cannot tear down " + aType + " contact: " + aError.name);
+      }
+    });
+}
+
 // Start tests
 startTestCommon(function() {
   let icc = getMozIcc();
 
-  // Test read adn contacts
-  return testReadContacts(icc, "adn")
     // Test add adn contacts
-    .then(() => testAddContact(icc, "adn"))
-    // Test read fdn contact
-    .then(() => testReadContacts(icc, "fdn"))
+  return testAddContact(icc, "adn")
     // Test add fdn contacts
     .then(() => testAddContact(icc, "fdn", "0000"))
     // Test add fdn contacts without passing pin2
     .then(() => testAddContact(icc, "fdn"))
-    // Test read sdn contacts
-    .then(() => testReadContacts(icc, "sdn"));
+    .then(() => tearDownContact(icc, "5", "adn"))
+    .then(() => tearDownContact(icc, "5", "fdn"))
+    .then(() => tearDownContact(icc, "5", "fdn", "0000"));
 });
