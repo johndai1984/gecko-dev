@@ -10,6 +10,7 @@ function testReadContacts(aIcc, aType) {
   return aIcc.readContacts(aType)
     .then((aResult) => {
       is(Array.isArray(aResult), true);
+      is(aResult.length, 4, "Check contact number.");
 
       is(aResult[0].name[0], "Mozilla");
       is(aResult[0].tel[0].value, "15555218201");

@@ -1,7 +1,7 @@
 /* Any copyright is dedicated to the Public Domain.
  * http://creativecommons.org/publicdomain/zero/1.0/ */
 
-MARIONETTE_TIMEOUT = 60000;
+MARIONETTE_TIMEOUT = 90000;
 MARIONETTE_HEAD_JS = "head.js";
 
 function testAddContact(aIcc, aType, aPin2) {
@@ -39,30 +39,12 @@ function testAddContact(aIcc, aType, aPin2) {
     });
 }
 
-function tearDownContact(aIcc, aContactId, aType, aPin2) {
-  log("tearDownContact: contactId=" + aContactId + ", type=" + aType + ", pin2=" + aPin2);
-  let contact = {
-    id: aIcc.iccInfo.iccid + aContactId,
-  };
+function removeContact(aIcc, aContactId, aType) {
+  log("removeContact: contactId=" + aContactId + ", type=" + aType + ", pin2=" + aPin2);
+  let contact = new mozContact({});
+  contact.id = aIcc.iccInfo.iccid + aContactId;
 
-  return aIcc.updateContact(aType, contact, aPin2)
-    .then((aResult) => {
-      // Get ICC contact for checking new contact
-      return aIcc.readContacts(aType)
-        .then((aResult) => {
-          // There are 4 SIM contacts which are harded in emulator
-          is(aResult.length, 4);
-        }, (aError) => {
-          ok(false, "Cannot get " + aType + " contacts: " + aError.name);
-        })
-    }, (aError) => {
-      if (aType === "fdn" && aPin2 === undefined) {
-        ok(aError.name === "SimPin2",
-           "expected error when pin2 is not provided");
-      } else {
-        ok(false, "Cannot tear down " + aType + " contact: " + aError.name);
-      }
-    });
+  return aIcc.updateContact(aType, contact, aPin2);
 }
 
 // Start tests
@@ -75,7 +57,6 @@ startTestCommon(function() {
     .then(() => testAddContact(icc, "fdn", "0000"))
     // Test add fdn contacts without passing pin2
     .then(() => testAddContact(icc, "fdn"))
-    .then(() => tearDownContact(icc, "5", "adn"))
-    .then(() => tearDownContact(icc, "5", "fdn"))
-    .then(() => tearDownContact(icc, "5", "fdn", "0000"));
+    .then(() => removeContact(icc, "5", "adn"))
+    .then(() => removeContact(icc, "5", "fdn"));
 });
