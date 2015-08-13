@@ -63,7 +63,7 @@ const PROXY_TYPE_PAC    = Ci.nsIProtocolProxyService.PROXYCONFIG_PAC;
 
 let debug;
 function updateDebug() {
-  let debugPref = false; // set default value here.
+  let debugPref = true; // set default value here.
   try {
     debugPref = debugPref || Services.prefs.getBoolPref(PREF_NETWORK_DEBUG_ENABLED);
   } catch (e) {}
