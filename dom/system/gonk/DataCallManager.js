@@ -583,6 +583,7 @@ DataCallHandler.prototype = {
   },
 
   updateRILNetworkInterface: function() {
+    this.debug("JJ updateRILNetworkInterface");
     let networkInterface = this.dataNetworkInterfaces.get(NETWORK_TYPE_MOBILE);
     if (!networkInterface) {
       if (DEBUG) {
@@ -646,6 +647,7 @@ DataCallHandler.prototype = {
       if (DEBUG) {
         this.debug("Data call settings: disconnect data call.");
       }
+      this.debug("JJ updateRILNetworkInterface call disconnect");
       networkInterface.disconnect();
       return;
     }
@@ -654,6 +656,7 @@ DataCallHandler.prototype = {
       if (DEBUG) {
         this.debug("Disconnect data call when Wifi is connected.");
       }
+      this.debug("JJ updateRILNetworkInterface call disconnect");
       networkInterface.disconnect();
       return;
     }
@@ -689,6 +692,7 @@ DataCallHandler.prototype = {
     if (DEBUG) {
       this.debug("Data call settings: connect data call.");
     }
+    this.debug("JJ updateRILNetworkInterface connect");
     networkInterface.connect();
   },
 
@@ -1668,12 +1672,14 @@ RILNetworkInterface.prototype = {
   },
 
   connect: function() {
+    this.debug("JJ connect");
     this.enabled = true;
 
     this.dataCall.connect(this);
   },
 
   disconnect: function() {
+    this.debug("JJ disconnect");
     if (!this.enabled) {
       return;
     }

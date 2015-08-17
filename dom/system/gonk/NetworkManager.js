@@ -329,7 +329,7 @@ NetworkManager.prototype = {
     // Note that since Lollipop we need to allocate and initialize
     // something through netd, so we add createNetwork/destroyNetwork
     // to deal with that explicitly.
-
+    debug("JJ updateNetworkInterface state: " + extNetworkInfo.state);
     switch (extNetworkInfo.state) {
       case Ci.nsINetworkInfo.NETWORK_STATE_CONNECTED:
 
