@@ -939,6 +939,7 @@ setReq.onerror = function() {
             manifest.read(filepath)
 
             filters = []
+            print ('JJ test:', self.test_tags)
             if self.test_tags:
                 filters.append(tags(self.test_tags))
             manifest_tests = manifest.active_tests(exists=False,
@@ -955,11 +956,17 @@ setReq.onerror = function() {
             unfiltered_tests = []
             for test in manifest_tests:
                 if test.get('disabled'):
+                    print ('JJ skip test:', test)
                     self.manifest_skipped_tests.append(test)
                 else:
                     unfiltered_tests.append(test)
 
             target_tests = manifest.get(tests=unfiltered_tests, **testargs)
+            print ('JJ target_tests:', target_tests)
+            import sys, traceback
+
+            traceback.print_stack()
+            
             for test in unfiltered_tests:
                 if test['path'] not in [x['path'] for x in target_tests]:
                     test.setdefault('disabled', 'filtered by type (%s)' % self.type)

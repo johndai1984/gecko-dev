@@ -26,9 +26,11 @@ def skip_if(tests, values):
     is True. This filter is added by default.
     """
     tag = 'skip-if'
+    print('JJ run in skip-if')
     for test in tests:
         if tag in test and parse(test[tag], **values):
             test.setdefault('disabled', '{}: {}'.format(tag, test[tag]))
+            print('JJ run in skip-if', '{}: {}'.format(tag, test[tag]))
         yield test
 
 
