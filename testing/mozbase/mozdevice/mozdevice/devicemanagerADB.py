@@ -213,8 +213,19 @@ class DeviceManagerADB(DeviceManager):
         proc = self._runCmd(["push", os.path.realpath(localname), destname],
                 retryLimit=retryLimit)
         if proc.returncode != 0:
-            raise DMError("Error pushing file %s -> %s; output: %s" % (localname, destname, proc.output))
-
+            count = 0
+            while count < 3:
+                if 'Read-only file system' in proc.output[0]:
+                    # remount file system and try again
+                    self.remount()
+                    proc = self._runCmd(["push", os.path.realpath(localname), destname],
+                    retryLimit=retryLimit)
+                    if proc.returncode != 0:
+                        count += 1
+                    else:
+                        return
+            raise DMError("Error pushing file %s -> %s; output: %s" % (localname, destname, proc.output))        
+     
     def mkDir(self, name):
         result = self._runCmd(["shell", "mkdir", name], timeout=self.short_timeout).output
         if len(result) and 'read-only file system' in result[0].lower():
@@ -718,6 +729,18 @@ class DeviceManagerADB(DeviceManager):
             self._logger.info("will use zip to push directories")
             self._useZip = True
         else:
+            count = 0
+            while (count < 3):
+                self.remount()
+                self._checkCmd(['-s', self._deviceSerial,
+                    'shell', 'ln -s /system/bin/busybox /system/bin/unzip;'], 
+                    timeout=self.short_timeout)
+                if (self._isUnzipAvailable() and self._isLocalZipAvailable()):
+                    self._logger.info("will use zip to push directories")
+                    self._useZip = True
+                    return
+                else:
+                    count += 1
             raise DMError("zip not available")
 
     def _adb_root(self):
