@@ -195,6 +195,58 @@ builds:
     types:
       debug:
         task: tasks/builds/dbg_macosx64_clobber.yml
+  flame-kk-spark-eng:
+    platforms:
+      - b2g
+    types:
+      opt:
+        task: tasks/builds/b2g_flame_kk_spark_eng.yml
+  nexus-4:
+    platforms:
+      - b2g
+    types:
+      opt:
+        task: tasks/builds/b2g_nexus_4_user.yml
+  nexus-4-eng:
+    platforms:
+      - b2g
+    types:
+      opt:
+        task: tasks/builds/b2g_nexus_4_eng.yml
+  nexus-5l:
+    platforms:
+      - b2g
+    types:
+      opt:
+        task: tasks/builds/b2g_nexus_5l_user.yml
+  nexus-5l-eng:
+    platforms:
+      - b2g
+    types:
+      opt:
+        task: tasks/builds/b2g_nexus_5l_eng.yml
+  aries-dogfood:
+    platforms:
+      - b2g
+    types:
+      opt:
+        task: tasks/builds/b2g_aries_spark_dogfood.yml
+  aries-ota:
+    platforms:
+      - b2g
+    types:
+      opt:
+        task: tasks/builds/b2g_aries_spark_ota_opt.yml
+      debug:
+        task: tasks/builds/b2g_aries_spark_ota_debug.yml
+  flame-kk-ota:
+    platforms:
+      - b2g
+    types:
+      opt:
+        task: tasks/builds/b2g_flame_kk_ota_opt.yml
+      debug:
+        task: tasks/builds/b2g_flame_kk_ota_debug.yml
 
 post-build:
   upload-symbols:
