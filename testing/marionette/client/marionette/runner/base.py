@@ -413,6 +413,9 @@ class BaseMarionetteArguments(ArgumentParser):
                           help="Path to directory for Marionette output. "
                                "(Default: .) (Default profile dest: TMP)",
                           type=dir_path)
+        self.add_argument('--oop',
+                        action='store_true',
+                        help="Running marionette oop tests.")
 
     def register_argument_container(self, container):
         group = self.add_argument_group(container.name)
@@ -527,6 +530,7 @@ class BaseMarionetteTestRunner(object):
                  socket_timeout=BaseMarionetteArguments.socket_timeout_default,
                  startup_timeout=None, addons=None, workspace=None,
                  verbose=0, **kwargs):
+                 startup_timeout=None, addons=None, oop=False, **kwargs):
         self.address = address
         self.emulator = emulator
         self.emulator_binary = emulator_binary
@@ -577,6 +581,7 @@ class BaseMarionetteTestRunner(object):
         # and default location for profile is TMP
         self.workspace_path = workspace or os.getcwd()
         self.verbose = verbose
+        self.oop = oop
 
         def gather_debug(test, status):
             rv = {}
@@ -871,8 +876,8 @@ setReq.onerror = function() {
             name = os.path.basename(test['path'])
             self.logger.test_start(name)
             self.logger.test_end(name,
-                                 'SKIP',
-                                 message=test['disabled'])
+                                 status='SKIP',
+                                 message=test['disabled'] if hasattr(test, 'disabled') else '')
             self.todo += 1
 
         interrupted = None
@@ -983,7 +988,6 @@ setReq.onerror = function() {
                     testargs.update({ atype: 'true' })
 
         testarg_b2g = bool(testargs.get('b2g'))
-
         file_ext = os.path.splitext(os.path.split(filepath)[-1])[1]
 
         if file_ext == '.ini':
@@ -1008,6 +1012,13 @@ setReq.onerror = function() {
             for test in manifest_tests:
                 if test.get('disabled'):
                     self.manifest_skipped_tests.append(test)
+                elif not self.oop and test.get('test_container') == "true":
+                    # Tests run in marionette-webapi-oop and they don't run in marionette-webapi.
+                    self.manifest_skipped_tests.append(test)
+                elif self.oop and \
+                     (test.get('test_container') is None or test.get('test_container') == "false"):
+                    # Tests run in marionette-webapi and they don't run in marionette-webapi-oop.
+                    self.manifest_skipped_tests.append(test)
                 else:
                     unfiltered_tests.append(test)
 
@@ -1023,19 +1034,17 @@ setReq.onerror = function() {
 
                 file_ext = os.path.splitext(os.path.split(i['path'])[-1])[-1]
                 test_container = None
-                if i.get('test_container') and testarg_b2g:
-                    if i.get('test_container') == "true":
+                if testarg_b2g and self.oop:
+                    if i.get('test_container') == "both" or i.get('test_container') == "true":
                         test_container = True
-                    elif i.get('test_container') == "false":
+                    else:
                         test_container = False
-
                 self.add_test(i["path"], i["expected"], test_container)
             return
 
         self.tests.append({'filepath': filepath, 'expected': expected, 'test_container': test_container})
 
     def run_test(self, filepath, expected, test_container):
-
         testloader = unittest.TestLoader()
         suite = unittest.TestSuite()
         self.test_kwargs['expected'] = expected

@@ -129,6 +129,7 @@ flags:
     - luciddream
     - marionette
     - marionette-webapi
+    - marionette-webapi-oop
     - mochitest
     - mochitest-browser-chrome
     - mochitest-browser-chrome-e10s

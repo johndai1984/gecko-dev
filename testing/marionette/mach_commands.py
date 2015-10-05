@@ -83,6 +83,7 @@ class B2GCommands(MachCommandBase):
     @Command('marionette-webapi', category='testing',
         description='Run a Marionette webapi test (test WebAPIs using marionette).',
         conditions=[conditions.is_b2g])
+    @CommandArgument('--oop', action='store_true',  help='marionette-webapi-oop (b2g only).')
     @CommandArgument('--type',
         default='b2g',
         help='Test type, usually one of: browser, b2g, b2g-qemu.')

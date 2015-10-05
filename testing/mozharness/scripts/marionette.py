@@ -140,6 +140,11 @@ class MarionetteTest(TestingMixin, MercurialScript, BlobUploadMixin, TransferMix
          "dest": "e10s",
          "help": "Run tests with multiple processes. (Desktop builds only)",
         }
+     ], [
+        ["--oop"],
+        {"action": "store_true",
+        "help": "Running marionette-webapi-oop tests.",
+        }
      ]] + copy.deepcopy(testing_config_options) \
         + copy.deepcopy(blobupload_config_options)
 
@@ -419,6 +424,8 @@ class MarionetteTest(TestingMixin, MercurialScript, BlobUploadMixin, TransferMix
             if self.config.get('e10s'):
                 cmd.append('--e10s')
 
+            if self.config.get('oop'):
+                cmd.append('--oop')
             cmd.append('--gecko-log=%s' % os.path.join(dirs["abs_blob_upload_dir"],
                                                        'gecko.log'))
 
