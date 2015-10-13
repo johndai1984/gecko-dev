@@ -87,7 +87,7 @@ function updateDebugFlag() {
   // Read debug setting from pref
   let debugPref;
   try {
-    debugPref = Services.prefs.getBoolPref(PREF_RIL_DEBUG_ENABLED);
+    debugPref = true;//Services.prefs.getBoolPref(PREF_RIL_DEBUG_ENABLED);
   } catch (e) {
     debugPref = false;
   }
@@ -282,7 +282,7 @@ DataCallManager.prototype = {
         break;
       case "ril.data.enabled":
         if (DEBUG) {
-          this.debug("'ril.data.enabled' is now " + aResult);
+          this.debug("'JJ ril.data.enabled' is now " + aResult);
         }
         if (this._dataEnabled === aResult) {
           break;
@@ -586,20 +586,7 @@ DataCallHandler.prototype = {
     let networkInterface = this.dataNetworkInterfaces.get(NETWORK_TYPE_MOBILE);
     if (!networkInterface) {
       if (DEBUG) {
-        this.debug("No network interface for default data.");
-      }
-      return;
-    }
-
-    let connection =
-      gMobileConnectionService.getItemByServiceId(this.clientId);
-
-    // This check avoids data call connection if the radio is not ready
-    // yet after toggling off airplane mode.
-    let radioState = connection && connection.radioState;
-    if (radioState != Ci.nsIMobileConnection.MOBILE_RADIO_STATE_ENABLED) {
-      if (DEBUG) {
-        this.debug("RIL is not ready for data connection: radio's not ready");
+        this.debug("JJ No network interface for default data.");
       }
       return;
     }
@@ -611,83 +598,35 @@ DataCallHandler.prototype = {
     // the new values and reconnect the data call.
     if (this.dataCallSettings.oldEnabled === this.dataCallSettings.enabled) {
       if (DEBUG) {
-        this.debug("No changes for ril.data.enabled flag. Nothing to do.");
+        this.debug("JJ No changes for ril.data.enabled flag. Nothing to do.");
       }
       return;
+    }
+  
+    // We have moved part of the decision making into DataCall, the rest will be  
+    // moved after Bug 904514 - [meta] NetworkManager enhancement.  
+    if (networkInterface.enabled && 
+        (!this.dataCallSettings.enabled ||  
+         (dataInfo.roaming && !this.dataCallSettings.roamingEnabled))) {  
+      if (DEBUG) {  
+        this.debug("JJ Data call settings: disconnect data call.");  
+      } 
+      networkInterface.disconnect();  
+      return; 
     }
 
-    let dataInfo = connection && connection.data;
-    let isRegistered =
-      dataInfo &&
-      dataInfo.state == RIL.GECKO_MOBILE_CONNECTION_STATE_REGISTERED;
-    let haveDataConnection =
-      dataInfo &&
-      dataInfo.type != RIL.GECKO_MOBILE_CONNECTION_STATE_UNKNOWN;
-    if (!isRegistered || !haveDataConnection) {
-      if (DEBUG) {
-        this.debug("RIL is not ready for data connection: Phone's not " +
-                   "registered or doesn't have data connection.");
-      }
-      return;
-    }
-    let wifi_active = false;
-    if (gNetworkManager.activeNetworkInfo &&
-        gNetworkManager.activeNetworkInfo.type == NETWORK_TYPE_WIFI) {
-      wifi_active = true;
-    }
-
-    let defaultDataCallConnected = networkInterface.connected;
-
-    // We have moved part of the decision making into DataCall, the rest will be
-    // moved after Bug 904514 - [meta] NetworkManager enhancement.
-    if (networkInterface.enabled &&
-        (!this.dataCallSettings.enabled ||
-         (dataInfo.roaming && !this.dataCallSettings.roamingEnabled))) {
-      if (DEBUG) {
-        this.debug("Data call settings: disconnect data call.");
-      }
-      networkInterface.disconnect();
-      return;
-    }
-
-    if (networkInterface.enabled && wifi_active) {
-      if (DEBUG) {
-        this.debug("Disconnect data call when Wifi is connected.");
-      }
-      networkInterface.disconnect();
-      return;
-    }
-
-    if (!this.dataCallSettings.enabled || defaultDataCallConnected) {
-      if (DEBUG) {
-        this.debug("Data call settings: nothing to do.");
-      }
-      return;
-    }
-    if (dataInfo.roaming && !this.dataCallSettings.roamingEnabled) {
-      if (DEBUG) {
-        this.debug("We're roaming, but data roaming is disabled.");
-      }
-      return;
-    }
-    if (wifi_active) {
-      if (DEBUG) {
-        this.debug("Don't connect data call when Wifi is connected.");
-      }
-      return;
-    }
     if (this._pendingApnSettings) {
-      if (DEBUG) this.debug("We're changing apn settings, ignore any changes.");
+      if (DEBUG) this.debug("JJ We're changing apn settings, ignore any changes.");
       return;
     }
 
     if (this._deactivatingDataCalls) {
-      if (DEBUG) this.debug("We're deactivating all data calls, ignore any changes.");
+      if (DEBUG) this.debug("JJ We're deactivating all data calls, ignore any changes.");
       return;
     }
 
     if (DEBUG) {
-      this.debug("Data call settings: connect data call.");
+      this.debug("JJ Data call settings: connect data call.");
     }
     networkInterface.connect();
   },
@@ -1641,6 +1580,7 @@ function RILNetworkInterface(aDataCallHandler, aType, aApnSetting, aDataCall) {
 
   this.dataCallHandler = aDataCallHandler;
   this.enabled = false;
+  this.activated = false;
   this.dataCall = aDataCall;
   this.apnSetting = aApnSetting;
 
@@ -1656,6 +1596,8 @@ RILNetworkInterface.prototype = {
 
   // If this RILNetworkInterface type is enabled or not.
   enabled: null,
+
+  activated: null,
 
   apnSetting: null,
 
@@ -1700,10 +1642,92 @@ RILNetworkInterface.prototype = {
     gNetworkManager.updateNetworkInterface(this);
   },
 
+  activate: function() {
+    this.activated = true;
+    if (DEBUG) {
+        this.debug("JJ activate:" + this.activated);
+    }
+    return this.connect();
+  },
+
+  deactivate: function() {
+    if (!this.activated) {
+      return;
+    }
+
+    this.activated = false;
+    if (DEBUG) {
+        this.debug("JJ deactivate:" + this.activated);
+    }
+    this.disconnect();
+  },
+
   connect: function() {
+    this.debug("JJ this.dataCall.clientId: "+this.dataCall.clientId+
+      ",this.dataCallHandler.clientId:"+this.dataCallHandler.clientId+
+      ", dataDefaultServiceId:"+this.dataCallHandler.dataDefaultServiceId);
+
+    let connection =
+      gMobileConnectionService.getItemByServiceId(this.dataCall.clientId);
+
+    // This check avoids data call connection if the radio is not ready
+    // yet after toggling off airplane mode.
+    let radioState = connection && connection.radioState;
+    if (radioState != Ci.nsIMobileConnection.MOBILE_RADIO_STATE_ENABLED) {
+      if (DEBUG) {
+        this.debug("JJ RIL is not ready for data connection: radio's not ready");
+      }
+      return Ci.nsINetworkInterface.STATUS_RADIO_NOT_READY;
+    }
+
+    let dataInfo = connection && connection.data;
+    let isRegistered =
+      dataInfo &&
+      dataInfo.state == RIL.GECKO_MOBILE_CONNECTION_STATE_REGISTERED;
+    let haveDataConnection =
+      dataInfo &&
+      dataInfo.type != RIL.GECKO_MOBILE_CONNECTION_STATE_UNKNOWN;
+    if (!isRegistered || !haveDataConnection) {
+      if (DEBUG) {
+        this.debug("JJ RIL is not ready for data connection: Phone's not " +
+                   "registered or doesn't have data connection.");
+      }
+      return Ci.nsINetworkInterface.STATUS_RIL_NOT_READY;
+    }
+    //TODO:only get _dataDefaultClientId is _currentDataClientId will call dataCall.connect()
+    // if this network interface's service id is the default service id for data call.
+    // if (this.dataCall.clientId !== this.dataCallHandler.dataDefaultServiceId) {
+    //   if (DEBUG) {
+    //     this.debug("JJ Not dataDefaultServiceId network interface for default data.");
+    //   }
+    //   return Ci.nsINetworkInterface.STATUS_NETWORKMANAGER_NOT_ALLOWED;
+    // }
+   
+    if (!this.dataCallHandler.dataCallSettings.enabled) {
+      if (DEBUG) {
+        this.debug("JJ Data call settings: nothing to do.");
+      }
+      return Ci.nsINetworkInterface.STATUS_DATACALL_DISABLED;
+    }
+
+    if (dataInfo.roaming && !this.dataCallHandler.dataCallSettings.roamingEnabled) {
+      if (DEBUG) {
+        this.debug("JJ We're roaming, but data roaming is disabled.");
+      }
+      return Ci.nsINetworkInterface.STATUS_ROAMING_DISABLED;
+    }
+
+    if (!this.activated) {
+      if (DEBUG) {
+        this.debug("JJ NetwrokManager not allowed.");
+      }
+      return Ci.nsINetworkInterface.STATUS_NETWORKMANAGER_NOT_ALLOWED;
+    }
+
     this.enabled = true;
 
     this.dataCall.connect(this);
+    return Ci.nsINetworkInterface.STATUS_OK;
   },
 
   disconnect: function() {

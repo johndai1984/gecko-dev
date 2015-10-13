@@ -830,15 +830,6 @@ RadioInterface.prototype = {
   },
 
   /**
-   * TODO: Bug 911713 - B2G NetworkManager: Move policy control logic to
-   *                    NetworkManager
-   */
-  updateRILNetworkInterface: function() {
-    let connHandler = gDataCallManager.getDataCallHandler(this.clientId);
-    connHandler.updateRILNetworkInterface();
-  },
-
-  /**
    * handle received SMS.
    */
   handleSmsReceived: function(aMessage) {

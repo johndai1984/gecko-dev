@@ -67,7 +67,7 @@ const PROXY_TYPE_PAC    = Ci.nsIProtocolProxyService.PROXYCONFIG_PAC;
 
 var debug;
 function updateDebug() {
-  let debugPref = false; // set default value here.
+  let debugPref = true; // set default value here.
   try {
     debugPref = debugPref || Services.prefs.getBoolPref(PREF_NETWORK_DEBUG_ENABLED);
   } catch (e) {}
@@ -293,6 +293,15 @@ NetworkManager.prototype = {
     this.networkInterfaceLinks[networkId] = new NetworkInterfaceLinks();
 
     Services.obs.notifyObservers(network.info, TOPIC_INTERFACE_REGISTERED, null);
+
+    if (network.info.type === Ci.nsINetworkInfo.NETWORK_TYPE_WIFI) {
+      debug('JJ registerNetworkInterface _checkPolicy ');
+      this._checkPolicy();
+    }
+    if (network.info.type === Ci.nsINetworkInfo.NETWORK_TYPE_MOBILE) {
+      debug('JJ registerNetworkInterface activate ');
+      network.activate();
+    }
     debug("Network '" + networkId + "' registered.");
   },
 
@@ -383,12 +392,9 @@ NetworkManager.prototype = {
           })
           .then(() => this.setAndConfigureActive())
           .then(() => {
-            // Update data connection when Wifi connected/disconnected
-            if (extNetworkInfo.type ==
-                Ci.nsINetworkInfo.NETWORK_TYPE_WIFI && this.mRil) {
-              for (let i = 0; i < this.mRil.numRadioInterfaces; i++) {
-                this.mRil.getRadioInterface(i).updateRILNetworkInterface();
-              }
+            if (extNetworkInfo.type == Ci.nsINetworkInfo.NETWORK_TYPE_WIFI) {
+              debug('JJ NETWORK_STATE_CONNECTED _checkPolicy ');
+              this._checkPolicy();
             }
 
             // Probing the public network accessibility after routing table is ready
@@ -446,12 +452,9 @@ NetworkManager.prototype = {
           })
           .then(() => this.setAndConfigureActive())
           .then(() => {
-            // Update data connection when Wifi connected/disconnected
-            if (extNetworkInfo.type ==
-                Ci.nsINetworkInfo.NETWORK_TYPE_WIFI && this.mRil) {
-              for (let i = 0; i < this.mRil.numRadioInterfaces; i++) {
-                this.mRil.getRadioInterface(i).updateRILNetworkInterface();
-              }
+            if (extNetworkInfo.type == Ci.nsINetworkInfo.NETWORK_TYPE_WIFI) {
+              debug('JJ NETWORK_STATE_DISCONNECTED _checkPolicy ');
+              this._checkPolicy();
             }
           })
           .then(() => this._destroyNetwork(extNetworkInfo.name))
@@ -469,6 +472,35 @@ NetworkManager.prototype = {
     }
   },
 
+  _checkPolicy: function() {
+    //If wifi is not registered/connected, activate mobile network, otherwise, 
+    //deactivate mobile network.
+    let wifi_active = this.activeNetworkInfo &&
+        this.activeNetworkInfo.type == Ci.nsINetworkInfoNETWORK_TYPE_WIFI;
+    //sim1, sim2 will send activate and disactivate
+    for (let networkId in this.networkInterfaces) {
+      debug("JJ in _checkPolicy networkId: " + networkId);
+      debug("JJ in _checkPolicy hasOwnProperty: " + this.networkInterfaces.hasOwnProperty(networkId));
+      debug("JJ in _checkPolicy type: " + this.networkInterfaces[networkId].type);
+      debug("JJ in _checkPolicy state: " + this.networkInterfaces[networkId].state);
+      if (this.networkInterfaces.hasOwnProperty(networkId) &&
+          this.networkInterfaces[networkId].type === Ci.nsINetworkInfo.NETWORK_TYPE_MOBILE) {
+        if (wifi_active && 
+          this.networkInterfaces[networkId].state === Ci.nsINetworkInfo.NETWORK_STATE_CONNECTED) {
+          debug("JJ _checkPolicy Disconnect data call when Wifi is connected.");
+          this.networkInterfaces[networkId].deactivate();
+          return;
+        } 
+        if (!wifi_active &&
+            this.networkInterfaces[networkId].state !== Ci.nsINetworkInfo.NETWORK_STATE_CONNECTED) {
+          debug("JJ _checkPolicy Connect data call when Wifi is disconnected.");
+          this.networkInterfaces[networkId].activate();
+          return;
+        }
+      }
+    }
+  },
+
   unregisterNetworkInterface: function(network) {
     if (!(network instanceof Ci.nsINetworkInterface)) {
       throw Components.Exception("Argument must be nsINetworkInterface.",
@@ -480,9 +512,19 @@ NetworkManager.prototype = {
                                  Cr.NS_ERROR_INVALID_ARG);
     }
 
-    // This is for in case a network gets unregistered without being
-    // DISCONNECTED.
+    if (network.info.type === Ci.nsINetworkInfo.NETWORK_TYPE_WIFI
+        ) {
+      debug('JJ unregisterNetworkInterface _checkPolicy ');
+      this._checkPolicy();
+    }
+    if (network.info.type === Ci.nsINetworkInfo.NETWORK_TYPE_MOBILE) {
+      debug('JJ unregisterNetworkInterface deactivate ');
+      network.deactivate();
+    }
+
     if (this.isNetworkTypeMobile(network.info.type)) {
+      // This is for in case a network gets unregistered without being
+      // DISCONNECTED.
       this._cleanupAllHostRoutes(networkId);
     }
 
@@ -1178,13 +1220,5 @@ var CaptivePortalDetectionHelper = (function() {
     }
   };
 }());
-
-XPCOMUtils.defineLazyGetter(NetworkManager.prototype, "mRil", function() {
-  try {
-    return Cc["@mozilla.org/ril;1"].getService(Ci.nsIRadioInterfaceLayer);
-  } catch (e) {}
-
-  return null;
-});
 
 this.NSGetFactory = XPCOMUtils.generateNSGetFactory([NetworkManager]);

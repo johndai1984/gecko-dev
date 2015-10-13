@@ -14,7 +14,7 @@ interface nsIRilSendWorkerMessageCallback : nsISupports
   boolean handleResponse(in jsval response);
 };
 
-[scriptable, uuid(1a3ef88a-e4d1-11e4-8512-176220f2b32b)]
+[scriptable, uuid(38d124ec-4832-4cf4-b9bc-8feb49f41c82)]
 interface nsIRadioInterface : nsISupports
 {
   /**
@@ -27,8 +27,6 @@ interface nsIRadioInterface : nsISupports
   void setupDataCallByType(in long networkType);
   void deactivateDataCallByType(in long networkType);
   long getDataCallStateByType(in long networkType);
-
-  void updateRILNetworkInterface();
 
   void sendWorkerMessage(in DOMString type,
               [optional] in jsval message,

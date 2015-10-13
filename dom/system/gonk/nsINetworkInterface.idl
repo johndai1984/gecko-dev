@@ -80,9 +80,17 @@ interface nsINetworkInfo : nsISupports
                 [array, size_is(count), retval] out wstring dnses);
 };
 
-[scriptable, uuid(8b1345fa-b34c-41b3-8d21-09f961bf8887)]
+[scriptable, uuid(ad52c3f6-0098-4ab9-919b-b0b648a3db68)]
 interface nsINetworkInterface : nsISupports
 {
+  const long STATUS_OK                          = 0;
+  const long STATUS_RADIO_NOT_READY             = 1;
+  const long STATUS_RIL_NOT_READY               = 2;
+  const long STATUS_ROAMING_DISABLED            = 3;
+  const long STATUS_DATACALL_DISABLED           = 4;
+  const long STATUS_DEACTIVATING_DATACALLS      = 5;
+  const long STATUS_NETWORKMANAGER_NOT_ALLOWED  = 6;
+
   /**
    * The network information about this network interface.
    */
@@ -102,4 +110,14 @@ interface nsINetworkInterface : nsISupports
    * The Maximun Transmit Unit for this network interface, -1 if not set.
    */
   readonly attribute long mtu;
+
+  /*
+   * Activate network interface.
+   */
+  long activate();
+
+  /*
+   * Deactivate network interface.
+   */
+  long deactivate();
 };
