@@ -213,6 +213,7 @@ class DeviceManagerADB(DeviceManager):
         proc = self._runCmd(["push", os.path.realpath(localname), destname],
                 retryLimit=retryLimit)
         if proc.returncode != 0:
+            self._edgarDebug()
             raise DMError("Error pushing file %s -> %s; output: %s" % (localname, destname, proc.output))
 
     def mkDir(self, name):
@@ -247,8 +248,10 @@ class DeviceManagerADB(DeviceManager):
             except:
                 self._logger.warning(traceback.format_exc())
                 self._logger.warning("zip/unzip failure: falling back to normal push")
-                self._useZip = False
-                self.pushDir(localDir, remoteDir, retryLimit=retryLimit, timeout=timeout)
+                #self._useZip = False
+                #self.pushDir(localDir, remoteDir, retryLimit=retryLimit, timeout=timeout)
+                self._edgarDebug()
+                raise Exception("zip/unzip failure")
         else:
             tmpDir = tempfile.mkdtemp()
             # copytree's target dir must not already exist, so create a subdir
@@ -406,6 +409,13 @@ class DeviceManagerADB(DeviceManager):
             self._runCmd(["pull",  remoteFile, localFile])
         except (OSError, ValueError):
             raise DMError("Error pulling remote file '%s' to '%s'" % (remoteFile, localFile))
+
+    def _edgarDebug(self):
+        "Edgar's debug"
+        mounts = self._runCmd(['shell', 'cat', '/proc/mounts']).output
+        self._logger.warning('mounts: %s' % mounts)
+        devices = self._runCmd(['devices']).output
+        self._logger.warning('devices: %s' % devices)
 
     def pullFile(self, remoteFile, offset=None, length=None):
         # TODO: add debug flags and allow for printing stdout
@@ -718,6 +728,7 @@ class DeviceManagerADB(DeviceManager):
             self._logger.info("will use zip to push directories")
             self._useZip = True
         else:
+            self._edgarDebug()
             raise DMError("zip not available")
 
     def _adb_root(self):

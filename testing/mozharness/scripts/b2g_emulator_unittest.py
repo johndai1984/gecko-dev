@@ -374,12 +374,17 @@ class B2GEmulatorTest(TestingMixin, VCSMixin, BaseScript, BlobUploadMixin):
                                        output_parser=parser,
                                        success_codes=success_codes)
 
-        logcat = os.path.join(dirs['abs_work_dir'], 'emulator-5554.log')
-
         qemu = os.path.join(dirs['abs_work_dir'], 'qemu.log')
         if os.path.isfile(qemu):
             self.copyfile(qemu, os.path.join(env['MOZ_UPLOAD_DIR'],
                                              os.path.basename(qemu)))
+
+        kmsg = os.path.join(dirs['abs_work_dir'], 'emulator-5554_kmsg.log')
+        if os.path.isfile(kmsg):
+            self.copyfile(kmsg, os.path.join(env['MOZ_UPLOAD_DIR'],
+                                             os.path.basename(kmsg)))
+
+        logcat = os.path.join(dirs['abs_work_dir'], 'emulator-5554.log')
 
         tbpl_status, log_level = parser.evaluate_parser(return_code,
                                                         success_codes=success_codes)

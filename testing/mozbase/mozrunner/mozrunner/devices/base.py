@@ -145,6 +145,15 @@ class Device(object):
             self.logcat_proc = ProcessHandler(logcat_args, logfile=logcat_log)
             self.logcat_proc.run()
 
+            #save kernel log
+            kmsg_log = os.path.join(self.logdir, '%s_kmsg.log' % serial)
+            if os.path.isfile(kmsg_log):
+                self._rotate_log(kmsg_log)
+            kmsg_args = [self.app_ctx.adb, '-s', '%s' % serial,
+                         'shell', 'cat', '/proc/kmsg']
+            self.logcat_proc = ProcessHandler(kmsg_args, logfile=kmsg_log)
+            self.logcat_proc.run()
+
     def reboot(self):
         """
         Reboots the device via adb.

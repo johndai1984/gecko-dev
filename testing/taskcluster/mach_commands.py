@@ -41,7 +41,10 @@ DEFAULT_TRY = 'try: -b do -p all -u all'
 DEFAULT_JOB_PATH = os.path.join(
     ROOT, 'tasks', 'branches', 'base_jobs.yml'
 )
-
+BUSYBOX_URL = {
+'arm': 'https://api.pub.build.mozilla.org/tooltool/sha512/0748e900821820f1a42e2f1f3fa4d9002ef257c351b9e6b78e7de0ddd0202eace351f440372fbb1ae0b7e69e8361b036f6bd3362df99e67fc585082a311fc0df',
+'x86': 'http://www.busybox.net/downloads/binaries/latest/busybox-i686'
+}
 def docker_image(name):
     ''' Determine the docker tag/revision from an in tree docker file '''
     repository_path = os.path.join(DOCKER_ROOT, name, 'REGISTRY')
@@ -455,7 +458,11 @@ class Graph(object):
             taskcluster_graph.build_task.validate(build_task)
             graph['tasks'].append(build_task)
 
-            test_packages_url, tests_url, mozharness_url = None, None, None
+            test_packages_url, tests_url, mozharness_url, busybox_url = None, None, None, None
+            # Now we only setup busybox_url for emulator builds.
+            if 'emulator' in build['build_name']:
+                arch = 'x86' if 'x86' in build['build_name'] else 'arm'
+                busybox_url = BUSYBOX_URL[arch]
 
             if 'test_packages' in build_task['task']['extra']['locations']:
                 test_packages_url = ARTIFACT_URL.format(
@@ -543,6 +550,8 @@ class Graph(object):
                     test_parameters['test_packages_url'] = test_packages_url
                 if mozharness_url:
                     test_parameters['mozharness_url'] = mozharness_url
+                if busybox_url:
+                    test_parameters['busybox_url'] = busybox_url
                 test_definition = templates.load(test['task'], {})['task']
                 chunk_config = test_definition['extra'].get('chunks', {})
 
