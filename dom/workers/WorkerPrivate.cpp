@@ -938,6 +938,72 @@ private:
   }
 };
 
+class ReportErrorOnConsoleRunnable final : public WorkerRunnable
+{
+  nsCString mMessage;
+
+public:
+  // aWorkerPrivate is the worker thread we're on (or the main thread, if null)
+  static void
+  ReportErrorOnConsole(WorkerPrivate* aWorkerPrivate,
+                       const nsCString& aMessage)
+  {
+    if (aWorkerPrivate) {
+      aWorkerPrivate->AssertIsOnWorkerThread();
+    } else {
+      AssertIsOnMainThread();
+    }
+
+    // Now fire a runnable to do the same on the parent's thread if we can.
+    if (aWorkerPrivate) {
+      RefPtr<ReportErrorOnConsoleRunnable> runnable =
+        new ReportErrorOnConsoleRunnable(aWorkerPrivate, aMessage);
+      runnable->Dispatch();
+      return;
+    }
+
+    nsXPIDLString message;
+    nsContentUtils::GetLocalizedString(nsContentUtils::eDOM_PROPERTIES,
+                                       aMessage.get(), message);
+
+    // Log an error to the error console.
+    LogErrorToConsole(message, nsString(), nsString(), 0, 0, 0, 0);
+  }
+
+private:
+  ReportErrorOnConsoleRunnable(WorkerPrivate* aWorkerPrivate, const nsCString& aMessage)
+  : WorkerRunnable(aWorkerPrivate, ParentThreadUnchangedBusyCount),
+    mMessage(aMessage)
+  { }
+
+  virtual void
+  PostDispatch(WorkerPrivate* aWorkerPrivate, bool aDispatchResult) override
+  {
+    aWorkerPrivate->AssertIsOnWorkerThread();
+
+    // Dispatch may fail if the worker was canceled, no need to report that as
+    // an error, so don't call base class PostDispatch.
+  }
+
+  virtual bool
+  WorkerRun(JSContext* aCx, WorkerPrivate* aWorkerPrivate) override
+  {
+    WorkerPrivate* parent = aWorkerPrivate->GetParent();
+    if (!parent) {
+      AssertIsOnMainThread();
+
+      if (aWorkerPrivate->IsFrozen() || aWorkerPrivate->IsSuspended()) {
+        MOZ_ASSERT(!IsDebuggerRunnable());
+        aWorkerPrivate->QueueRunnable(this);
+        return true;
+      }
+    }
+
+    ReportErrorOnConsole(parent, mMessage);
+    return true;
+  }
+};
+
 class ReportErrorRunnable final : public WorkerRunnable
 {
   nsString mMessage;
@@ -5846,6 +5912,18 @@ WorkerPrivate::ReportError(JSContext* aCx, const char* aFallbackMessage,
                                    mutedError, 0);
 
   mErrorHandlerRecursionCount--;
+}
+
+void
+WorkerPrivate::ReportErrorOnConsole(const char* aMessage)
+{
+  AssertIsOnWorkerThread();
+
+  nsCString message;
+  if (message.IsEmpty()) {
+    message = nsCString(aMessage);
+  }
+  ReportErrorOnConsoleRunnable::ReportErrorOnConsole(this, message);
 }
 
 int32_t
