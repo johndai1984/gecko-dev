@@ -37,6 +37,7 @@ class EventChainVisitor;
 class EventListenerManager;
 class EventStates;
 namespace dom {
+class GlobalObject;
 class HTMLFormElement;
 class HTMLMenuElement;
 } // namespace dom
@@ -59,6 +60,9 @@ public:
     AddStatesSilently(NS_EVENT_STATE_LTR);
     SetFlags(NODE_HAS_DIRECTION_LTR);
   }
+
+  static already_AddRefed<nsGenericHTMLElement>
+    Constructor(const mozilla::dom::GlobalObject& aGlobal, ErrorResult& aError);
 
   NS_DECL_ISUPPORTS_INHERITED
 

@@ -215,6 +215,29 @@ NS_INTERFACE_MAP_BEGIN(nsGenericHTMLElement)
                                  new nsGenericHTMLElementTearoff(this))
 NS_INTERFACE_MAP_END_INHERITING(nsGenericHTMLElementBase)
 
+// static
+already_AddRefed<nsGenericHTMLElement>
+nsGenericHTMLElement::Constructor(const GlobalObject& aGlobal,
+                                  ErrorResult& aError)
+{
+  nsCOMPtr<nsPIDOMWindowInner> win = do_QueryInterface(aGlobal.GetAsSupports());
+  nsIDocument* doc;
+  if (!win || !(doc = win->GetExtantDoc())) {
+    aError.Throw(NS_ERROR_FAILURE);
+    return nullptr;
+  }
+
+  RefPtr<mozilla::dom::NodeInfo> nodeInfo;
+  nodeInfo = doc->NodeInfoManager()->GetNodeInfo(nsGkAtoms::element, nullptr,
+                                                 kNameSpaceID_XHTML,
+                                                 nsIDOMNode::ELEMENT_NODE);
+
+  RefPtr<nsGenericHTMLElement> element;
+  element = NS_NewHTMLElement(nodeInfo.forget());
+
+  return element.forget();
+}
+
 nsresult
 nsGenericHTMLElement::CopyInnerTo(Element* aDst)
 {
