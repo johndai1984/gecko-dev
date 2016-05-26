@@ -286,8 +286,6 @@ nsComboboxControlFrame::SetFocus(bool aOn, bool aRepaint)
         return;
       }
     }
-    // May delete |this|.
-    mListControlFrame->FireOnChange();
   }
 
   if (!weakFrame.IsAlive()) {
