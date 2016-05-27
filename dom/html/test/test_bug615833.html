@@ -31,7 +31,7 @@ https://bugzilla.mozilla.org/show_bug.cgi?id=615697
 /** Test for Bug 615697 **/
 
 /**
- * This test is making all elements trigger 'change' event.
+ * This test is making all elements trigger 'input' and 'change' event.
  * You should read the test from bottom to top:
  * events are registered from the last one to the first one.
  *
@@ -46,6 +46,12 @@ var checkbox= document.getElementsByTagName('input')[2];
 var select = document.getElementsByTagName('select')[0];
 var selectMultiple = document.getElementsByTagName('select')[1];
 
+function checkInputEvent(aEvent)
+{
+  ok(aEvent.bubbles, "input event should bubble");
+  ok(!aEvent.cancelable, "input event shouldn't be cancelable");
+}
+
 function checkChangeEvent(aEvent)
 {
   ok(aEvent.bubbles, "change event should bubble");
@@ -55,6 +61,12 @@ function checkChangeEvent(aEvent)
 selectMultiple.addEventListener("change", function(aEvent) {
   selectMultiple.removeEventListener("change", arguments.callee, false);
   checkChangeEvent(aEvent);
+  SimpleTest.finish();
+}, false);
+
+selectMultiple.addEventListener("input", function(aEvent) {
+  selectMultiple.removeEventListener("input", arguments.callee, false);
+  checkInputEvent(aEvent);
   SimpleTest.finish();
 }, false);
 
@@ -68,6 +80,12 @@ selectMultiple.addEventListener("focus", function() {
 select.addEventListener("change", function(aEvent) {
   select.removeEventListener("change", arguments.callee, false);
   checkChangeEvent(aEvent);
+  selectMultiple.focus();
+}, false);
+
+select.addEventListener("input", function(aEvent) {
+  select.removeEventListener("input", arguments.callee, false);
+  checkInputEvent(aEvent);
   selectMultiple.focus();
 }, false);
 
@@ -89,6 +107,12 @@ checkbox.addEventListener("change", function(aEvent) {
   select.focus();
 }, false);
 
+checkbox.addEventListener("input", function(aEvent) {
+  checkbox.removeEventListener("input", arguments.callee, false);
+  checkInputEvent(aEvent);
+  select.focus();
+}, false);
+
 checkbox.addEventListener("focus", function() {
   checkbox.removeEventListener("focus", arguments.callee, false);
   SimpleTest.executeSoon(function () {
@@ -102,12 +126,19 @@ radio.addEventListener("change", function(aEvent) {
   checkbox.focus();
 }, false);
 
+radio.addEventListener("input", function(aEvent) {
+  radio.removeEventListener("input", arguments.callee, false);
+  checkInputEvent(aEvent);
+  checkbox.focus();
+}, false);
+
 radio.addEventListener("focus", function() {
   radio.removeEventListener("focus", arguments.callee, false);
   SimpleTest.executeSoon(function () {
     synthesizeMouseAtCenter(radio, {});
   });
 }, false);
+
 
 textarea.addEventListener("change", function(aEvent) {
   textarea.removeEventListener("change", arguments.callee, false);
