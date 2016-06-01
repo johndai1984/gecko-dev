@@ -2478,6 +2478,10 @@ public:
   virtual void SetupCustomElement(Element* aElement,
                                   uint32_t aNamespaceID,
                                   const nsAString* aTypeExtension = nullptr) = 0;
+  virtual mozilla::dom::CustomElementDefinition*
+    LookUpCustomElementDefinition(uint32_t aNamespaceID,
+                                  nsCOMPtr<nsIAtom> localNameAtom,
+                                  nsCOMPtr<nsIAtom> isAtom) = 0;
   virtual void
     RegisterElement(JSContext* aCx, const nsAString& aName,
                     const mozilla::dom::ElementRegistrationOptions& aOptions,

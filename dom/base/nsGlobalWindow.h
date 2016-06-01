@@ -879,7 +879,7 @@ public:
   nsLocation* GetLocation(mozilla::ErrorResult& aError);
   nsIDOMLocation* GetLocation() override;
   nsHistory* GetHistory(mozilla::ErrorResult& aError);
-  mozilla::dom::CustomElementsRegistry* CustomElements();
+  mozilla::dom::CustomElementsRegistry* CustomElements() override;
   mozilla::dom::BarProp* GetLocationbar(mozilla::ErrorResult& aError);
   mozilla::dom::BarProp* GetMenubar(mozilla::ErrorResult& aError);
   mozilla::dom::BarProp* GetPersonalbar(mozilla::ErrorResult& aError);

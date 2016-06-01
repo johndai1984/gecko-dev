@@ -470,21 +470,6 @@ CustomElementCallback::CustomElementCallback(Element* aThisObject,
 {
 }
 
-CustomElementDefinition::CustomElementDefinition(JSObject* aPrototype,
-                                                 nsIAtom* aType,
-                                                 nsIAtom* aLocalName,
-                                                 LifecycleCallbacks* aCallbacks,
-                                                 uint32_t aNamespaceID,
-                                                 uint32_t aDocOrder)
-  : mPrototype(aPrototype),
-    mType(aType),
-    mLocalName(aLocalName),
-    mCallbacks(aCallbacks),
-    mNamespaceID(aNamespaceID),
-    mDocOrder(aDocOrder)
-{
-}
-
 CustomElementData::CustomElementData(nsIAtom* aType)
   : mType(aType),
     mCurrentCallback(-1),
@@ -2715,7 +2700,7 @@ nsDocument::ApplySettingsFromCSP(bool aSpeculative)
         mReferrerPolicy = static_cast<ReferrerPolicy>(referrerPolicy);
         mReferrerPolicySet = true;
       }
- 
+
       // Set up 'block-all-mixed-content' if not already inherited
       // from the parent context or set by any other CSP.
       if (!mBlockAllMixedContent) {
@@ -5683,6 +5668,39 @@ nsDocument::SetupCustomElement(Element* aElement,
   // Enqueuing the created callback will set the CustomElementData on the
   // element, causing prototype swizzling to occur in Element::WrapObject.
   EnqueueLifecycleCallback(nsIDocument::eCreated, aElement, nullptr, data);
+}
+
+mozilla::dom::CustomElementDefinition*
+nsDocument::LookUpCustomElementDefinition(uint32_t aNamespaceID,
+                                          nsCOMPtr<nsIAtom> aLocalNameAtom,
+                                          nsCOMPtr<nsIAtom> aIsAtom)
+{
+  if (aNamespaceID != kNameSpaceID_XHTML) {
+    return nullptr;
+  }
+  nsCOMPtr<nsPIDOMWindowOuter> window = GetWindow();
+  mozilla::dom::CustomElementsRegistry* registry = window->CustomElements();
+
+  CustomElementDefinition* data;
+  // We use name be the primary key to get hash value.
+  nsCOMPtr<nsIAtom> nameAtom = aLocalNameAtom;
+  if (aIsAtom) {
+    nameAtom = aIsAtom;
+  }
+  CustomElementHashKey key(aNamespaceID, nameAtom);
+
+  if (!registry->mCustomDefinitions.Get(&key, &data)) {
+    return nullptr;
+  }
+
+  if (((data->mType == aLocalNameAtom) &&
+      (data->mLocalName == aLocalNameAtom)) ||
+      ((data->mType == aIsAtom) &&
+      (data->mLocalName == aLocalNameAtom))) {
+    return data;
+  }
+
+  return nullptr;
 }
 
 already_AddRefed<Element>

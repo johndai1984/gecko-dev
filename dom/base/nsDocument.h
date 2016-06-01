@@ -335,40 +335,6 @@ private:
   virtual ~CustomElementData() {}
 };
 
-// The required information for a custom element as defined in:
-// https://dvcs.w3.org/hg/webcomponents/raw-file/tip/spec/custom/index.html
-struct CustomElementDefinition
-{
-  CustomElementDefinition(JSObject* aPrototype,
-                          nsIAtom* aType,
-                          nsIAtom* aLocalName,
-                          mozilla::dom::LifecycleCallbacks* aCallbacks,
-                          uint32_t aNamespaceID,
-                          uint32_t aDocOrder);
-
-  // The prototype to use for new custom elements of this type.
-  JS::Heap<JSObject *> mPrototype;
-
-  // The type (name) for this custom element.
-  nsCOMPtr<nsIAtom> mType;
-
-  // The localname to (e.g. <button is=type> -- this would be button).
-  nsCOMPtr<nsIAtom> mLocalName;
-
-  // The lifecycle callbacks to call for this custom element.
-  nsAutoPtr<mozilla::dom::LifecycleCallbacks> mCallbacks;
-
-  // Whether we're currently calling the created callback for a custom element
-  // of this type.
-  bool mElementIsBeingCreated;
-
-  // Element namespace.
-  int32_t mNamespaceID;
-
-  // The document custom element order.
-  uint32_t mDocOrder;
-};
-
 class Registry : public nsISupports
 {
 public:
@@ -1554,6 +1520,10 @@ public:
   virtual void SetupCustomElement(Element* aElement,
                                   uint32_t aNamespaceID,
                                   const nsAString* aTypeExtension) override;
+  virtual mozilla::dom::CustomElementDefinition*
+          LookUpCustomElementDefinition(uint32_t aNamespaceID,
+                                        nsCOMPtr<nsIAtom> localNameAtom,
+                                        nsCOMPtr<nsIAtom> isAtom) override;
 
   static bool IsWebComponentsEnabled(JSContext* aCx, JSObject* aObject);
 
