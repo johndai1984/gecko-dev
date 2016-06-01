@@ -1189,7 +1189,7 @@ pref("dom.event.highrestimestamp.enabled",  false);
 #endif
 
 pref("dom.webcomponents.enabled",           false);
-
+pref("dom.webcomponents.customelement.enabled", true);//TODO: jdai need to set to false
 pref("javascript.enabled",                  true);
 pref("javascript.options.strict",           false);
 #ifdef DEBUG

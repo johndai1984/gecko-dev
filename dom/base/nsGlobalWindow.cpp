@@ -3830,6 +3830,17 @@ nsGlobalWindow::GetHistory(ErrorResult& aError)
   return mHistory;
 }
 
+CustomElementsRegistry*
+nsGlobalWindow::CustomElements()
+{
+  MOZ_RELEASE_ASSERT(IsInnerWindow());
+  if (!mCustomElements) {
+      mCustomElements = CustomElementsRegistry::Create(AsInner());
+  }
+
+  return mCustomElements;
+}
+
 Performance*
 nsPIDOMWindowInner::GetPerformance()
 {
