@@ -2816,11 +2816,15 @@ nsContentUtils::IsCustomElementName(nsIAtom* aName)
   // check.
   nsDependentAtomString str(aName);
   const char16_t* colon;
-  if (str.FindChar('-') == -1 ||
-      NS_FAILED(nsContentUtils::CheckQName(str, false, &colon)) || colon) {
+  const char16_t* name = aName->GetUTF16String();
+  if (str.FindChar('-') == -1 || name[0] < 'a' || name[0] > 'z') {
     return false;
   }
+  printf("len: %d\n", aName->GetLength());
 
+  for(int i=0; i<aName->GetLength(); i++) {
+    printf("i=[%d]: %u\n",i, aName->GetLength());
+  }
   // The custom element name must not be one of the following values:
   //  annotation-xml
   //  color-profile
