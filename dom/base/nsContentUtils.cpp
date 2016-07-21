@@ -2808,16 +2808,59 @@ nsContentUtils::NewURIWithDocumentCharset(nsIURI** aResult,
 bool
 nsContentUtils::IsCustomElementName(nsIAtom* aName)
 {
-  // The custom element name identifies a custom element and is a sequence of
-  // alphanumeric ASCII characters that must match the NCName production and
-  // contain a U+002D HYPHEN-MINUS character.  We check for the HYPHEN-MINUS
-  // first, since that will typically not be present, which will allow us to
-  // return before doing the more expensive (and generally passing) CheckQName
-  // check.
-  nsDependentAtomString str(aName);
-  const char16_t* colon;
-  if (str.FindChar('-') == -1 ||
-      NS_FAILED(nsContentUtils::CheckQName(str, false, &colon)) || colon) {
+  // A valid custom element name is a sequence of characters name which
+  // must match the PotentialCustomElementName production:
+  // PotentialCustomElementName ::= [a-z] (PCENChar)* '-' (PCENChar)*
+  const char16_t* name = aName->GetUTF16String();
+  if (name[0] < 'a' || name[0] > 'z') {
+    return false;
+  }
+
+  int i = 1;
+  int len = aName->GetLength();
+  bool hasDash = false;
+
+  do {
+    if(name[i] >= 0xD800 && name[i] <= 0xDBFF) {
+      char16_t high_surrogates = name[i];
+      if((i+1 < len) && name[i+1] >= 0xDC00 && name[i+1] <= 0xDFFF) {
+        char16_t low_surrogates = name[i+1];
+        char32_t code = 0x10000 + ((high_surrogates - 0xD800) << 10) +
+                        (low_surrogates - 0xDC00);
+
+        if (code < 0x10000 || code > 0xEFFFF) {
+          return false;
+        }
+      } else {
+        return false;
+      }
+      i += 2;
+    } else {
+      if (name[i] == '-') {
+        hasDash = true;
+      }
+      if (name[i] == '-' || name[i] == '.' ||
+          name[i] == '_' || name[i] == 0xB7 ||
+         (name[i] >= '0' && name[i] <= '9') ||
+         (name[i] >= 'a' && name[i] <= 'z') ||
+         (name[i] >= 0xC0 && name[i] <= 0xD6) ||
+         (name[i] >= 0xF8 && name[i] <= 0x37D) ||
+         (name[i] >= 0x37F && name[i] <= 0x1FFF) ||
+         (name[i] >= 0x200C && name[i] <= 0x200D) ||
+         (name[i] >= 0x203F && name[i] <= 0x2040) ||
+         (name[i] >= 0x2070 && name[i] <= 0x218F) ||
+         (name[i] >= 0x2C00 && name[i] <= 0x2FEF) ||
+         (name[i] >= 0x3001 && name[i] <= 0xD7FF) ||
+         (name[i] >= 0xF900 && name[i] <= 0xFDCF) ||
+         (name[i] >= 0xFDF0 && name[i] <= 0xFFFD)) {
+        i++;
+      } else {
+        return false;
+      }
+    }
+  } while(i<len);
+
+  if (!hasDash) {
     return false;
   }
 
@@ -3624,11 +3667,11 @@ nsContentUtils::IsChildOfSameType(nsIDocument* aDoc)
   return sameTypeParent != nullptr;
 }
 
-bool 
+bool
 nsContentUtils::IsScriptType(const nsACString& aContentType)
 {
   // NOTE: if you add a type here, add it to the CONTENTDLF_CATEGORIES
-  // define in nsContentDLF.h as well. 
+  // define in nsContentDLF.h as well.
   return aContentType.EqualsLiteral(APPLICATION_JAVASCRIPT) ||
          aContentType.EqualsLiteral(APPLICATION_XJAVASCRIPT) ||
          aContentType.EqualsLiteral(TEXT_ECMASCRIPT) ||
