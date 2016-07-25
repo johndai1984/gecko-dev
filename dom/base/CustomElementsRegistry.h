@@ -98,6 +98,12 @@ struct CustomElementDefinition
   uint32_t mDocOrder;
 };
 
+struct WhenDefinedPromiseData
+{
+    WhenDefinedPromiseData(RefPtr<Promise> aPromise);
+    RefPtr<Promise> mPromise;
+};
+
 class CustomElementsRegistry final : public nsISupports,
                                      public nsWrapperCache
 {
@@ -109,11 +115,23 @@ public:
   static bool IsCustomElementsEnabled(JSContext* aCx, JSObject* aObject);
   static already_AddRefed<CustomElementsRegistry> Create(nsPIDOMWindowInner* aWindow);
   already_AddRefed<nsIDocument> GetOwnerDocument() const;
+  typedef nsClassHashtable<mozilla::dom::CustomElementHashKey,
+                           mozilla::dom::CustomElementDefinition>
+                           DefinitionMap;
+  // Hashtable for custom element definitions in web components.
+  // Custom prototypes are stored in the compartment where
+  // registerElement was called.
+  DefinitionMap mCustomDefinitions;
+  typedef nsClassHashtable<nsPtrHashKey<nsCOMPtr<nsIAtom>>,
+                           WhenDefinedPromiseData>
+                           WhenDefinedPromiseMap;
+  WhenDefinedPromiseMap mWhenDefinedPromiseMap;
 
 private:
   explicit CustomElementsRegistry(nsPIDOMWindowInner* aWindow);
   ~CustomElementsRegistry();
   nsCOMPtr<nsPIDOMWindowInner> mWindow;
+  already_AddRefed<Promise> CreatePromise(ErrorResult& aRv);
 
 public:
   nsISupports* GetParentObject() const;

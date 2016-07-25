@@ -25,9 +25,8 @@ NS_INTERFACE_MAP_END
 /* static */ bool
 CustomElementsRegistry::IsCustomElementsEnabled(JSContext* aCx, JSObject* aObject)
 {
-  JS::Rooted<JSObject*> obj(aCx, aObject);
   if (Preferences::GetBool("dom.webcomponents.customelements.enabled") ||
-      nsDocument::IsWebComponentsEnabled(aCx, obj)) {
+      nsDocument::IsWebComponentsEnabled(aCx, aObject)) {
     return true;
   }
 
@@ -252,6 +251,13 @@ void CustomElementsRegistry::Define(const nsAString& aName,
   // TODO: upgrade all elements.
 
   // TODO: when-defined promise.
+  WhenDefinedPromiseData* whenDefineValue;
+  if (mWhenDefinedPromiseMap.Get(&nameAtom, &whenDefineValue)) {
+    RefPtr<Promise> promise = whenDefineValue->mPromise;
+    promise->MaybeResolve(JS::UndefinedHandleValue);
+    nsAutoPtr<WhenDefinedPromiseData> doomed;
+    mWhenDefinedPromiseMap.RemoveAndForget(&nameAtom, doomed);
+  }
 }
 
 void
@@ -264,13 +270,64 @@ CustomElementsRegistry::Get(JSContext* aCx, const nsAString& aName,
 }
 
 already_AddRefed<Promise>
-CustomElementsRegistry::WhenDefined(const nsAString& name, ErrorResult& aRv)
+CustomElementsRegistry::WhenDefined(const nsAString& aName, ErrorResult& aRv)
 {
+  RefPtr<Promise> promise = CreatePromise(aRv);
+  if (!promise) {
+    return nullptr;
+  }
+
+  nsCOMPtr<nsIAtom> nameAtom(NS_Atomize(aName));
+  if (!nsContentUtils::IsCustomElementName(nameAtom)) {
+    promise->MaybeReject(NS_ERROR_DOM_SYNTAX_ERR);
+    return promise.forget();
+  }
+
+  CustomElementDefinition* data;
+  CustomElementHashKey key(kNameSpaceID_Unknown, nameAtom);
+  if (mCustomDefinitions.Get(&key, &data)) {
+    promise->MaybeResolve(JS::UndefinedHandleValue);
+    return promise.forget();
+  }
+
+  WhenDefinedPromiseData* whenDefineValue;
+  if (!mWhenDefinedPromiseMap.Get(&nameAtom, &whenDefineValue)) {
+    WhenDefinedPromiseData* whenDefineData = new WhenDefinedPromiseData(promise);
+    mWhenDefinedPromiseMap.Put(&nameAtom, whenDefineData);
+    return promise.forget();
+  }
+  promise = whenDefineValue->mPromise;
+
+  return promise.forget();
+
+
+
+
   // TODO: This function will be implemented in bug 1275839
-  aRv.Throw(NS_ERROR_NOT_IMPLEMENTED);
-  return nullptr;
+  // aRv.Throw(NS_ERROR_NOT_IMPLEMENTED);
+  // return nullptr;
 }
 
+already_AddRefed<Promise>
+CustomElementsRegistry::CreatePromise(ErrorResult& aRv)
+{
+  nsCOMPtr<nsIGlobalObject> global = do_QueryInterface(mWindow);
+  if (!global) {
+    aRv.Throw(NS_ERROR_FAILURE);
+    return nullptr;
+  }
+
+  RefPtr<Promise> promise = Promise::Create(global, aRv);
+  if (aRv.Failed()) {
+    return nullptr;
+  }
+
+  return promise.forget();
+}
+
+WhenDefinedPromiseData::WhenDefinedPromiseData(RefPtr<Promise> aPromise)
+: mPromise(aPromise)
+{}
 CustomElementDefinition::CustomElementDefinition(JSObject* aPrototype,
                                                  nsIAtom* aType,
                                                  nsIAtom* aLocalName,
