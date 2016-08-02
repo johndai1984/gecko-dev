@@ -8694,10 +8694,16 @@ public:
 
     for (StringBuilder* current = this; current; current = current->mNext) {
       uint32_t len = current->mUnits.Length();
+      bool isAppendLFChar = false;
       for (uint32_t i = 0; i < len; ++i) {
         Unit& u = current->mUnits[i];
         switch (u.mType) {
           case Unit::eAtom:
+            if (u.mAtom == nsGkAtoms::pre ||
+                u.mAtom == nsGkAtoms::textarea ||
+                u.mAtom == nsGkAtoms::listing) {
+              isAppendLFChar = true;
+            }
             aOut.Append(nsDependentAtomString(u.mAtom));
             break;
           case Unit::eString:
@@ -8710,6 +8716,10 @@ public:
             aOut.AppendASCII(u.mLiteral, u.mLength);
             break;
           case Unit::eTextFragment:
+            if (isAppendLFChar) {
+                aOut.AppendLiteral("\n");
+                isAppendLFChar = false;
+            }
             u.mTextFragment->AppendTo(aOut);
             break;
           case Unit::eTextFragmentWithEncode:
