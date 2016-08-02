@@ -8703,6 +8703,8 @@ public:
                 u.mAtom == nsGkAtoms::textarea ||
                 u.mAtom == nsGkAtoms::listing) {
               isAppendLFChar = true;
+              //FIXME: nested tags will fail
+              //FIXME: exists pre tag with \n will add additional \n
             }
             aOut.Append(nsDependentAtomString(u.mAtom));
             break;
@@ -8716,7 +8718,7 @@ public:
             aOut.AppendASCII(u.mLiteral, u.mLength);
             break;
           case Unit::eTextFragment:
-            if (isAppendLFChar) {
+            if (isAppendLFChar && u.mTextFragment->CharAt(0) == '\n') {
                 aOut.AppendLiteral("\n");
                 isAppendLFChar = false;
             }
