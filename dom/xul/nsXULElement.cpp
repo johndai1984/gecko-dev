@@ -805,7 +805,7 @@ public:
 
   NS_IMETHOD Run() override
   {
-    mDocument->WarnOnceAbout(nsIDocument::eImportXULIntoContent, false);
+    mDocument->WarnOnceAbout(DeprecatedOperations::eImportXULIntoContent, false);
     return NS_OK;
   }
 
@@ -823,7 +823,7 @@ nsXULElement::BindToTree(nsIDocument* aDocument,
       aDocument &&
       !aDocument->IsLoadedAsInteractiveData() &&
       !aDocument->AllowXULXBL() &&
-      !aDocument->HasWarnedAbout(nsIDocument::eImportXULIntoContent)) {
+      !aDocument->HasWarnedAbout(DeprecatedOperations::eImportXULIntoContent)) {
     nsContentUtils::AddScriptRunner(new XULInContentErrorReporter(aDocument));
   }
 

@@ -14609,7 +14609,7 @@ nsDocShell::IssueWarning(uint32_t aWarning, bool aAsError)
   if (mContentViewer) {
     nsCOMPtr<nsIDocument> doc = mContentViewer->GetDocument();
     if (doc) {
-      doc->WarnOnceAbout(nsIDocument::DeprecatedOperations(aWarning), aAsError);
+      doc->WarnOnceAbout(DeprecatedOperations(aWarning), aAsError);
     }
   }
   return NS_OK;

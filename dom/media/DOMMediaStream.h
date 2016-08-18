@@ -17,6 +17,7 @@
 #include "MediaTrackConstraints.h"
 #include "mozilla/DOMEventTargetHelper.h"
 #include "PrincipalChangeObserver.h"
+#include "mozilla/CORSMode.h"
 
 // X11 has a #define for CurrentTime. Unbelievable :-(.
 // See dom/media/webaudio/AudioContext.h for more fun!

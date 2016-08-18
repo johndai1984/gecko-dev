@@ -54,6 +54,7 @@
 #include "mozilla/BinarySearch.h"
 #include "nsIHttpHeaderVisitor.h"
 #include "nsIXULRuntime.h"
+#include "nsIDocument.h"
 
 #include <algorithm>
 

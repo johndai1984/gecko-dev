@@ -14,6 +14,7 @@
 #include "mozilla/layers/ISurfaceAllocator.h"  // for ISurfaceAllocator
 #include "mozilla/layers/LayersTypes.h"  // for LayersBackend
 #include "mozilla/layers/TextureForwarder.h"
+#include "nsIDocument.h"
 
 namespace mozilla {
 namespace dom {

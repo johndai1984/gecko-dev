@@ -2157,14 +2157,14 @@ nsHTMLDocument::GetSelection(ErrorResult& aRv)
 NS_IMETHODIMP
 nsHTMLDocument::CaptureEvents()
 {
-  WarnOnceAbout(nsIDocument::eUseOfCaptureEvents);
+  WarnOnceAbout(DeprecatedOperations::eUseOfCaptureEvents);
   return NS_OK;
 }
 
 NS_IMETHODIMP
 nsHTMLDocument::ReleaseEvents()
 {
-  WarnOnceAbout(nsIDocument::eUseOfReleaseEvents);
+  WarnOnceAbout(DeprecatedOperations::eUseOfReleaseEvents);
   return NS_OK;
 }
 

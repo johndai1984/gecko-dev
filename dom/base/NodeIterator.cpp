@@ -247,7 +247,7 @@ NodeIterator::NextOrPrevNode(NodePointer::MoveToMethodType aMove,
 NS_IMETHODIMP NodeIterator::Detach(void)
 {
     if (mRoot) {
-        mRoot->OwnerDoc()->WarnOnceAbout(nsIDocument::eNodeIteratorDetach);
+        mRoot->OwnerDoc()->WarnOnceAbout(DeprecatedOperations::eNodeIteratorDetach);
     }
     return NS_OK;
 }

@@ -1907,7 +1907,7 @@ LookupComponentsShim(JSContext *cx, JS::Handle<JSObject*> global,
   // Warn once.
   nsCOMPtr<nsIDocument> doc = win->GetExtantDoc();
   if (doc) {
-    doc->WarnOnceAbout(nsIDocument::eComponents, /* asError = */ true);
+    doc->WarnOnceAbout(DeprecatedOperations::eComponents, /* asError = */ true);
   }
 
   // Create a fake Components object.

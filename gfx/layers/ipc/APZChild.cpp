@@ -6,6 +6,7 @@
 
 #include "mozilla/layers/APZChild.h"
 
+#include "nsIDocument.h"
 #include "mozilla/dom/TabChild.h"
 #include "mozilla/layers/APZCCallbackHelper.h"
 

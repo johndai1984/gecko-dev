@@ -55,6 +55,7 @@
 #include "nsDOMClassInfo.h"
 #include "ipc/ErrorIPCUtils.h"
 #include "mozilla/UseCounter.h"
+#include "nsIDocument.h"
 
 namespace mozilla {
 namespace dom {
@@ -2358,7 +2359,7 @@ ReportLenientThisUnwrappingFailure(JSContext* cx, JSObject* obj)
   }
   nsCOMPtr<nsPIDOMWindowInner> window = do_QueryInterface(global.GetAsSupports());
   if (window && window->GetDoc()) {
-    window->GetDoc()->WarnOnceAbout(nsIDocument::eLenientThis);
+    window->GetDoc()->WarnOnceAbout(DeprecatedOperations::eLenientThis);
   }
   return true;
 }
@@ -3327,11 +3328,11 @@ namespace {
 // console running on the main-thread.
 class DeprecationWarningRunnable final : public WorkerProxyToMainThreadRunnable
 {
-  nsIDocument::DeprecatedOperations mOperation;
+  mozilla::dom::DeprecatedOperations mOperation;
 
 public:
   DeprecationWarningRunnable(WorkerPrivate* aWorkerPrivate,
-                             nsIDocument::DeprecatedOperations aOperation)
+                             mozilla::dom::DeprecatedOperations aOperation)
     : WorkerProxyToMainThreadRunnable(aWorkerPrivate)
     , mOperation(aOperation)
   {
@@ -3366,7 +3367,7 @@ private:
 
 void
 DeprecationWarning(JSContext* aCx, JSObject* aObject,
-                   nsIDocument::DeprecatedOperations aOperation)
+                   mozilla::dom::DeprecatedOperations aOperation)
 {
   GlobalObject global(aCx, aObject);
   if (global.Failed()) {

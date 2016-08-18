@@ -17,6 +17,7 @@
 #include "nsNSSComponent.h"
 #include "nsURLParsers.h"
 #include "pk11pub.h"
+#include "nsIDocument.h"
 
 using mozilla::dom::ContentChild;
 

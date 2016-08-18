@@ -300,7 +300,7 @@ XMLDocument::Load(const nsAString& aUrl, ErrorResult& aRv)
     return false;
   }
 
-  WarnOnceAbout(nsIDocument::eUseOfDOM3LoadMethod);
+  WarnOnceAbout(DeprecatedOperations::eUseOfDOM3LoadMethod);
 
   nsCOMPtr<nsIDocument> callingDoc = GetEntryDocument();
   nsCOMPtr<nsIPrincipal> principal = NodePrincipal();

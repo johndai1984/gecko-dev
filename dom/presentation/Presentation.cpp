@@ -20,6 +20,7 @@
 #include "nsSandboxFlags.h"
 #include "nsServiceManagerUtils.h"
 #include "PresentationReceiver.h"
+#include "nsIDocument.h"
 
 using namespace mozilla;
 using namespace mozilla::dom;

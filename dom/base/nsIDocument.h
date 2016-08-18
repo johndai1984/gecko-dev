@@ -2616,7 +2616,7 @@ public:
   }
   bool MozHidden() const
   {
-    WarnOnceAbout(ePrefixedVisibilityAPI);
+    WarnOnceAbout(mozilla::dom::ePrefixedVisibilityAPI);
     return Hidden();
   }
   mozilla::dom::VisibilityState VisibilityState() const
@@ -2625,7 +2625,7 @@ public:
   }
   mozilla::dom::VisibilityState MozVisibilityState() const
   {
-    WarnOnceAbout(ePrefixedVisibilityAPI);
+    WarnOnceAbout(mozilla::dom::ePrefixedVisibilityAPI);
     return VisibilityState();
   }
   virtual mozilla::dom::StyleSheetList* StyleSheets() = 0;
@@ -2801,7 +2801,7 @@ protected:
   }
 
 private:
-  mutable std::bitset<eDeprecatedOperationCount> mDeprecationWarnedAbout;
+  mutable std::bitset<mozilla::dom::DeprecatedOperations::eDeprecatedOperationCount> mDeprecationWarnedAbout;
   mutable std::bitset<eDocumentWarningCount> mDocWarningWarnedAbout;
   SelectorCache mSelectorCache;
 

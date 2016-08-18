@@ -28,6 +28,7 @@
 #include "WorkerRunnable.h"
 #include "WorkerPrivate.h"
 #include "WorkerScope.h"
+#include "nsIServiceManager.h"
 
 namespace mozilla {
 namespace dom {

@@ -19,7 +19,7 @@ DataContainerEvent::DataContainerEvent(EventTarget* aOwner,
 {
   if (nsCOMPtr<nsPIDOMWindowInner> win = do_QueryInterface(aOwner)) {
     if (nsIDocument* doc = win->GetExtantDoc()) {
-      doc->WarnOnceAbout(nsIDocument::eDataContainerEvent);
+      doc->WarnOnceAbout(DeprecatedOperations::eDataContainerEvent);
     }
   }
 }

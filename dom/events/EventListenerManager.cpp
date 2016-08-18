@@ -337,7 +337,7 @@ EventListenerManager::AddEventListenerInternal(
     if (nsPIDOMWindowInner* window = GetInnerWindowForTarget()) {
       nsCOMPtr<nsIDocument> doc = window->GetExtantDoc();
       if (doc) {
-        doc->WarnOnceAbout(nsIDocument::eMutationEvent);
+        doc->WarnOnceAbout(DeprecatedOperations::eMutationEvent);
       }
       // If aEventMessage is eLegacySubtreeModified, we need to listen all
       // mutations. nsContentUtils::HasMutationListeners relies on this.

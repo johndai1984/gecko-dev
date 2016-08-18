@@ -239,7 +239,7 @@ Attr::GetOwnerElement(nsIDOMElement** aOwnerElement)
 void
 Attr::GetNodeValueInternal(nsAString& aNodeValue)
 {
-  OwnerDoc()->WarnOnceAbout(nsIDocument::eNodeValue);
+  OwnerDoc()->WarnOnceAbout(DeprecatedOperations::eNodeValue);
 
   GetValue(aNodeValue);
 }
@@ -247,7 +247,7 @@ Attr::GetNodeValueInternal(nsAString& aNodeValue)
 void
 Attr::SetNodeValueInternal(const nsAString& aNodeValue, ErrorResult& aError)
 {
-  OwnerDoc()->WarnOnceAbout(nsIDocument::eNodeValue);
+  OwnerDoc()->WarnOnceAbout(DeprecatedOperations::eNodeValue);
 
   aError = SetValue(aNodeValue);
 }
@@ -281,7 +281,7 @@ void
 Attr::GetTextContentInternal(nsAString& aTextContent,
                              ErrorResult& aError)
 {
-  OwnerDoc()->WarnOnceAbout(nsIDocument::eTextContent);
+  OwnerDoc()->WarnOnceAbout(DeprecatedOperations::eTextContent);
 
   GetValue(aTextContent);
 }
@@ -290,7 +290,7 @@ void
 Attr::SetTextContentInternal(const nsAString& aTextContent,
                              ErrorResult& aError)
 {
-  OwnerDoc()->WarnOnceAbout(nsIDocument::eTextContent);
+  OwnerDoc()->WarnOnceAbout(DeprecatedOperations::eTextContent);
 
   SetNodeValueInternal(aTextContent, aError);
 }

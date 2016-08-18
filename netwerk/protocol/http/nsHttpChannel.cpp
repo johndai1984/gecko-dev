@@ -7763,7 +7763,7 @@ nsHttpChannel::MaybeWarnAboutAppCache()
     nsCOMPtr<nsIDeprecationWarner> warner;
     GetCallback(warner);
     if (warner) {
-        warner->IssueWarning(nsIDocument::eAppCache, false);
+        warner->IssueWarning(mozilla::dom::DeprecatedOperations::eAppCache, false);
     }
 }
 

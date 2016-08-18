@@ -1196,7 +1196,7 @@ public:
                    mozilla::ErrorResult& aError)
   {
     if (mDoc) {
-      mDoc->WarnOnceAbout(nsIDocument::eWindow_Content);
+      mDoc->WarnOnceAbout(mozilla::dom::DeprecatedOperations::eWindow_Content);
     }
     GetContent(aCx, aRetval, aError);
   }

@@ -44,6 +44,7 @@
 #include "prenv.h"
 #include "mozilla/StaticPresData.h"
 #include "mozilla/StyleBackendType.h"
+#include "nsCompatibility.h"
 
 class nsAString;
 class nsIPrintSettings;

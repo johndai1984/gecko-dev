@@ -3342,7 +3342,7 @@ SetDocumentAndPageUseCounter(JSContext* aCx, JSObject* aObject,
 // Warnings
 void
 DeprecationWarning(JSContext* aCx, JSObject* aObject,
-                   nsIDocument::DeprecatedOperations aOperation);
+                   mozilla::dom::DeprecatedOperations aOperation);
 
 // A callback to perform funToString on an interface object
 JSString*

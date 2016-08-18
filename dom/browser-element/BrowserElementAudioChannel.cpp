@@ -20,6 +20,7 @@
 #include "nsISupportsPrimitives.h"
 #include "nsITabParent.h"
 #include "nsPIDOMWindow.h"
+#include "nsIDocument.h"
 
 namespace mozilla {
 namespace dom {

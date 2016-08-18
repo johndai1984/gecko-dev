@@ -1123,7 +1123,7 @@ Event::GetPreventDefault() const
   nsCOMPtr<nsPIDOMWindowInner> win(do_QueryInterface(mOwner));
   if (win) {
     if (nsIDocument* doc = win->GetExtantDoc()) {
-      doc->WarnOnceAbout(nsIDocument::eGetPreventDefault);
+      doc->WarnOnceAbout(DeprecatedOperations::eGetPreventDefault);
     }
   }
   // GetPreventDefault() is legacy and Gecko specific method.  Although,

@@ -15,6 +15,7 @@
 #include "mozilla/dom/UnionTypes.h"
 #include "nsCycleCollectionParticipant.h"
 #include "nsWrapperCache.h"
+#include "nsIDocument.h"
 
 namespace mozilla {
 namespace dom {

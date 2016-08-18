@@ -771,7 +771,7 @@ SetUserDataProperty(uint16_t aCategory, nsINode *aNode, nsIAtom *aKey,
 nsresult
 nsINode::SetUserData(const nsAString &aKey, nsIVariant *aData, nsIVariant **aResult)
 {
-  OwnerDoc()->WarnOnceAbout(nsIDocument::eGetSetUserData);
+  OwnerDoc()->WarnOnceAbout(DeprecatedOperations::eGetSetUserData);
   *aResult = nullptr;
 
   nsCOMPtr<nsIAtom> key = NS_Atomize(aKey);
@@ -826,7 +826,7 @@ nsINode::SetUserData(JSContext* aCx, const nsAString& aKey,
 nsIVariant*
 nsINode::GetUserData(const nsAString& aKey)
 {
-  OwnerDoc()->WarnOnceAbout(nsIDocument::eGetSetUserData);
+  OwnerDoc()->WarnOnceAbout(DeprecatedOperations::eGetSetUserData);
   nsCOMPtr<nsIAtom> key = NS_Atomize(aKey);
   if (!key) {
     return nullptr;

@@ -7870,7 +7870,7 @@ void
 nsGlobalWindow::CaptureEvents()
 {
   if (mDoc) {
-    mDoc->WarnOnceAbout(nsIDocument::eUseOfCaptureEvents);
+    mDoc->WarnOnceAbout(DeprecatedOperations::eUseOfCaptureEvents);
   }
 }
 
@@ -7878,7 +7878,7 @@ void
 nsGlobalWindow::ReleaseEvents()
 {
   if (mDoc) {
-    mDoc->WarnOnceAbout(nsIDocument::eUseOfReleaseEvents);
+    mDoc->WarnOnceAbout(DeprecatedOperations::eUseOfReleaseEvents);
   }
 }
 
@@ -9180,7 +9180,7 @@ nsGlobalWindow::ShowModalDialogOuter(const nsAString& aUrl, nsIVariant* aArgumen
   MOZ_RELEASE_ASSERT(IsOuterWindow());
 
   if (mDoc) {
-    mDoc->WarnOnceAbout(nsIDocument::eShowModalDialog);
+    mDoc->WarnOnceAbout(DeprecatedOperations::eShowModalDialog);
   }
 
   if (!IsShowModalDialogEnabled()) {

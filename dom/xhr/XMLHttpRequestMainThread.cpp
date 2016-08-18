@@ -1441,7 +1441,7 @@ XMLHttpRequestMainThread::OpenInternal(const nsACString& aMethod,
   // Gecko-specific
   if (!async && !DontWarnAboutSyncXHR() && GetOwner() &&
       GetOwner()->GetExtantDoc()) {
-    GetOwner()->GetExtantDoc()->WarnOnceAbout(nsIDocument::eSyncXMLHttpRequest);
+    GetOwner()->GetExtantDoc()->WarnOnceAbout(DeprecatedOperations::eSyncXMLHttpRequest);
   }
 
   Telemetry::Accumulate(Telemetry::XMLHTTPREQUEST_ASYNC_OR_SYNC, async ? 0 : 1);

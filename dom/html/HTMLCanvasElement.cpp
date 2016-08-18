@@ -831,7 +831,7 @@ HTMLCanvasElement::MozGetAsFile(const nsAString& aName,
                                 const nsAString& aType,
                                 nsISupports** aResult)
 {
-  OwnerDoc()->WarnOnceAbout(nsIDocument::eMozGetAsFile);
+  OwnerDoc()->WarnOnceAbout(DeprecatedOperations::eMozGetAsFile);
 
   // do a trust check if this is a write-only canvas
   if ((mWriteOnly) &&

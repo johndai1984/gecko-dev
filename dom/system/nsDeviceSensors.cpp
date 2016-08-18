@@ -24,6 +24,7 @@
 #include "mozilla/dom/DeviceOrientationEvent.h"
 #include "mozilla/dom/DeviceProximityEvent.h"
 #include "mozilla/dom/UserProximityEvent.h"
+#include "nsIDocument.h"
 
 #include <cmath>
 

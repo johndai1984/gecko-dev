@@ -90,6 +90,7 @@
 #include "nsThread.h"
 #include "nsThreadUtils.h"
 #include "xpcpublic.h"
+#include "nsIServiceManager.h"
 
 using namespace mozilla;
 using namespace mozilla::dom;
