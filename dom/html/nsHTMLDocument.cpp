@@ -557,7 +557,7 @@ nsHTMLDocument::StartDocumentLoad(const char* aCommand,
       mCompatMode = eCompatibility_FullStandards;
       loadAsHtml5 = false;
   }
-  
+
   // TODO: Proper about:blank treatment is bug 543435
   if (loadAsHtml5 && view) {
     // mDocumentURI hasn't been set, yet, so get the URI from the channel
@@ -570,13 +570,13 @@ nsHTMLDocument::StartDocumentLoad(const char* aCommand,
       nsAutoCString str;
       uri->GetSpec(str);
       if (str.EqualsLiteral("about:blank")) {
-        loadAsHtml5 = false;    
+        loadAsHtml5 = false;
       }
     }
   }
-  
+
   CSSLoader()->SetCompatibilityMode(mCompatMode);
-  
+
   nsresult rv = nsDocument::StartDocumentLoad(aCommand,
                                               aChannel, aLoadGroup,
                                               aContainer,
@@ -658,7 +658,7 @@ nsHTMLDocument::StartDocumentLoad(const char* aCommand,
   nsAutoCString parserCharset;
 
   nsCOMPtr<nsIWyciwygChannel> wyciwygChannel;
-  
+
   // For error reporting and referrer policy setting
   nsHtml5TreeOpExecutor* executor = nullptr;
   if (loadAsHtml5) {
@@ -720,7 +720,7 @@ nsHTMLDocument::StartDocumentLoad(const char* aCommand,
       parserCharset = "UTF-16";
       parserCharsetSource = charsetSource < kCharsetFromChannel ?
         kCharsetFromChannel : charsetSource;
-        
+
       nsAutoCString cachedCharset;
       int32_t cachedSource;
       rv = wyciwygChannel->GetCharsetAndSource(&cachedSource, cachedCharset);
@@ -733,7 +733,7 @@ nsHTMLDocument::StartDocumentLoad(const char* aCommand,
         // Don't propagate this error.
         rv = NS_OK;
       }
-      
+
     } else {
       parserCharset = charset;
       parserCharsetSource = charsetSource;
@@ -1256,7 +1256,7 @@ nsHTMLDocument::GetCookie(nsAString& aCookie, ErrorResult& rv)
     rv.Throw(NS_ERROR_DOM_SECURITY_ERR);
     return;
   }
-  
+
   // not having a cookie service isn't an error
   nsCOMPtr<nsICookieService> service = do_GetService(NS_COOKIESERVICE_CONTRACTID);
   if (service) {
@@ -2822,7 +2822,7 @@ nsHTMLDocument::EditingStateChanged()
   if (spellRecheckAll) {
     nsCOMPtr<nsISelectionController> selcon;
     nsresult rv = editor->GetSelectionController(getter_AddRefs(selcon));
-    NS_ENSURE_SUCCESS(rv, rv); 
+    NS_ENSURE_SUCCESS(rv, rv);
 
     nsCOMPtr<nsISelection> spellCheckSelection;
     rv = selcon->GetSelection(nsISelectionController::SELECTION_SPELLCHECK,

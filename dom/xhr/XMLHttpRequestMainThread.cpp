@@ -1373,7 +1373,7 @@ XMLHttpRequestMainThread::IsSystemXHR() const
 {
   return mIsSystem || nsContentUtils::IsSystemPrincipal(mPrincipal);
 }
- 
+
 bool
 XMLHttpRequestMainThread::InUploadPhase() const
 {
