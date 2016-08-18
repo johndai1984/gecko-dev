@@ -7150,7 +7150,7 @@ class CGPerSignatureCall(CGThing):
         if deprecated:
             cgThings.append(CGGeneric(dedent(
                 """
-                DeprecationWarning(cx, obj, nsIDocument::e%s);
+                DeprecationWarning(cx, obj, DeprecatedOperations::e%s);
                 """ % deprecated[0])))
 
         lenientFloatCode = None
@@ -8794,7 +8794,7 @@ class CGSpecializedLenientSetter(CGSpecializedSetter):
         # JS_DefineProperty can only deal with ASCII
         assert all(ord(c) < 128 for c in attrName)
         return dedent("""
-            DeprecationWarning(cx, obj, nsIDocument::eLenientSetter);
+            DeprecationWarning(cx, obj, DeprecatedOperations::eLenientSetter);
             return true;
             """)
 
