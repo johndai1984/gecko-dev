@@ -235,7 +235,7 @@ TVTuner::CreateSimulatedMediaStream()
   }
 
   ErrorResult error;
-  ElementCreationOptions options;
+  ElementCreationOptionsOrString options;
   RefPtr<Element> element = doc->CreateElement(VIDEO_TAG, options, error);
   if (NS_WARN_IF(error.Failed())) {
     error.SuppressException();
