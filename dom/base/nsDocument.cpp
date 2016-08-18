@@ -10499,11 +10499,11 @@ static const char* kDocumentWarnings[] = {
 #undef DOCUMENT_WARNING
 
 static UseCounter
-OperationToUseCounter(nsIDocument::DeprecatedOperations aOperation)
+OperationToUseCounter(DeprecatedOperations aOperation)
 {
   switch(aOperation) {
 #define DEPRECATED_OPERATION(_op) \
-    case nsIDocument::e##_op: return eUseCounter_##_op;
+    case DeprecatedOperations::e##_op: return eUseCounter_##_op;
 #include "nsDeprecatedOperationList.h"
 #undef DEPRECATED_OPERATION
   default:

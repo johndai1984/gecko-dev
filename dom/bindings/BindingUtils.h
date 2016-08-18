@@ -30,7 +30,6 @@
 #include "mozilla/Likely.h"
 #include "mozilla/MemoryReporting.h"
 #include "nsAutoPtr.h"
-#include "nsIDocument.h"
 #include "nsIGlobalObject.h"
 #include "nsIXPConnect.h"
 #include "nsJSUtils.h"
@@ -42,12 +41,14 @@
 #include "nsWrapperCacheInlines.h"
 
 class nsIJSID;
+class nsIDocument;
 
 namespace mozilla {
 
 enum UseCounter : int16_t;
 
 namespace dom {
+enum DeprecatedOperations : int16_t;
 template<typename DataType> class MozMap;
 
 nsresult

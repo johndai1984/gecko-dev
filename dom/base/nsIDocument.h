@@ -148,6 +148,12 @@ class XPathNSResolver;
 class XPathResult;
 template<typename> class Sequence;
 
+#define DEPRECATED_OPERATION(_op) e##_op,
+  enum DeprecatedOperations : int16_t {
+#include "nsDeprecatedOperationList.h"
+    eDeprecatedOperationCount
+  };
+#undef DEPRECATED_OPERATION
 template<typename, typename> class CallbackObjectHolder;
 typedef CallbackObjectHolder<NodeFilter, nsIDOMNodeFilter> NodeFilterHolder;
 
@@ -2349,14 +2355,9 @@ public:
   // be called prior to selector matching.
   void FlushPendingLinkUpdates();
 
-#define DEPRECATED_OPERATION(_op) e##_op,
-  enum DeprecatedOperations {
-#include "nsDeprecatedOperationList.h"
-    eDeprecatedOperationCount
-  };
-#undef DEPRECATED_OPERATION
-  bool HasWarnedAbout(DeprecatedOperations aOperation) const;
-  void WarnOnceAbout(DeprecatedOperations aOperation,
+
+  bool HasWarnedAbout(mozilla::dom::DeprecatedOperations aOperation) const;
+  void WarnOnceAbout(mozilla::dom::DeprecatedOperations aOperation,
                      bool asError = false) const;
 
 #define DOCUMENT_WARNING(_op) e##_op,
