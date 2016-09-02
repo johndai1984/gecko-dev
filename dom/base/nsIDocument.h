@@ -2937,7 +2937,7 @@ protected:
 #ifdef MOZILLA_INTERNAL_API
   // Our visibility state
   mozilla::dom::VisibilityState mVisibilityState;
-  static_assert(sizeof(mVisibilityState) == sizeof(uint32_t), "Error size of mVisibilityState and mDummy");
+  static_assert(sizeof(mozilla::dom::VisibilityState) == sizeof(uint32_t), "Error size of mVisibilityState and mDummy");
 #else
   uint32_t mDummy;
 #endif
