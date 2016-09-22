@@ -15,6 +15,22 @@
 namespace mozilla {
 namespace dom {
 
+already_AddRefed<Promise>
+CustomElementsRegistry::CreatePromise(ErrorResult& aRv)
+{
+  nsCOMPtr<nsIGlobalObject> global = do_QueryInterface(mWindow);
+  if (!global) {
+    return nullptr;
+  }
+
+  RefPtr<Promise> promise = Promise::Create(global, aRv);
+  if (aRv.Failed()) {
+    return nullptr;
+  }
+
+  return promise.forget();
+}
+
 void
 CustomElementCallback::Call()
 {
@@ -788,7 +804,12 @@ CustomElementsRegistry::Define(const nsAString& aName,
    *     3. Delete the entry with key name from this CustomElementsRegistry's
    *        when-defined promise map.
    */
-  // TODO: Bug 1275839 - Implement CustomElementsRegistry whenDefined function
+  RefPtr<Promise> promise;
+  mWhenDefinedPromiseMap.Remove(nameAtom, getter_AddRefs(promise));
+  if (promise) {
+    promise->MaybeResolveWithUndefined();
+  }
+
 }
 
 void
@@ -808,11 +829,31 @@ CustomElementsRegistry::Get(JSContext* aCx, const nsAString& aName,
 }
 
 already_AddRefed<Promise>
-CustomElementsRegistry::WhenDefined(const nsAString& name, ErrorResult& aRv)
+CustomElementsRegistry::WhenDefined(const nsAString& aName, ErrorResult& aRv)
 {
-  // TODO: This function will be implemented in bug 1275839
-  aRv.Throw(NS_ERROR_NOT_IMPLEMENTED);
-  return nullptr;
+  RefPtr<Promise> promise = CreatePromise(aRv);
+  if (!promise) {
+    return nullptr;
+  }
+
+  nsCOMPtr<nsIAtom> nameAtom(NS_Atomize(aName));
+  if (!nsContentUtils::IsCustomElementName(nameAtom)) {
+    promise->MaybeReject(NS_ERROR_DOM_SYNTAX_ERR);
+    return promise.forget();
+  }
+
+  if (mCustomDefinitions.Get(nameAtom)) {
+    promise->MaybeResolve(JS::UndefinedHandleValue);
+    return promise.forget();
+  }
+
+  if (mWhenDefinedPromiseMap.Contains(nameAtom)) {
+    mWhenDefinedPromiseMap.Get(nameAtom, getter_AddRefs(promise));
+  } else {
+    mWhenDefinedPromiseMap.Put(nameAtom, promise);
+  }
+
+  return promise.forget();
 }
 
 CustomElementDefinition::CustomElementDefinition(nsIAtom* aType,
