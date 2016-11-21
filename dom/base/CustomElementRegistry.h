@@ -158,6 +158,7 @@ private:
 // https://html.spec.whatwg.org/multipage/scripting.html#custom-element-reactions-stack
 class CustomElementReactionStack : public nsISupports
 {
+public:
   NS_DECL_CYCLE_COLLECTING_ISUPPORTS
   NS_DECL_CYCLE_COLLECTION_CLASS(CustomElementReactionStack)
 

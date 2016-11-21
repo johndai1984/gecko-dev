@@ -548,6 +548,7 @@ CustomElementRegistry::Define(const nsAString& aName,
                               const ElementDefinitionOptions& aOptions,
                               ErrorResult& aRv)
 {
+  mCustomElementReactionStack->push();
   aRv.MightThrowJSException();
 
   AutoJSAPI jsapi;
@@ -780,7 +781,7 @@ CustomElementRegistry::Define(const nsAString& aName,
   if (promise) {
     promise->MaybeResolveWithUndefined();
   }
-
+  mCustomElementReactionStack->pop();
 }
 
 void
