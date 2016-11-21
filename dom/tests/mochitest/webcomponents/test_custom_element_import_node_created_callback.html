@@ -18,6 +18,7 @@ var fooProto = Object.create(HTMLElement.prototype);
 fooProto.createdCallback = function() {
   ok(this.firstElementChild, "When the created callback is called, the element should already have a child because the callback should only be called after cloning all the contents.");
   fooProtoCreatedCallbackCalled = true;
+  ok(fooProtoCreatedCallbackCalled, "Created callback should be called after importing custom element into document");
 };
 
 document.registerElement("x-foo", { prototype: fooProto });
@@ -26,8 +27,6 @@ var template = document.getElementById("template");
 
 // Importing node will implicityly clone the conent in the main document.
 var adoptedFoo = document.importNode(template.content, true);
-
-ok(fooProtoCreatedCallbackCalled, "Created callback should be called after importing custom element into document");
 
 </script>
 </body>

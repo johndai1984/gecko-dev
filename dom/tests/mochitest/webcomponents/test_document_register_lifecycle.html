@@ -33,6 +33,9 @@ function testRegisterUnresolved() {
     is(createdCallbackCalled, false, "Created callback should only be called once in this tests.");
     is(this, helloElem, "The 'this' value should be the custom element.");
     createdCallbackCalled = true;
+    is(createdCallbackCalled, true, "created callback should be called when control returns to script from user agent code");
+    // Remove element from document to trigger detached callback.
+    container.removeChild(helloElem);
   };
 
   p.attachedCallback = function() {
@@ -55,10 +58,6 @@ function testRegisterUnresolved() {
   };
 
   document.registerElement("x-hello", { prototype: p });
-  is(createdCallbackCalled, true, "created callback should be called when control returns to script from user agent code");
-
-  // Remove element from document to trigger detached callback.
-  container.removeChild(helloElem);
 }
 
 // Tests callbacks after registering an extended element type that is already in the document.
@@ -76,6 +75,10 @@ function testRegisterUnresolvedExtended() {
     is(createdCallbackCalled, false, "Created callback should only be called once in this tests.");
     is(this, buttonElem, "The 'this' value should be the custom element.");
     createdCallbackCalled = true;
+    is(createdCallbackCalled, true, "created callback should be called when control returns to script from user agent code");
+
+    // Remove element from document to trigger detached callback.
+    container.removeChild(buttonElem);
   };
 
   p.attachedCallback = function() {
@@ -98,10 +101,6 @@ function testRegisterUnresolvedExtended() {
   };
 
   document.registerElement("x-button", { prototype: p, extends: "button" });
-  is(createdCallbackCalled, true, "created callback should be called when control returns to script from user agent code");
-
-  // Remove element from document to trigger detached callback.
-  container.removeChild(buttonElem);
 }
 
 function testInnerHTML() {
@@ -111,13 +110,13 @@ function testInnerHTML() {
   p.createdCallback = function() {
     is(createdCallbackCalled, false, "created callback should only be called once in this test.");
     createdCallbackCalled = true;
+    is(createdCallbackCalled, true, "created callback should be called after setting innerHTML.");
+    runNextTest();
   };
 
   document.registerElement("x-inner-html", { prototype: p });
   var div = document.createElement(div);
   div.innerHTML = '<x-inner-html></x-inner-html>';
-  is(createdCallbackCalled, true, "created callback should be called after setting innerHTML.");
-  runNextTest();
 }
 
 function testInnerHTMLExtended() {
@@ -127,13 +126,13 @@ function testInnerHTMLExtended() {
   p.createdCallback = function() {
     is(createdCallbackCalled, false, "created callback should only be called once in this test.");
     createdCallbackCalled = true;
+    is(createdCallbackCalled, true, "created callback should be called after setting innerHTML.");
+    runNextTest();
   };
 
   document.registerElement("x-inner-html-extended", { prototype: p, extends: "button" });
   var div = document.createElement(div);
   div.innerHTML = '<button is="x-inner-html-extended"></button>';
-  is(createdCallbackCalled, true, "created callback should be called after setting innerHTML.");
-  runNextTest();
 }
 
 function testInnerHTMLUpgrade() {
@@ -146,11 +145,11 @@ function testInnerHTMLUpgrade() {
   p.createdCallback = function() {
     is(createdCallbackCalled, false, "created callback should only be called once in this test.");
     createdCallbackCalled = true;
+    is(createdCallbackCalled, true, "created callback should be called after registering.");
+    runNextTest();
   };
 
   document.registerElement("x-inner-html-upgrade", { prototype: p });
-  is(createdCallbackCalled, true, "created callback should be called after registering.");
-  runNextTest();
 }
 
 function testInnerHTMLExtendedUpgrade() {
@@ -163,11 +162,11 @@ function testInnerHTMLExtendedUpgrade() {
   p.createdCallback = function() {
     is(createdCallbackCalled, false, "created callback should only be called once in this test.");
     createdCallbackCalled = true;
+    is(createdCallbackCalled, true, "created callback should be called after registering.");
+    runNextTest();
   };
 
   document.registerElement("x-inner-html-extended-upgrade", { prototype: p, extends: "button" });
-  is(createdCallbackCalled, true, "created callback should be called after registering.");
-  runNextTest();
 }
 
 // Test callback when creating element after registering an element type.
@@ -184,6 +183,16 @@ function testRegisterResolved() {
     is(createdCallbackCalled, false, "Created callback should only be called once in this test.");
     createdCallbackThis = this;
     createdCallbackCalled = true;
+
+
+    is(createdCallbackThis, createdElement, "The 'this' value in the created callback should be the custom element.");
+    is(createdElement.__proto__, p, "Prototype of custom element should be the registered prototype.");
+
+    // Insert element into document to trigger attached callback.
+    container.appendChild(createdElement);
+
+    // Remove element from document to trigger detached callback.
+    container.removeChild(createdElement);
   };
 
   p.attachedCallback = function() {
@@ -207,22 +216,17 @@ function testRegisterResolved() {
 
   document.registerElement("x-resolved", { prototype: p });
   is(createdCallbackCalled, false, "Created callback should not be called when custom element instance has not been created.");
-
   var createdElement = document.createElement("x-resolved");
-  is(createdCallbackThis, createdElement, "The 'this' value in the created callback should be the custom element.");
-  is(createdElement.__proto__, p, "Prototype of custom element should be the registered prototype.");
-
-  // Insert element into document to trigger attached callback.
-  container.appendChild(createdElement);
-
-  // Remove element from document to trigger detached callback.
-  container.removeChild(createdElement);
 }
 
 // Callbacks should always be the same ones when registered.
 function testChangingCallback() {
   var p = Object.create(HTMLElement.prototype);
   var callbackCalled = false;
+  p.createdCallback = function() {
+    elem.setAttribute("foo", "bar");
+  };
+
   p.attributeChangedCallback = function(name, oldValue, newValue) {
     is(callbackCalled, false, "Callback should only be called once in this test.");
     callbackCalled = true;
@@ -236,7 +240,6 @@ function testChangingCallback() {
   };
 
   var elem = document.createElement("x-test-callback");
-  elem.setAttribute("foo", "bar");
 }
 
 function testAttributeChanged() {
@@ -250,6 +253,11 @@ function testAttributeChanged() {
     is(createdCallbackCalled, false, "Created callback should only be called once in this test.");
     createdCallbackThis = this;
     createdCallbackCalled = true;
+    is(createdCallbackThis, createdElement, "The 'this' value in the created callback should be the custom element.");
+    createdElement.setAttribute("changeme", "newvalue");
+    createdElement.setAttribute("changeme", "nextvalue");
+    createdElement.setAttribute("changeme", "");
+    createdElement.removeAttribute("changeme");
   };
 
   // Sequence of callback arguments that we expect from attribute changed callback
@@ -282,16 +290,15 @@ function testAttributeChanged() {
   document.registerElement("x-attrchange", { prototype: p });
 
   var createdElement = document.createElement("x-attrchange");
-  is(createdCallbackThis, createdElement, "The 'this' value in the created callback should be the custom element.");
-  createdElement.setAttribute("changeme", "newvalue");
-  createdElement.setAttribute("changeme", "nextvalue");
-  createdElement.setAttribute("changeme", "");
-  createdElement.removeAttribute("changeme");
 }
 
 function testAttributeChangedExtended() {
   var p = Object.create(HTMLButtonElement.prototype);
   var callbackCalled = false;
+  p.createdCallback = function() {
+    elem.setAttribute("foo", "bar");
+  };
+
   p.attributeChangedCallback = function(name, oldValue, newValue) {
     is(callbackCalled, false, "Callback should only be called once in this test.");
     callbackCalled = true;
@@ -301,7 +308,6 @@ function testAttributeChangedExtended() {
   document.registerElement("x-extended-attribute-change", { prototype: p, extends: "button" });
 
   var elem = document.createElement("button", {is: "x-extended-attribute-change"});
-  elem.setAttribute("foo", "bar");
 }
 
 // Creates a custom element that is an upgrade candidate (no registration)
@@ -318,7 +324,17 @@ function testUpgradeCandidate() {
 
 function testNotInDocEnterLeave() {
   var p = Object.create(HTMLElement.prototype);
+  p.createdCallback = function() {
+    var fragment = new DocumentFragment();
+    fragment.appendChild(createdElement);
+    fragment.removeChild(createdElement);
 
+    var divNotInDoc = document.createElement("div");
+    divNotInDoc.appendChild(createdElement);
+    divNotInDoc.removeChild(createdElement);
+
+    runNextTest();
+  };
   p.attached = function() {
     ok(false, "attached should not be called when not entering the document.");
   };
@@ -330,16 +346,6 @@ function testNotInDocEnterLeave() {
   var createdElement = document.createElement("x-destined-for-fragment");
 
   document.registerElement("x-destined-for-fragment", { prototype: p });
-
-  var fragment = new DocumentFragment();
-  fragment.appendChild(createdElement);
-  fragment.removeChild(createdElement);
-
-  var divNotInDoc = document.createElement("div");
-  divNotInDoc.appendChild(createdElement);
-  divNotInDoc.removeChild(createdElement);
-
-  runNextTest();
 }
 
 function testEnterLeaveView() {
@@ -347,6 +353,13 @@ function testEnterLeaveView() {
   var detachedCallbackCalled = false;
 
   var p = Object.create(HTMLElement.prototype);
+  p.createdCallback = function() {
+    is(attachedCallbackCalled, false, "Appending a custom element to a node that is not in the document should not call the attached callback.");
+
+    container.appendChild(div);
+    container.removeChild(div);
+  };
+
   p.attachedCallback = function() {
     is(attachedCallbackCalled, false, "attached callback should only be called on in this test.");
     attachedCallbackCalled = true;
@@ -363,10 +376,6 @@ function testEnterLeaveView() {
   document.registerElement("x-element-in-div", { prototype: p });
   var customElement = document.createElement("x-element-in-div");
   div.appendChild(customElement);
-  is(attachedCallbackCalled, false, "Appending a custom element to a node that is not in the document should not call the attached callback.");
-
-  container.appendChild(div);
-  container.removeChild(div);
 }
 
 var testFunctions = [

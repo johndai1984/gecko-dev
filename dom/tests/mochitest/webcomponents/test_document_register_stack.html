@@ -48,6 +48,11 @@ function testChangeAttributeInEnteredViewCallback() {
   var attributeChangedCallbackCalled = false;
   var attachedCallbackCalled = false;
 
+  p.createdCallback = function() {
+    var container = document.getElementById("container");
+    container.appendChild(elem);
+  };
+
   p.attachedCallback = function() {
     is(attachedCallbackCalled, false, "attached callback should be called only once in this test.");
     attachedCallbackCalled = true;
@@ -65,9 +70,6 @@ function testChangeAttributeInEnteredViewCallback() {
 
   document.registerElement("x-two", { prototype: p });
   var elem = document.createElement("x-two");
-
-  var container = document.getElementById("container");
-  container.appendChild(elem);
 }
 
 function testLeaveViewInEnteredViewCallback() {
@@ -75,6 +77,10 @@ function testLeaveViewInEnteredViewCallback() {
   var attachedCallbackCalled = false;
   var detachedCallbackCalled = false;
   var container = document.getElementById("container");
+
+  p.createdCallback = function() {
+    container.appendChild(elem);
+  };
 
   p.attachedCallback = function() {
     is(this.parentNode, container, "Parent node should the container in which the node was appended.");
@@ -94,8 +100,6 @@ function testLeaveViewInEnteredViewCallback() {
 
   document.registerElement("x-three", { prototype: p });
   var elem = document.createElement("x-three");
-
-  container.appendChild(elem);
 }
 
 function testStackedAttributeChangedCallback() {
@@ -103,6 +107,10 @@ function testStackedAttributeChangedCallback() {
   var attributeChangedCallbackCount = 0;
 
   var attributeSequence = ["foo", "bar", "baz"];
+
+  p.createdCallback = function() {
+    elem.setAttribute("foo", "changeme");
+  };
 
   p.attributeChangedCallback = function(attrName, oldValue, newValue) {
     if (newValue == "baz") {
@@ -125,7 +133,6 @@ function testStackedAttributeChangedCallback() {
 
   document.registerElement("x-four", { prototype: p });
   var elem = document.createElement("x-four");
-  elem.setAttribute("foo", "changeme");
 }
 
 var testFunctions = [

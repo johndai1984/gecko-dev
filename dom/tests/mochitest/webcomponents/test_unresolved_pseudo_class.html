@@ -58,25 +58,46 @@ is(getComputedStyle(baz).backgroundColor, "rgb(0, 0, 255)", "baz - backgroundCol
 var span1 = document.querySelector('#span1');
 is(getComputedStyle(span1).color, "rgb(255, 0, 0)", "span1 - color");
 
-var Foo = document.registerElement('x-foo', { prototype: Object.create(HTMLElement.prototype) });
+var p = Object.create(HTMLElement.prototype);
 
-var Bar = document.registerElement('x-bar', { extends: 'span', prototype: Object.create(HTMLSpanElement.prototype) });
-
-var Baz = document.registerElement('x-baz', { prototype: Object.create(HTMLElement.prototype) });
+var q = Object.create(HTMLSpanElement.prototype);
 
 // After registerElement
-is(getComputedStyle(foo).color, "rgb(255, 0, 0)",
-   "foo - color (after registerElement)");
+p.createdCallback = function() {
+  if (this == foo) {
+    is(getComputedStyle(foo).color, "rgb(255, 0, 0)",
+       "foo - color (after registerElement)");
+  }
 
-is(getComputedStyle(bar).color,
-   "rgb(255, 0, 0)", "bar - color (after registerElement)");
+  if (this == baz) {
+    is(getComputedStyle(baz).color,
+       "rgb(255, 0, 0)", "baz - color (after registerElement)");
+    is(getComputedStyle(baz).backgroundColor,
+       "rgb(255, 0, 0)", "baz - backgroundColor (after registerElement)");
+  }
+};
 
-is(getComputedStyle(baz).color,
-   "rgb(255, 0, 0)", "baz - color (after registerElement)");
-is(getComputedStyle(baz).backgroundColor,
-   "rgb(255, 0, 0)", "baz - backgroundColor (after registerElement)");
+q.createdCallback = function() {
+  if (this == bar) {
+    is(getComputedStyle(bar).color,
+       "rgb(255, 0, 0)", "bar - color (after registerElement)");
+    is(getComputedStyle(span1).color,
+       "rgb(0, 255, 0)", "span1 - color (after registerElement)");
+  }
 
-is(getComputedStyle(span1).color, "rgb(0, 255, 0)", "span1 - color (after registerElement)");
+  if (this == del) {
+    // [is="x-del"] will not match any longer so the rule of span will apply
+    is(getComputedStyle(del).color, "rgb(0, 255, 0)", "del - color (after registerElement)");
+    // but the element should have been upgraded:
+    ok(del instanceof Del, "element was upgraded correctly after changing |is|");
+  }
+};
+
+var Foo = document.registerElement('x-foo', { prototype: p });
+
+var Bar = document.registerElement('x-bar', { extends: 'span', prototype: q });
+
+var Baz = document.registerElement('x-baz', { prototype: p });
 
 // After tree removal
 var del = document.querySelector('#del');
@@ -88,11 +109,7 @@ par.removeChild(del);
 del.setAttribute("is", "foobar");
 par.appendChild(del);
 is(getComputedStyle(del).color, "rgb(0, 0, 255)", "del - color (after reappend)");
-var Del = document.registerElement('x-del', { extends: 'span', prototype: Object.create(HTMLSpanElement.prototype) });
-// [is="x-del"] will not match any longer so the rule of span will apply
-is(getComputedStyle(del).color, "rgb(0, 255, 0)", "del - color (after registerElement)");
-// but the element should have been upgraded:
-ok(del instanceof Del, "element was upgraded correctly after changing |is|");
+var Del = document.registerElement('x-del', { extends: 'span', prototype: q });
 
 </script>
 </body>

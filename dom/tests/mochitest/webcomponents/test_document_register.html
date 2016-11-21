@@ -96,10 +96,14 @@ function startTest() {
 
   // document.createElement with extended type.
   var extendedProto = Object.create(HTMLButtonElement.prototype);
+  extendedProto.createdCallback = function() {
+    is(extendedButton.__proto__, extendedProto, "Created element should have the prototype of the extended type.");
+  };
+
   var buttonConstructor = document.registerElement("x-extended-button", { prototype: extendedProto, extends: "button" });
   var extendedButton = document.createElement("button", {is: "x-extended-button"});
   is(extendedButton.tagName, "BUTTON", "Created element should have local name of BUTTON");
-  is(extendedButton.__proto__, extendedProto, "Created element should have the prototype of the extended type.");
+
   is(extendedButton.getAttribute("is"), "x-extended-button", "The |is| attribute of the created element should be the extended type.");
 
   // document.createElementNS with different namespace than definition.
@@ -136,8 +140,10 @@ function startTest() {
 
   // Custom element constructor.
   var constructedButton = new buttonConstructor();
+  constructedButton.createdCallback = function() {
+    is(constructedButton.__proto__, extendedProto, "Created element should have the prototype of the extended type.");
+  };
   is(constructedButton.tagName, "BUTTON", "Created element should have local name of BUTTON");
-  is(constructedButton.__proto__, extendedProto, "Created element should have the prototype of the extended type.");
   is(constructedButton.getAttribute("is"), "x-extended-button", "The |is| attribute of the created element should be the extended type.");
 
   // document.createElement with different namespace than definition for extended element.

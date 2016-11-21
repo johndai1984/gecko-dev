@@ -21,14 +21,17 @@ function shouldThrow(fun, msg, ex, todo) {
   }
 }
 
+var p = {bar: 5};
+p.createdCallback = function() {
+  is(foo.bar, 6, "prototype of the ctor returned from registerElement works");
+};
+
 var Foo = document.registerElement('x-foo', {
-  prototype: {bar: 5}
+  prototype: p
 });
 
 Foo.prototype.bar = 6;
 var foo = new Foo();
-is(foo.bar, 6, "prototype of the ctor returned from registerElement works");
-
 var protoDesc = Object.getOwnPropertyDescriptor(Foo, "prototype");
 is(protoDesc.configurable, false, "proto should be non-configurable");
 is(protoDesc.enumerable, false, "proto should be non-enumerable");
