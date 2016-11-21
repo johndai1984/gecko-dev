@@ -129,6 +129,97 @@ struct CustomElementDefinition
   uint32_t mDocOrder;
 };
 
+class CustomElementReaction
+{
+public:
+  explicit CustomElementReaction(CustomElementDefinition* aDefinition) :
+    mDefinition(aDefinition)
+    {
+    };
+  virtual ~CustomElementReaction() = default;
+  virtual void Invoke(CustomElementRegistry* aRegistry, nsCOMPtr<Element>& aElement) = 0;
+
+protected:
+  CustomElementDefinition* mDefinition;
+};
+
+class CustomElementUpgradeReaction : public CustomElementReaction
+{
+public:
+  explicit CustomElementUpgradeReaction(CustomElementDefinition* aDefinition) :
+      CustomElementReaction(aDefinition)
+      {
+      }
+
+private:
+   void Invoke(CustomElementRegistry* aRegistry, nsCOMPtr<Element>& aElement) override;
+};
+
+// https://html.spec.whatwg.org/multipage/scripting.html#custom-element-reactions-stack
+class CustomElementReactionStack
+{
+public:
+  NS_INLINE_DECL_REFCOUNTING(CustomElementReactionStack)
+
+  explicit CustomElementReactionStack(RefPtr<CustomElementRegistry> aRegistry) :
+    mCustomElementRegistry(aRegistry),
+    mIsBackupQueueProcessing(false)
+    {
+    }
+
+  typedef nsTArray<nsWeakPtr> ElementQueue;
+
+  /**
+   * Invoke custom element reactions
+   * https://html.spec.whatwg.org/multipage/scripting.html#invoke-custom-element-reactions
+   */
+  void InvokeReactions(ElementQueue& aElementQueue);
+  void InvokeBackupQueue();
+  void Enqueue(Element* aElement, CustomElementReaction* aReaction);
+
+private:
+  ~CustomElementReactionStack();
+
+  typedef nsTArray<nsAutoPtr<CustomElementReaction>> ReactionQueue;
+  typedef nsClassHashtable<nsISupportsHashKey, ReactionQueue>
+    ElementReactionQueueMap;
+
+  ElementReactionQueueMap mElementReactionQueueMap;
+
+  nsTArray<ElementQueue> mReactionStack;
+  nsTArray<nsWeakPtr> mBackupQueue;
+
+  RefPtr<CustomElementRegistry> mCustomElementRegistry;
+  bool mIsBackupQueueProcessing;
+
+private:
+  //MOZ_RAII
+  class AutoSetBackupQueueProcessing  : public mozilla::Runnable {
+    public:
+      explicit AutoSetBackupQueueProcessing(CustomElementReactionStack* aReactionStack)
+        : mReactionStack(aReactionStack)
+      {
+        MOZ_ASSERT(!mReactionStack->mIsBackupQueueProcessing,
+                   "mIsBackupQueueProcessing should be initially false");
+        mReactionStack->mIsBackupQueueProcessing = true;
+      }
+
+      NS_IMETHOD Run() override
+      {
+        mReactionStack->InvokeBackupQueue();
+        return NS_OK;
+      }
+
+    private:
+      ~AutoSetBackupQueueProcessing() {
+        mReactionStack->mIsBackupQueueProcessing = false;
+      }
+
+    private:
+      CustomElementReactionStack* mReactionStack;
+  };
+};
+
 class CustomElementRegistry final : public nsISupports,
                                     public nsWrapperCache
 {
@@ -167,6 +258,15 @@ public:
 
   void GetCustomPrototype(nsIAtom* aAtom,
                           JS::MutableHandle<JSObject*> aPrototype);
+
+  /**
+   * Enqueue a custom element upgrade reaction
+   * https://html.spec.whatwg.org/multipage/scripting.html#enqueue-a-custom-element-upgrade-reaction
+   */
+  void EnqueueUpgradeReaction(Element* aElement,
+                              CustomElementDefinition* aDefinition);
+
+  void Upgrade(Element* aElement, CustomElementDefinition* aDefinition);
 
 private:
   explicit CustomElementRegistry(nsPIDOMWindowInner* aWindow);
@@ -215,6 +315,8 @@ private:
   // queue in the stack is the base element queue.
   static mozilla::Maybe<nsTArray<RefPtr<CustomElementData>>> sProcessingStack;
 
+  // https://html.spec.whatwg.org/#custom-element-reactions-stack
+  RefPtr<CustomElementReactionStack> mCustomElementReactionStack;
   // It is used to prevent reentrant invocations of element definition.
   bool mIsCustomDefinitionRunning;
 
