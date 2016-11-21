@@ -103,6 +103,7 @@ NS_IMPL_CYCLE_COLLECTION_CLASS(CustomElementRegistry)
 
 NS_IMPL_CYCLE_COLLECTION_UNLINK_BEGIN(CustomElementRegistry)
   tmp->mCustomDefinitions.Clear();
+  NS_IMPL_CYCLE_COLLECTION_UNLINK(mCustomElementReactionStack)
   NS_IMPL_CYCLE_COLLECTION_UNLINK(mWhenDefinedPromiseMap)
   NS_IMPL_CYCLE_COLLECTION_UNLINK(mWindow)
   NS_IMPL_CYCLE_COLLECTION_UNLINK_PRESERVED_WRAPPER
@@ -137,6 +138,7 @@ NS_IMPL_CYCLE_COLLECTION_TRAVERSE_BEGIN(CustomElementRegistry)
     }
   }
 
+  NS_IMPL_CYCLE_COLLECTION_TRAVERSE(mCustomElementReactionStack)
   NS_IMPL_CYCLE_COLLECTION_TRAVERSE(mWhenDefinedPromiseMap)
   NS_IMPL_CYCLE_COLLECTION_TRAVERSE(mWindow)
   NS_IMPL_CYCLE_COLLECTION_TRAVERSE_SCRIPT_OBJECTS
@@ -161,6 +163,15 @@ NS_INTERFACE_MAP_BEGIN_CYCLE_COLLECTION(CustomElementRegistry)
   NS_WRAPPERCACHE_INTERFACE_MAP_ENTRY
   NS_INTERFACE_MAP_ENTRY(nsISupports)
 NS_INTERFACE_MAP_END
+
+NS_IMPL_CYCLE_COLLECTION(CustomElementReactionStack, mCustomElementRegistry)
+
+NS_IMPL_CYCLE_COLLECTING_ADDREF(CustomElementReactionStack)
+NS_IMPL_CYCLE_COLLECTING_RELEASE(CustomElementReactionStack)
+NS_INTERFACE_MAP_BEGIN_CYCLE_COLLECTION(CustomElementReactionStack)
+  NS_INTERFACE_MAP_ENTRY(nsISupports)
+NS_INTERFACE_MAP_END
+
 
 /* static */ bool
 CustomElementRegistry::IsCustomElementEnabled(JSContext* aCx, JSObject* aObject)
@@ -894,6 +905,26 @@ CustomElementDefinition::CustomElementDefinition(nsIAtom* aType,
 
 //-----------------------------------------------------
 // CustomElementReactionStack
+
+void
+CustomElementReactionStack::Push()
+{
+  // Push a new element queue onto the custom element reactions stack.
+  ElementQueue elementQueue;
+  mReactionStack.AppendElement(elementQueue);
+}
+
+void
+CustomElementReactionStack::Pop()
+{
+  // Pop the element queue from the custom element reactions stack,
+  // and invoke custom element reactions in that queue.
+  if (!mReactionStack.IsEmpty()) {
+    ElementQueue& elementQueue = mReactionStack.LastElement();
+    CustomElementReactionStack::InvokeReactions(elementQueue);
+    mReactionStack.RemoveElement(elementQueue);
+  }
+}
 
 void
 CustomElementReactionStack::Enqueue(Element* aElement,

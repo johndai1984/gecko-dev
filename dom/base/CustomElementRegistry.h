@@ -156,10 +156,10 @@ private:
 };
 
 // https://html.spec.whatwg.org/multipage/scripting.html#custom-element-reactions-stack
-class CustomElementReactionStack
+class CustomElementReactionStack : public nsISupports
 {
-public:
-  NS_INLINE_DECL_REFCOUNTING(CustomElementReactionStack)
+  NS_DECL_CYCLE_COLLECTING_ISUPPORTS
+  NS_DECL_CYCLE_COLLECTION_CLASS(CustomElementReactionStack)
 
   explicit CustomElementReactionStack(RefPtr<CustomElementRegistry> aRegistry) :
     mCustomElementRegistry(aRegistry),
@@ -176,6 +176,8 @@ public:
   void InvokeReactions(ElementQueue& aElementQueue);
   void InvokeBackupQueue();
   void Enqueue(Element* aElement, CustomElementReaction* aReaction);
+  void Push();
+  void Pop();
 
 private:
   ~CustomElementReactionStack();
@@ -193,7 +195,7 @@ private:
   bool mIsBackupQueueProcessing;
 
 private:
-  //MOZ_RAII
+  // MOZ_RAII
   class AutoSetBackupQueueProcessing  : public mozilla::Runnable {
     public:
       explicit AutoSetBackupQueueProcessing(CustomElementReactionStack* aReactionStack)
