@@ -15,6 +15,6 @@
 interface HTMLDivElement : HTMLElement {};
 
 partial interface HTMLDivElement {
-  [SetterThrows]
+  [SetterThrows, CEReactions]
            attribute DOMString align;
 };

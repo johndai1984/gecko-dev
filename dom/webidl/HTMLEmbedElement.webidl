@@ -15,21 +15,21 @@
 // http://www.whatwg.org/specs/web-apps/current-work/#the-embed-element
 [HTMLConstructor, NeedResolve]
 interface HTMLEmbedElement : HTMLElement {
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute DOMString src;
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute DOMString type;
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute DOMString width;
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute DOMString height;
 };
 
 // http://www.whatwg.org/specs/web-apps/current-work/#HTMLEmbedElement-partial
 partial interface HTMLEmbedElement {
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute DOMString align;
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute DOMString name;
 };
 

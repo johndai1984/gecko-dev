@@ -13,40 +13,40 @@
 
 [HTMLConstructor]
 interface HTMLTableCellElement : HTMLElement {
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute unsigned long colSpan;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute unsigned long rowSpan;
   //[PutForwards=value] readonly attribute DOMTokenList headers;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString headers;
   readonly attribute long cellIndex;
 
   // Mozilla-specific extensions
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString abbr;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString scope;
 };
 
 partial interface HTMLTableCellElement {
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString align;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString axis;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString height;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString width;
 
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString ch;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString chOff;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute boolean noWrap;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString vAlign;
 
-  [TreatNullAs=EmptyString, SetterThrows] attribute DOMString bgColor;
+  [TreatNullAs=EmptyString, SetterThrows, CEReactions] attribute DOMString bgColor;
 };

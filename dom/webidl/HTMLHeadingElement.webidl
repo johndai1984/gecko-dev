@@ -18,6 +18,6 @@ interface HTMLHeadingElement : HTMLElement {
 
 // http://www.whatwg.org/specs/web-apps/current-work/#other-elements,-attributes-and-apis
 partial interface HTMLHeadingElement {
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString align;
 };

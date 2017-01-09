@@ -13,27 +13,27 @@
 // http://www.whatwg.org/specs/web-apps/current-work/#the-button-element
 [HTMLConstructor]
 interface HTMLButtonElement : HTMLElement {
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute boolean autofocus;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute boolean disabled;
   [Pure]
   readonly attribute HTMLFormElement? form;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString formAction;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString formEnctype;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString formMethod;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute boolean formNoValidate;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString formTarget;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString name;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString type;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString value;
 // Not yet implemented:
 //           attribute HTMLMenuElement? menu;

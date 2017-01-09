@@ -59,11 +59,11 @@ interface HTMLDocument : Document {
   [Throws]
   DOMString queryCommandValue(DOMString commandId);
 
-  [TreatNullAs=EmptyString] attribute DOMString fgColor;
-  [TreatNullAs=EmptyString] attribute DOMString linkColor;
-  [TreatNullAs=EmptyString] attribute DOMString vlinkColor;
-  [TreatNullAs=EmptyString] attribute DOMString alinkColor;
-  [TreatNullAs=EmptyString] attribute DOMString bgColor;
+  [TreatNullAs=EmptyString, CEReactions] attribute DOMString fgColor;
+  [TreatNullAs=EmptyString, CEReactions] attribute DOMString linkColor;
+  [TreatNullAs=EmptyString, CEReactions] attribute DOMString vlinkColor;
+  [TreatNullAs=EmptyString, CEReactions] attribute DOMString alinkColor;
+  [TreatNullAs=EmptyString, CEReactions] attribute DOMString bgColor;
 
   [Pure]
   readonly attribute HTMLCollection anchors;

@@ -13,6 +13,6 @@
 
 [HTMLConstructor]
 interface HTMLDetailsElement : HTMLElement {
-  [SetterThrows]
+  [SetterThrows, CEReactions]
   attribute boolean open;
 };

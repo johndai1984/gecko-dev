@@ -17,15 +17,15 @@ interface MenuBuilder;
 // http://www.whatwg.org/specs/web-apps/current-work/#the-menu-element
 [HTMLConstructor]
 interface HTMLMenuElement : HTMLElement {
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString type;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString label;
 };
 
 // http://www.whatwg.org/specs/web-apps/current-work/#other-elements,-attributes-and-apis
 partial interface HTMLMenuElement {
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute boolean compact;
 };
 

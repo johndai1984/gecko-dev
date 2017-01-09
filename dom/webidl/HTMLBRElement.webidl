@@ -18,7 +18,7 @@ interface HTMLBRElement : HTMLElement {};
 
 // http://www.whatwg.org/specs/web-apps/current-work/#other-elements,-attributes-and-apis
 partial interface HTMLBRElement {
-             [SetterThrows]
+             [SetterThrows, CEReactions]
              attribute DOMString clear;
 };
 

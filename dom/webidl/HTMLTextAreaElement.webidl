@@ -17,38 +17,38 @@ interface MozControllers;
 [HTMLConstructor]
 interface HTMLTextAreaElement : HTMLElement {
            // attribute DOMString autocomplete;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute boolean autofocus;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute unsigned long cols;
            // attribute DOMString dirName;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute boolean disabled;
   [Pure]
   readonly attribute HTMLFormElement? form;
            // attribute DOMString inputMode;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute long maxLength;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute long minLength;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString name;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString placeholder;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute boolean readOnly;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute boolean required;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute unsigned long rows;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString wrap;
 
   [Constant]
   readonly attribute DOMString type;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString defaultValue;
-  [TreatNullAs=EmptyString] attribute DOMString value;
+  [TreatNullAs=EmptyString, CEReactions] attribute DOMString value;
   readonly attribute unsigned long textLength;
 
   readonly attribute boolean willValidate;

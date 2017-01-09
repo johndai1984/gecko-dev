@@ -16,12 +16,12 @@ interface HTMLBodyElement : HTMLElement {
 };
 
 partial interface HTMLBodyElement {
-  [TreatNullAs=EmptyString, SetterThrows] attribute DOMString text;
-  [TreatNullAs=EmptyString, SetterThrows] attribute DOMString link;
-  [TreatNullAs=EmptyString, SetterThrows] attribute DOMString vLink;
-  [TreatNullAs=EmptyString, SetterThrows] attribute DOMString aLink;
-  [TreatNullAs=EmptyString, SetterThrows] attribute DOMString bgColor;
-  [SetterThrows]                          attribute DOMString background;
+  [TreatNullAs=EmptyString, SetterThrows, CEReactions] attribute DOMString text;
+  [TreatNullAs=EmptyString, SetterThrows, CEReactions] attribute DOMString link;
+  [TreatNullAs=EmptyString, SetterThrows, CEReactions] attribute DOMString vLink;
+  [TreatNullAs=EmptyString, SetterThrows, CEReactions] attribute DOMString aLink;
+  [TreatNullAs=EmptyString, SetterThrows, CEReactions] attribute DOMString bgColor;
+  [SetterThrows, CEReactions]                          attribute DOMString background;
 };
 
 HTMLBodyElement implements WindowEventHandlers;

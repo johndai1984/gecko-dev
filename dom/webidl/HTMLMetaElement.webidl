@@ -14,16 +14,16 @@
 // http://www.whatwg.org/specs/web-apps/current-work/#the-meta-element
 [HTMLConstructor]
 interface HTMLMetaElement : HTMLElement {
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString name;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString httpEquiv;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString content;
 };
 
 // http://www.whatwg.org/specs/web-apps/current-work/#other-elements,-attributes-and-apis
 partial interface HTMLMetaElement {
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString scheme;
 };

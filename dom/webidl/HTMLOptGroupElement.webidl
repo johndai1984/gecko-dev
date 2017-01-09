@@ -13,8 +13,8 @@
 
 [HTMLConstructor]
 interface HTMLOptGroupElement : HTMLElement {
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute boolean disabled;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString label;
 };

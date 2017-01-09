@@ -13,23 +13,23 @@
 
 [OverrideBuiltins, LegacyUnenumerableNamedProperties, HTMLConstructor]
 interface HTMLFormElement : HTMLElement {
-           [Pure, SetterThrows]
+           [Pure, SetterThrows, CEReactions]
            attribute DOMString acceptCharset;
-           [Pure, SetterThrows]
+           [Pure, SetterThrows, CEReactions]
            attribute DOMString action;
-           [Pure, SetterThrows]
+           [Pure, SetterThrows, CEReactions]
            attribute DOMString autocomplete;
-           [Pure, SetterThrows]
+           [Pure, SetterThrows, CEReactions]
            attribute DOMString enctype;
-           [Pure, SetterThrows]
+           [Pure, SetterThrows, CEReactions]
            attribute DOMString encoding;
-           [Pure, SetterThrows]
+           [Pure, SetterThrows, CEReactions]
            attribute DOMString method;
-           [Pure, SetterThrows]
+           [Pure, SetterThrows, CEReactions]
            attribute DOMString name;
-           [Pure, SetterThrows]
+           [Pure, SetterThrows, CEReactions]
            attribute boolean noValidate;
-           [Pure, SetterThrows]
+           [Pure, SetterThrows, CEReactions]
            attribute DOMString target;
 
   [Constant]
@@ -43,6 +43,7 @@ interface HTMLFormElement : HTMLElement {
 
   [Throws]
   void submit();
+  [CEReactions]
   void reset();
   boolean checkValidity();
   boolean reportValidity();

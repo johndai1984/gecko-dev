@@ -13,9 +13,9 @@
 
 [HTMLConstructor]
 interface HTMLProgressElement : HTMLElement {
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute double value;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute double max;
   readonly attribute double position;
 

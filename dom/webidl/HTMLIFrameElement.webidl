@@ -13,21 +13,21 @@
 
 [HTMLConstructor]
 interface HTMLIFrameElement : HTMLElement {
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString src;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString srcdoc;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString name;
   [PutForwards=value, CEReactions] readonly attribute DOMTokenList sandbox;
            // attribute boolean seamless;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute boolean allowFullscreen;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString width;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString height;
-  [SetterThrows, Pure, Pref="network.http.enablePerElementReferrer"]
+  [SetterThrows, Pure, Pref="network.http.enablePerElementReferrer", CEReactions]
            attribute DOMString referrerPolicy;
   [NeedsSubjectPrincipal]
   readonly attribute Document? contentDocument;
@@ -36,17 +36,19 @@ interface HTMLIFrameElement : HTMLElement {
 
 // http://www.whatwg.org/specs/web-apps/current-work/#other-elements,-attributes-and-apis
 partial interface HTMLIFrameElement {
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString align;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString scrolling;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString frameBorder;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString longDesc;
 
-  [TreatNullAs=EmptyString,SetterThrows,Pure] attribute DOMString marginHeight;
-  [TreatNullAs=EmptyString,SetterThrows,Pure] attribute DOMString marginWidth;
+  [TreatNullAs=EmptyString, SetterThrows, Pure, CEReactions]
+          attribute DOMString marginHeight;
+  [TreatNullAs=EmptyString, SetterThrows, Pure, CEReactions]
+          attribute DOMString marginWidth;
 };
 
 partial interface HTMLIFrameElement {

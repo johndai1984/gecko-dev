@@ -14,22 +14,22 @@
 // http://www.whatwg.org/specs/web-apps/current-work/#the-menuitem-element
 [HTMLConstructor]
 interface HTMLMenuItemElement : HTMLElement {
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString type;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString label;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString icon;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute boolean disabled;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute boolean checked;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString radiogroup;
 
            // This should be 'default' but in the IDL implementation
            // this has been renamed 'defaultChecked'.
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute boolean defaultChecked;
 
            // Currently not implemented.

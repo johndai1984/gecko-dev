@@ -17,14 +17,14 @@ interface HTMLOutputElement : HTMLElement {
   [PutForwards=value, Constant]
   readonly attribute DOMTokenList htmlFor;
   readonly attribute HTMLFormElement? form;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString name;
 
   [Constant]
   readonly attribute DOMString type;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString defaultValue;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString value;
 
   readonly attribute boolean willValidate;

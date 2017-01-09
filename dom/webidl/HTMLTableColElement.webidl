@@ -13,19 +13,19 @@
 
 [HTMLConstructor]
 interface HTMLTableColElement : HTMLElement {
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute unsigned long span;
 };
 
 partial interface HTMLTableColElement {
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString align;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString ch;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString chOff;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString vAlign;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString width;
 };

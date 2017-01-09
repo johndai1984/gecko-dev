@@ -13,10 +13,10 @@
 
 [HTMLConstructor]
 interface HTMLFieldSetElement : HTMLElement {
-  [SetterThrows]
+  [SetterThrows, CEReactions]
            attribute boolean disabled;
   readonly attribute HTMLFormElement? form;
-  [SetterThrows]
+  [SetterThrows, CEReactions]
            attribute DOMString name;
 
   readonly attribute DOMString type;

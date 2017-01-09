@@ -13,17 +13,17 @@
 
 [HTMLConstructor]
 interface HTMLSourceElement : HTMLElement {
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString src;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString type;
 };
 
 partial interface HTMLSourceElement {
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString srcset;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString sizes;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString media;
 };

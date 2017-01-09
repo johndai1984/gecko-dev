@@ -13,44 +13,47 @@
 
 [HTMLConstructor]
 interface HTMLTableElement : HTMLElement {
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute HTMLTableCaptionElement? caption;
   HTMLElement createCaption();
+  [CEReactions]
   void deleteCaption();
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute HTMLTableSectionElement? tHead;
   HTMLElement createTHead();
+  [CEReactions]
   void deleteTHead();
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute HTMLTableSectionElement? tFoot;
   HTMLElement createTFoot();
+  [CEReactions]
   void deleteTFoot();
   readonly attribute HTMLCollection tBodies;
   HTMLElement createTBody();
   readonly attribute HTMLCollection rows;
   [Throws]
   HTMLElement insertRow(optional long index = -1);
-  [Throws]
+  [Throws, CEReactions]
   void deleteRow(long index);
   //         attribute boolean sortable;
   //void stopSorting();
 };
 
 partial interface HTMLTableElement {
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString align;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString border;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString frame;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString rules;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString summary;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString width;
 
-  [TreatNullAs=EmptyString, SetterThrows] attribute DOMString bgColor;
-  [TreatNullAs=EmptyString, SetterThrows] attribute DOMString cellPadding;
-  [TreatNullAs=EmptyString, SetterThrows] attribute DOMString cellSpacing;
+  [TreatNullAs=EmptyString, SetterThrows, CEReactions] attribute DOMString bgColor;
+  [TreatNullAs=EmptyString, SetterThrows, CEReactions] attribute DOMString cellPadding;
+  [TreatNullAs=EmptyString, SetterThrows, CEReactions] attribute DOMString cellSpacing;
 };

@@ -10,32 +10,32 @@
 
 [HTMLConstructor]
 interface HTMLScriptElement : HTMLElement {
-  [SetterThrows]
+  [SetterThrows, CEReactions]
   attribute DOMString src;
-  [SetterThrows]
+  [SetterThrows, CEReactions]
   attribute DOMString type;
-  [SetterThrows]
+  [SetterThrows, CEReactions]
   attribute DOMString charset;
-  [SetterThrows]
+  [SetterThrows, CEReactions]
   attribute boolean async;
-  [SetterThrows]
+  [SetterThrows, CEReactions]
   attribute boolean defer;
-  [SetterThrows]
+  [SetterThrows, CEReactions]
   attribute DOMString? crossOrigin;
-  [SetterThrows]
+  [SetterThrows, CEReactions]
   attribute DOMString text;
 };
 
 // http://www.whatwg.org/specs/web-apps/current-work/#other-elements,-attributes-and-apis
 partial interface HTMLScriptElement {
-  [SetterThrows]
+  [SetterThrows, CEReactions]
   attribute DOMString event;
-  [SetterThrows]
+  [SetterThrows, CEReactions]
   attribute DOMString htmlFor;
 };
 
 // https://w3c.github.io/webappsec/specs/subresourceintegrity/#htmlscriptelement-1
 partial interface HTMLScriptElement {
-  [SetterThrows]
+  [SetterThrows, CEReactions]
   attribute DOMString integrity;
 };

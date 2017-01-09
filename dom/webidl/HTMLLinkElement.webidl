@@ -16,33 +16,33 @@
 interface HTMLLinkElement : HTMLElement {
   [Pure]
            attribute boolean disabled;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString href;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString? crossOrigin;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString rel;
   [PutForwards=value, CEReactions]
   readonly attribute DOMTokenList relList;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString media;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString hreflang;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString type;
-  [SetterThrows, Pure, Pref="network.http.enablePerElementReferrer"]
+  [SetterThrows, Pure, Pref="network.http.enablePerElementReferrer", CEReactions]
            attribute DOMString referrerPolicy;
-  [PutForwards=value] readonly attribute DOMTokenList sizes;
+  [PutForwards=value, CEReactions] readonly attribute DOMTokenList sizes;
 };
 HTMLLinkElement implements LinkStyle;
 
 // http://www.whatwg.org/specs/web-apps/current-work/#other-elements,-attributes-and-apis
 partial interface HTMLLinkElement {
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString charset;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString rev;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString target;
 };
 

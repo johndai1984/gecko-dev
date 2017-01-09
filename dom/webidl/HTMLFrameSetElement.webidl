@@ -13,9 +13,9 @@
 
 [HTMLConstructor]
 interface HTMLFrameSetElement : HTMLElement {
-  [SetterThrows]
+  [SetterThrows, CEReactions]
   attribute DOMString cols;
-  [SetterThrows]
+  [SetterThrows, CEReactions]
   attribute DOMString rows;
 };
 

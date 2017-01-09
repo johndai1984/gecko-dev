@@ -13,19 +13,19 @@
 
 [HTMLConstructor, NamedConstructor=Option(optional DOMString text, optional DOMString value, optional boolean defaultSelected, optional boolean selected)]
 interface HTMLOptionElement : HTMLElement {
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute boolean disabled;
   readonly attribute HTMLFormElement? form;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString label;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute boolean defaultSelected;
            [SetterThrows]
            attribute boolean selected;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString value;
 
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString text;
   readonly attribute long index;
 };

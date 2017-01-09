@@ -11,12 +11,13 @@
  */
 
 interface HTMLOptionsCollection : HTMLCollection {
+           [CEReactions]
            attribute unsigned long length;
-  [Throws]
+  [Throws, CEReactions]
   setter creator void (unsigned long index, HTMLOptionElement? option);
-  [Throws]
+  [Throws, CEReactions]
   void add((HTMLOptionElement or HTMLOptGroupElement) element, optional (HTMLElement or long)? before = null);
-  [Throws]
+  [Throws, CEReactions]
   void remove(long index);
   [Throws]
            attribute long selectedIndex;

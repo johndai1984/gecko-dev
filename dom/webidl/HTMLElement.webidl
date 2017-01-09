@@ -15,36 +15,38 @@
 [HTMLConstructor]
 interface HTMLElement : Element {
   // metadata attributes
+           [CEReactions]
            attribute DOMString title;
+           [CEReactions]
            attribute DOMString lang;
   //         attribute boolean translate;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString dir;
   [Constant]
   readonly attribute DOMStringMap dataset;
 
-  [GetterThrows, Pure, TreatNullAs=EmptyString]
+  [GetterThrows, Pure, TreatNullAs=EmptyString, CEReactions]
            attribute DOMString innerText;
 
   // user interaction
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute boolean hidden;
   [NeedsCallerType]
   void click();
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute long tabIndex;
   [Throws]
   void focus();
   [Throws]
   void blur();
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString accessKey;
   [Pure]
   readonly attribute DOMString accessKeyLabel;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute boolean draggable;
   //[PutForwards=value] readonly attribute DOMTokenList dropzone;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString contentEditable;
   [Pure]
   readonly attribute boolean isContentEditable;
@@ -52,7 +54,7 @@ interface HTMLElement : Element {
   readonly attribute HTMLMenuElement? contextMenu;
   //[SetterThrows]
   //         attribute HTMLMenuElement? contextMenu;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute boolean spellcheck;
 
   // command API

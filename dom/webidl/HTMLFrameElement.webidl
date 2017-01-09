@@ -13,24 +13,24 @@
 // http://www.whatwg.org/specs/web-apps/current-work/#htmlframeelement
 [HTMLConstructor]
 interface HTMLFrameElement : HTMLElement {
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString name;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString scrolling;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString src;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString frameBorder;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString longDesc;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute boolean noResize;
   [NeedsSubjectPrincipal]
   readonly attribute Document? contentDocument;
   readonly attribute WindowProxy? contentWindow;
 
-  [TreatNullAs=EmptyString, SetterThrows] attribute DOMString marginHeight;
-  [TreatNullAs=EmptyString, SetterThrows] attribute DOMString marginWidth;
+  [TreatNullAs=EmptyString, SetterThrows, CEReactions] attribute DOMString marginHeight;
+  [TreatNullAs=EmptyString, SetterThrows, CEReactions] attribute DOMString marginWidth;
 };
 
 HTMLFrameElement implements MozFrameLoaderOwner;

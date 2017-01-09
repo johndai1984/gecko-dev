@@ -4,7 +4,7 @@
  * You can obtain one at http://mozilla.org/MPL/2.0/.
  *
  * The origin of this IDL file is
- * http://www.whatwg.org/specs/web-apps/current-work/#the-meter-element	
+ * http://www.whatwg.org/specs/web-apps/current-work/#the-meter-element
  *
  * © Copyright 2004-2011 Apple Computer, Inc., Mozilla Foundation, and
  * Opera Software ASA. You are granted a license to use, reproduce
@@ -14,17 +14,17 @@
 // http://www.whatwg.org/specs/web-apps/current-work/#the-meter-element
 [HTMLConstructor]
 interface HTMLMeterElement : HTMLElement {
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute double value;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute double min;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute double max;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute double low;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute double high;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute double optimum;
 
   /**

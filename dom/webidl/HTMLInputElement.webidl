@@ -23,78 +23,79 @@ interface nsIControllers;
 
 [HTMLConstructor]
 interface HTMLInputElement : HTMLElement {
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute DOMString accept;
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute DOMString alt;
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute DOMString autocomplete;
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute boolean autofocus;
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute boolean defaultChecked;
-  [Pure]
+  [Pure, CEReactions]
            attribute boolean checked;
            // Bug 850337 - attribute DOMString dirName;
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute boolean disabled;
   readonly attribute HTMLFormElement? form;
   [Pure]
   readonly attribute FileList? files;
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute DOMString formAction;
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute DOMString formEnctype;
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute DOMString formMethod;
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute boolean formNoValidate;
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute DOMString formTarget;
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute unsigned long height;
   [Pure]
            attribute boolean indeterminate;
-  [Pure, SetterThrows, Pref="dom.forms.inputmode"]
+  [Pure, SetterThrows, Pref="dom.forms.inputmode", CEReactions]
            attribute DOMString inputMode;
   [Pure]
   readonly attribute HTMLElement? list;
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute DOMString max;
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute long maxLength;
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute DOMString min;
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute long minLength;
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute boolean multiple;
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute DOMString name;
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute DOMString pattern;
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute DOMString placeholder;
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute boolean readOnly;
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute boolean required;
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute unsigned long size;
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute DOMString src;
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute DOMString step;
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute DOMString type;
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute DOMString defaultValue;
-  [Pure, TreatNullAs=EmptyString, SetterThrows, NeedsCallerType]
+  [Pure, TreatNullAs=EmptyString, SetterThrows, NeedsCallerType, CEReactions]
            attribute DOMString value;
   [Throws, Func="HTMLInputElement::ValueAsDateEnabled"]
            attribute Date? valueAsDate;
   [Pure, SetterThrows]
            attribute unrestricted double valueAsNumber;
+  [CEReactions]
            attribute unsigned long width;
 
   [Throws]
@@ -133,9 +134,9 @@ interface HTMLInputElement : HTMLElement {
 };
 
 partial interface HTMLInputElement {
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute DOMString align;
-  [Pure, SetterThrows]
+  [Pure, SetterThrows, CEReactions]
            attribute DOMString useMap;
 };
 

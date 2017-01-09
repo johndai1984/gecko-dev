@@ -9,15 +9,15 @@
 
 [HTMLConstructor]
 interface HTMLTrackElement : HTMLElement {
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
   attribute DOMString kind;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
   attribute DOMString src;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
   attribute DOMString srclang;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
   attribute DOMString label;
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
   attribute boolean default;
 
   const unsigned short NONE = 0;

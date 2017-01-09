@@ -18,14 +18,14 @@ interface HTMLHRElement : HTMLElement {
 
 // http://www.whatwg.org/specs/web-apps/current-work/#other-elements,-attributes-and-apis
 partial interface HTMLHRElement {
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString align;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString color;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute boolean noShade;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString size;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString width;
 };

@@ -18,6 +18,6 @@ interface HTMLParagraphElement : HTMLElement {
 
 // http://www.whatwg.org/specs/web-apps/current-work/#other-elements,-attributes-and-apis
 partial interface HTMLParagraphElement {
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString align;
 };

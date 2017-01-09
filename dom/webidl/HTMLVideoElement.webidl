@@ -13,13 +13,13 @@
 
 [HTMLConstructor]
 interface HTMLVideoElement : HTMLMediaElement {
-  [SetterThrows]
+  [SetterThrows, CEReactions]
            attribute unsigned long width;
-  [SetterThrows]
+  [SetterThrows, CEReactions]
            attribute unsigned long height;
   readonly attribute unsigned long videoWidth;
   readonly attribute unsigned long videoHeight;
-  [SetterThrows]
+  [SetterThrows, CEReactions]
            attribute DOMString poster;
 };
 

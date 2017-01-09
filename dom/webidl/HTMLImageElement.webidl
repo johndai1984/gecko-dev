@@ -19,23 +19,23 @@ interface nsIStreamListener;
 [HTMLConstructor,
  NamedConstructor=Image(optional unsigned long width, optional unsigned long height)]
 interface HTMLImageElement : HTMLElement {
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString alt;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString src;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString srcset;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString? crossOrigin;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString useMap;
-           [SetterThrows, Pref="network.http.enablePerElementReferrer"]
+           [SetterThrows, Pref="network.http.enablePerElementReferrer", CEReactions]
            attribute DOMString referrerPolicy;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute boolean isMap;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute unsigned long width;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute unsigned long height;
   readonly attribute unsigned long naturalWidth;
   readonly attribute unsigned long naturalHeight;
@@ -44,30 +44,31 @@ interface HTMLImageElement : HTMLElement {
 
 // http://www.whatwg.org/specs/web-apps/current-work/#other-elements,-attributes-and-apis
 partial interface HTMLImageElement {
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString name;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString align;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute unsigned long hspace;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute unsigned long vspace;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString longDesc;
 
-  [TreatNullAs=EmptyString,SetterThrows] attribute DOMString border;
+  [TreatNullAs=EmptyString, SetterThrows, CEReactions] attribute DOMString border;
 };
 
 // [Update me: not in whatwg spec yet]
 // http://picture.responsiveimages.org/#the-img-element
 partial interface HTMLImageElement {
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString sizes;
   readonly attribute DOMString currentSrc;
 };
 
 // Mozilla extensions.
 partial interface HTMLImageElement {
+           [CEReactions]
            attribute DOMString lowsrc;
 
   // These attributes are offsets from the closest view (to mimic

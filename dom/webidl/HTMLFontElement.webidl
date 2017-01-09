@@ -13,7 +13,7 @@
 
 [HTMLConstructor]
 interface HTMLFontElement : HTMLElement {
-  [TreatNullAs=EmptyString, SetterThrows] attribute DOMString color;
-  [SetterThrows]                          attribute DOMString face;
-  [SetterThrows]                          attribute DOMString size;
+  [TreatNullAs=EmptyString, SetterThrows, CEReactions] attribute DOMString color;
+  [SetterThrows, CEReactions]                          attribute DOMString face;
+  [SetterThrows, CEReactions]                          attribute DOMString size;
 };

@@ -16,17 +16,17 @@ interface HTMLTableSectionElement : HTMLElement {
   readonly attribute HTMLCollection rows;
   [Throws]
   HTMLElement insertRow(optional long index = -1);
-  [Throws]
+  [Throws, CEReactions]
   void deleteRow(long index);
 };
 
 partial interface HTMLTableSectionElement {
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString align;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString ch;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString chOff;
-           [SetterThrows]
+           [SetterThrows, CEReactions]
            attribute DOMString vAlign;
 };
