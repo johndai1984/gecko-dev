@@ -4263,6 +4263,19 @@ class IDLAttribute(IDLInterfaceMember):
                 raise WebIDLError("[Unscopable] is only allowed on non-static "
                                   "attributes and operations",
                                   [attr.location, self.location])
+        elif identifier == "CEReactions":
+            # IDLAttribute
+            if not attr.noArguments():
+                raise WebIDLError("[CEReactions] must take no arguments",
+                                  [attr.location])
+            #traceback.print_stack()
+            if self.readonly and not self.getExtendedAttribute("PutForwards"):
+                print self.readonly
+                print self.getExtendedAttribute("PutForwards")
+                raise WebIDLError("[CEReactions] only allowed on "
+                                  "readonly attributes is also "
+                                  "annotated with [PutForwards]",
+                                  [attr.location, self.location])
         elif (identifier == "Pref" or
               identifier == "Deprecated" or
               identifier == "SetterThrows" or
@@ -4993,6 +5006,24 @@ class IDLMethod(IDLInterfaceMember, IDLScope):
                                   [attr.location])
             if self.isStatic():
                 raise WebIDLError("[Unscopable] is only allowed on non-static "
+                                  "attributes and operations",
+                                  [attr.location, self.location])
+        elif identifier == "CEReactions":
+            #IDLMethod
+            if not attr.noArguments():
+                raise WebIDLError("[CEReactions] must take no arguments",
+                                  [attr.location])
+
+            if not self.isMethod() and not self.isSetter() and not self.isDeleter():
+                print self.isGetter()
+                print self.isSetter()
+                print self.isCreator()
+                print self.isDeleter()
+                print self.isLegacycaller()
+                print self.isStringifier()
+                print self.isJsonifier()
+                traceback.print_stack()
+                raise WebIDLError("[CEReactions] is only allowed on setter or deleter "
                                   "attributes and operations",
                                   [attr.location, self.location])
         elif (identifier == "Throws" or

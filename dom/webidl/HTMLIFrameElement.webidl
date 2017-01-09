@@ -19,7 +19,7 @@ interface HTMLIFrameElement : HTMLElement {
            attribute DOMString srcdoc;
   [SetterThrows, Pure]
            attribute DOMString name;
-  [PutForwards=value] readonly attribute DOMTokenList sandbox;
+  [PutForwards=value, CEReactions] readonly attribute DOMTokenList sandbox;
            // attribute boolean seamless;
   [SetterThrows, Pure]
            attribute boolean allowFullscreen;

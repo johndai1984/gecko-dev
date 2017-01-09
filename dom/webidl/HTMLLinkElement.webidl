@@ -22,7 +22,7 @@ interface HTMLLinkElement : HTMLElement {
            attribute DOMString? crossOrigin;
   [SetterThrows, Pure]
            attribute DOMString rel;
-  [PutForwards=value]
+  [PutForwards=value, CEReactions]
   readonly attribute DOMTokenList relList;
   [SetterThrows, Pure]
            attribute DOMString media;

@@ -567,7 +567,7 @@ CustomElementRegistry::Define(const nsAString& aName,
 {
   // We do this for [CEReaction] temporarily and it will be removed
   // after webidl supports [CEReaction] annotation in bug 1309147.
-  AutoCEReaction ceReaction(this);
+  //AutoCEReaction ceReaction(this);
   aRv.MightThrowJSException();
 
   AutoJSAPI jsapi;
