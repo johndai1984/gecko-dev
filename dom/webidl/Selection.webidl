@@ -29,7 +29,7 @@ interface Selection {
 
   [Throws]
   void               selectAllChildren(Node node);
-  [Throws]
+  [Throws, CEReactions]
   void               deleteFromDocument();
 
   readonly attribute unsigned long rangeCount;
