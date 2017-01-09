@@ -216,11 +216,11 @@ partial interface Element {
 
 // http://domparsing.spec.whatwg.org/#extensions-to-the-element-interface
 partial interface Element {
-  [Pure,SetterThrows,TreatNullAs=EmptyString]
+  [Pure,SetterThrows,TreatNullAs=EmptyString, CEReactions]
   attribute DOMString innerHTML;
-  [Pure,SetterThrows,TreatNullAs=EmptyString]
+  [Pure,SetterThrows,TreatNullAs=EmptyString, CEReactions]
   attribute DOMString outerHTML;
-  [Throws]
+  [Throws, CEReactions]
   void insertAdjacentHTML(DOMString position, DOMString text);
 };
 
