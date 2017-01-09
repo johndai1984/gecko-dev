@@ -57,21 +57,22 @@ interface Node : EventTarget {
   [Pure]
   readonly attribute Node? nextSibling;
 
-  [SetterThrows, Pure]
+  [SetterThrows, Pure, CEReactions]
            attribute DOMString? nodeValue;
-  [SetterThrows, GetterCanOOM, Pure]
+  [SetterThrows, GetterCanOOM, Pure, CEReactions]
            attribute DOMString? textContent;
-  [Throws]
+  [Throws, CEReactions]
   Node insertBefore(Node node, Node? child);
-  [Throws]
+  [Throws, CEReactions]
   Node appendChild(Node node);
-  [Throws]
+  [Throws, CEReactions]
   Node replaceChild(Node node, Node child);
-  [Throws]
+  [Throws, CEReactions]
   Node removeChild(Node child);
+  [CEReactions]
   void normalize();
 
-  [Throws]
+  [Throws, CEReactions]
   Node cloneNode(optional boolean deep = false);
   [Pure]
   boolean isSameNode(Node? node);

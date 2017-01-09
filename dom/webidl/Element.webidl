@@ -25,11 +25,11 @@ interface Element : Node {
   [Pure]
   readonly attribute DOMString tagName;
 
-  [Pure]
+  [Pure, CEReactions]
            attribute DOMString id;
-  [Pure]
+  [Pure, CEReactions]
            attribute DOMString className;
-  [Constant, PutForwards=value]
+  [Constant, PutForwards=value, CEReactions]
   readonly attribute DOMTokenList classList;
 
   [SameObject]
@@ -40,13 +40,13 @@ interface Element : Node {
   DOMString? getAttribute(DOMString name);
   [Pure]
   DOMString? getAttributeNS(DOMString? namespace, DOMString localName);
-  [Throws]
+  [Throws, CEReactions]
   void setAttribute(DOMString name, DOMString value);
-  [Throws]
+  [Throws, CEReactions]
   void setAttributeNS(DOMString? namespace, DOMString name, DOMString value);
-  [Throws]
+  [Throws, CEReactions]
   void removeAttribute(DOMString name);
-  [Throws]
+  [Throws, CEReactions]
   void removeAttributeNS(DOMString? namespace, DOMString localName);
   [Pure]
   boolean hasAttribute(DOMString name);
@@ -70,7 +70,7 @@ interface Element : Node {
   [Pure]
   HTMLCollection getElementsByClassName(DOMString classNames);
 
-  [Throws, Pure]
+  [Throws, Pure, CEReactions]
   Element? insertAdjacentElement(DOMString where, Element element); // historical
 
   [Throws]
@@ -121,7 +121,7 @@ interface Element : Node {
    * called. If retargetToElement is true, then all events are targetted at
    * this element. If false, events can also fire at descendants of this
    * element.
-   * 
+   *
    */
   void setCapture(optional boolean retargetToElement = false);
 
@@ -141,12 +141,12 @@ interface Element : Node {
 
   // Obsolete methods.
   Attr? getAttributeNode(DOMString name);
-  [Throws]
+  [Throws, CEReactions]
   Attr? setAttributeNode(Attr newAttr);
-  [Throws]
+  [Throws, CEReactions]
   Attr? removeAttributeNode(Attr oldAttr);
   Attr? getAttributeNodeNS(DOMString? namespaceURI, DOMString localName);
-  [Throws]
+  [Throws, CEReactions]
   Attr? setAttributeNodeNS(Attr newAttr);
 
   [ChromeOnly]
@@ -186,7 +186,7 @@ partial interface Element {
            attribute long scrollLeft;  // scroll on setting
   readonly attribute long scrollWidth;
   readonly attribute long scrollHeight;
-  
+
   void scroll(unrestricted double x, unrestricted double y);
   void scroll(optional ScrollToOptions options);
   void scrollTo(unrestricted double x, unrestricted double y);

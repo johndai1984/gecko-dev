@@ -14,17 +14,17 @@ interface DOMTokenList {
   readonly attribute unsigned long length;
   getter DOMString? item(unsigned long index);
   boolean contains(DOMString token);
-  [Throws]
+  [Throws, CEReactions]
   void add(DOMString... tokens);
-  [Throws]
+  [Throws, CEReactions]
   void remove(DOMString... tokens);
-  [Throws]
+  [Throws, CEReactions]
   void replace(DOMString token, DOMString newToken);
-  [Throws]
+  [Throws, CEReactions]
   boolean toggle(DOMString token, optional boolean force);
   [Throws]
   boolean supports(DOMString token);
-  [SetterThrows]
+  [SetterThrows, CEReactions]
   attribute DOMString value;
   stringifier DOMString ();
   iterable<DOMString?>;

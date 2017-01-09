@@ -6,17 +6,17 @@
 [LegacyUnenumerableNamedProperties]
 interface NamedNodeMap {
   getter Attr? getNamedItem(DOMString name);
-  [Throws, BinaryName="setNamedItemNS"]
+  [Throws, BinaryName="setNamedItemNS", CEReactions]
   Attr? setNamedItem(Attr arg);
-  [Throws]
+  [Throws, CEReactions]
   Attr removeNamedItem(DOMString name);
 
   getter Attr? item(unsigned long index);
   readonly attribute unsigned long length;
 
   Attr? getNamedItemNS(DOMString? namespaceURI, DOMString localName);
-  [Throws]
+  [Throws, CEReactions]
   Attr? setNamedItemNS(Attr arg);
-  [Throws]
+  [Throws, CEReactions]
   Attr removeNamedItemNS(DOMString? namespaceURI, DOMString localName);
 };
