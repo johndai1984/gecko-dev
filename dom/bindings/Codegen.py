@@ -9077,7 +9077,18 @@ class CGSpecializedForwardingSetter(CGSpecializedSetter):
     def definition_body(self):
         attrName = self.attr.identifier.name
         forwardToAttrName = self.attr.getExtendedAttribute("PutForwards")[0]
-        ceReaction = "AutoCEReaction ceReaction(nullptr);" if self.attr.getExtendedAttribute("CEReactions") else ""
+        ceReaction = ""
+        if self.attr.getExtendedAttribute("CEReactions"):
+            ceReaction = dedent(
+            """
+            GlobalObject global(cx, obj);
+            if (global.Failed()) {
+              return false;
+            }
+            nsCOMPtr<nsPIDOMWindowInner> window = do_QueryInterface(global.GetAsSupports());
+            CustomElementRegistry* registry = window->CustomElements();
+            AutoCEReaction ceReaction(registry);
+            """)
         # print 'ceReaction:', ceReaction
         # JS_GetProperty and JS_SetProperty can only deal with ASCII
         assert all(ord(c) < 128 for c in attrName)
