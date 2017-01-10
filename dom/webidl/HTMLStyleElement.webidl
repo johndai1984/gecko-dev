@@ -12,9 +12,9 @@
 interface HTMLStyleElement : HTMLElement {
            [Pure]
            attribute boolean disabled;
-           [SetterThrows, Pure]
+           [SetterThrows, Pure, CEReactions]
            attribute DOMString media;
-           [SetterThrows, Pure]
+           [SetterThrows, Pure, CEReactions]
            attribute DOMString type;
            [SetterThrows, Pure]
            attribute boolean scoped;
