@@ -4268,10 +4268,8 @@ class IDLAttribute(IDLInterfaceMember):
             if not attr.noArguments():
                 raise WebIDLError("[CEReactions] must take no arguments",
                                   [attr.location])
-            #traceback.print_stack()
+
             if self.readonly and not self.getExtendedAttribute("PutForwards"):
-                print self.readonly
-                print self.getExtendedAttribute("PutForwards")
                 raise WebIDLError("[CEReactions] only allowed on "
                                   "readonly attributes is also "
                                   "annotated with [PutForwards]",
@@ -5022,7 +5020,6 @@ class IDLMethod(IDLInterfaceMember, IDLScope):
                 print self.isLegacycaller()
                 print self.isStringifier()
                 print self.isJsonifier()
-                traceback.print_stack()
                 raise WebIDLError("[CEReactions] is only allowed on setter or deleter "
                                   "attributes and operations",
                                   [attr.location, self.location])
