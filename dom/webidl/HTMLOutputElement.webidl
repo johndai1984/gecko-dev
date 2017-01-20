@@ -14,7 +14,7 @@
 // http://www.whatwg.org/specs/web-apps/current-work/#the-output-element
 [HTMLConstructor]
 interface HTMLOutputElement : HTMLElement {
-  [PutForwards=value, Constant]
+  [PutForwards=value, Constant, CEReactions]
   readonly attribute DOMTokenList htmlFor;
   readonly attribute HTMLFormElement? form;
   [SetterThrows, Pure, CEReactions]

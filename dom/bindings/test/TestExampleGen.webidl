@@ -785,6 +785,10 @@ interface TestExampleInterface {
   [NeedsSubjectPrincipal] attribute boolean needsSubjectPrincipalAttr;
   [NeedsCallerType] void needsCallerTypeMethod();
   [NeedsCallerType] attribute boolean needsCallerTypeAttr;
+  [CEReactions] void cEReactionsMethod();
+  [CEReactions] attribute boolean cEReactionsAttr;
+  [CEReactions] setter void (DOMString name, DOMString value);
+  [CEReactions] deleter void (DOMString name);
   legacycaller short(unsigned long arg1, TestInterface arg2);
   void passArgsWithDefaults(optional long arg1,
                             optional TestInterface? arg2 = null,

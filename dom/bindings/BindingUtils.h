@@ -3171,6 +3171,8 @@ bool
 GetDesiredProto(JSContext* aCx, const JS::CallArgs& aCallArgs,
                 JS::MutableHandle<JSObject*> aDesiredProto);
 
+CustomElementRegistry*
+GetCustomElementRegistry(JSContext* aCx, JS::Handle<JSObject*> aObj);
 // This function is expected to be called from the constructor function for an
 // HTML element interface; the global/callargs need to be whatever was passed to
 // that constructor function.

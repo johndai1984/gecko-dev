@@ -870,7 +870,7 @@ public:
   void Overload19(JSContext*, const Dict&);
   void Overload20(JSContext*, const Dict&);
   void Overload20(const Sequence<int32_t>&);
-  
+
   // Variadic handling
   void PassVariadicThirdArg(const nsAString&, int32_t,
                             const Sequence<OwningNonNull<TestInterface> >&);
@@ -949,6 +949,13 @@ public:
   void NeedsCallerTypeMethod(CallerType);
   bool NeedsCallerTypeAttr(CallerType);
   void SetNeedsCallerTypeAttr(bool, CallerType);
+  void CEReactionsMethod();
+  bool CEReactionsAttr();
+  void SetCEReactionsAttr(bool);
+  void NamedSetter(const nsAString&,
+                   const nsAString&,
+                   ErrorResult&);
+  void NamedDeleter(const nsAString&, bool &);
   int16_t LegacyCall(const JS::Value&, uint32_t, TestInterface&);
   void PassArgsWithDefaults(JSContext*, const Optional<int32_t>&,
                             TestInterface*, const Dict&, double,
