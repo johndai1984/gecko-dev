@@ -7862,9 +7862,8 @@ class CGMethodCall(CGThing):
                 self.cgRoot.prepend(CGGeneric(dedent(
                     """
                     CustomElementRegistry* registry = GetCustomElementRegistry(cx, obj);
-                    if (!registry) {
-                      return false;
-                    }
+                    MOZ_ASSERT(!registry,
+                               "Should have a custom element registry here");
                     AutoCEReaction ceReaction(registry);
                     """)))
             # Skip required arguments check for maplike/setlike interfaces, as
@@ -8942,9 +8941,8 @@ class CGSpecializedGetter(CGAbstractStaticMethod):
             ceReaction = dedent(
             """
             CustomElementRegistry* registry = GetCustomElementRegistry(cx, obj);
-            if (!registry) {
-              return false;
-            }
+            MOZ_ASSERT(!registry,
+                       "Should have a custom element registry here");
             AutoCEReaction ceReaction(registry);
             """)
         if self.attr.navigatorObjectGetter:
@@ -9057,9 +9055,8 @@ class CGSpecializedSetter(CGAbstractStaticMethod):
             ceReaction = dedent(
             """
             CustomElementRegistry* registry = GetCustomElementRegistry(cx, obj);
-            if (!registry) {
-              return false;
-            }
+            MOZ_ASSERT(!registry,
+                       "Should have a custom element registry here");
             AutoCEReaction ceReaction(registry);
             """)
         return (ceReaction +
@@ -9112,9 +9109,8 @@ class CGSpecializedForwardingSetter(CGSpecializedSetter):
             ceReaction = dedent(
             """
             CustomElementRegistry* registry = GetCustomElementRegistry(cx, obj);
-            if (!registry) {
-              return false;
-            }
+            MOZ_ASSERT(!registry,
+                       "Should have a custom element registry here");
             AutoCEReaction ceReaction(registry);
             """)
         # JS_GetProperty and JS_SetProperty can only deal with ASCII
@@ -11442,9 +11438,8 @@ class CGDOMJSProxyHandler_defineProperty(ClassMethod):
             ceReaction = dedent(
             """
             CustomElementRegistry* registry = GetCustomElementRegistry(cx, proxy);
-            if (!registry) {
-              return false;
-            }
+            MOZ_ASSERT(!registry,
+                       "Should have a custom element registry here");
             AutoCEReaction ceReaction(registry);
             """)
         indexedSetter = self.descriptor.operations['IndexedSetter']
@@ -11595,9 +11590,8 @@ class CGDeleteNamedProperty(CGAbstractStaticMethod):
             ceReaction = dedent(
             """
             CustomElementRegistry* registry = GetCustomElementRegistry(cx, proxy);
-            if (!registry) {
-              return false;
-            }
+            MOZ_ASSERT(!registry,
+                       "Should have a custom element registry here");
             AutoCEReaction ceReaction(registry);
             """)
         return fill(
@@ -11636,9 +11630,8 @@ class CGDOMJSProxyHandler_delete(ClassMethod):
             ceReaction = dedent(
             """
             CustomElementRegistry* registry = GetCustomElementRegistry(cx, proxy);
-            if (!registry) {
-              return false;
-            }
+            MOZ_ASSERT(!registry,
+                       "Should have a custom element registry here");
             AutoCEReaction ceReaction(registry);
             """)
         delete = dedent("""
@@ -11983,9 +11976,8 @@ class CGDOMJSProxyHandler_setCustom(ClassMethod):
             ceReaction = dedent(
             """
             CustomElementRegistry* registry = GetCustomElementRegistry(cx, proxy);
-            if (!registry) {
-              return false;
-            }
+            MOZ_ASSERT(!registry,
+                       "Should have a custom element registry here");
             AutoCEReaction ceReaction(registry);
             """)
         # Correctness first. If we have a NamedSetter and [OverrideBuiltins],
