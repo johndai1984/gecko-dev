@@ -7862,7 +7862,7 @@ class CGMethodCall(CGThing):
                 self.cgRoot.prepend(CGGeneric(dedent(
                     """
                     CustomElementRegistry* registry = GetCustomElementRegistry(cx, obj);
-                    MOZ_ASSERT(!registry,
+                    MOZ_ASSERT(registry,
                                "Should have a custom element registry here");
                     AutoCEReaction ceReaction(registry);
                     """)))
@@ -8941,7 +8941,7 @@ class CGSpecializedGetter(CGAbstractStaticMethod):
             ceReaction = dedent(
             """
             CustomElementRegistry* registry = GetCustomElementRegistry(cx, obj);
-            MOZ_ASSERT(!registry,
+            MOZ_ASSERT(registry,
                        "Should have a custom element registry here");
             AutoCEReaction ceReaction(registry);
             """)
@@ -9055,7 +9055,7 @@ class CGSpecializedSetter(CGAbstractStaticMethod):
             ceReaction = dedent(
             """
             CustomElementRegistry* registry = GetCustomElementRegistry(cx, obj);
-            MOZ_ASSERT(!registry,
+            MOZ_ASSERT(registry,
                        "Should have a custom element registry here");
             AutoCEReaction ceReaction(registry);
             """)
@@ -9109,7 +9109,7 @@ class CGSpecializedForwardingSetter(CGSpecializedSetter):
             ceReaction = dedent(
             """
             CustomElementRegistry* registry = GetCustomElementRegistry(cx, obj);
-            MOZ_ASSERT(!registry,
+            MOZ_ASSERT(registry,
                        "Should have a custom element registry here");
             AutoCEReaction ceReaction(registry);
             """)
@@ -11438,7 +11438,7 @@ class CGDOMJSProxyHandler_defineProperty(ClassMethod):
             ceReaction = dedent(
             """
             CustomElementRegistry* registry = GetCustomElementRegistry(cx, proxy);
-            MOZ_ASSERT(!registry,
+            MOZ_ASSERT(registry,
                        "Should have a custom element registry here");
             AutoCEReaction ceReaction(registry);
             """)
@@ -11590,7 +11590,7 @@ class CGDeleteNamedProperty(CGAbstractStaticMethod):
             ceReaction = dedent(
             """
             CustomElementRegistry* registry = GetCustomElementRegistry(cx, proxy);
-            MOZ_ASSERT(!registry,
+            MOZ_ASSERT(registry,
                        "Should have a custom element registry here");
             AutoCEReaction ceReaction(registry);
             """)
@@ -11630,7 +11630,7 @@ class CGDOMJSProxyHandler_delete(ClassMethod):
             ceReaction = dedent(
             """
             CustomElementRegistry* registry = GetCustomElementRegistry(cx, proxy);
-            MOZ_ASSERT(!registry,
+            MOZ_ASSERT(registry,
                        "Should have a custom element registry here");
             AutoCEReaction ceReaction(registry);
             """)
@@ -11976,7 +11976,7 @@ class CGDOMJSProxyHandler_setCustom(ClassMethod):
             ceReaction = dedent(
             """
             CustomElementRegistry* registry = GetCustomElementRegistry(cx, proxy);
-            MOZ_ASSERT(!registry,
+            MOZ_ASSERT(registry,
                        "Should have a custom element registry here");
             AutoCEReaction ceReaction(registry);
             """)
