@@ -3367,6 +3367,7 @@ GetCustomElementRegistry(JSContext* aCx, JS::Handle<JSObject*> aObj)
   if (!window) {
     return nullptr;
   }
+
   return window->CustomElements();
 }
 // https://html.spec.whatwg.org/multipage/dom.html#htmlconstructor

@@ -373,10 +373,14 @@ class MOZ_RAII AutoCEReaction final {
   public:
     explicit AutoCEReaction(CustomElementRegistry* aRegistry)
       : mRegistry(aRegistry) {
-      mRegistry->CreateAndPushElementQueue();
+      if (mRegistry) {
+        mRegistry->CreateAndPushElementQueue();
+      }
     }
     ~AutoCEReaction() {
-      mRegistry->PopAndInvokeElementQueue();
+      if (mRegistry) {
+        mRegistry->PopAndInvokeElementQueue();
+      }
     }
   private:
     RefPtr<CustomElementRegistry> mRegistry;
