@@ -8936,21 +8936,11 @@ class CGSpecializedGetter(CGAbstractStaticMethod):
         else:
             prefix = ""
 
-        ceReaction = ""
-        if self.attr.getExtendedAttribute("CEReactions"):
-            ceReaction = dedent(
-            """
-            CustomElementRegistry* registry = GetCustomElementRegistry(cx, obj);
-            MOZ_ASSERT(registry,
-                       "Should have a custom element registry here");
-            AutoCEReaction ceReaction(registry);
-            """)
         if self.attr.navigatorObjectGetter:
             cgGetterCall = CGNavigatorGetterCall
         else:
             cgGetterCall = CGGetterCall
         return (prefix +
-                ceReaction +
                 cgGetterCall(self.attr.type, nativeName,
                              self.descriptor, self.attr).define())
 
