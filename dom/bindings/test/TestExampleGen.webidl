@@ -789,6 +789,7 @@ interface TestExampleInterface {
   [CEReactions] attribute boolean cEReactionsAttr;
   [CEReactions] setter void (DOMString name, DOMString value);
   [CEReactions] deleter void (DOMString name);
+  [PutForwards=writableByte, CEReactions] readonly attribute TestInterface putForwardsCEReactionsAttr;
   legacycaller short(unsigned long arg1, TestInterface arg2);
   void passArgsWithDefaults(optional long arg1,
                             optional TestInterface? arg2 = null,

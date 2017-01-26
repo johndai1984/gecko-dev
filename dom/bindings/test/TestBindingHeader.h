@@ -956,6 +956,7 @@ public:
                    const nsAString&,
                    ErrorResult&);
   void NamedDeleter(const nsAString&, bool &);
+  TestInterface* PutForwardsCEReactionsAttr();
   int16_t LegacyCall(const JS::Value&, uint32_t, TestInterface&);
   void PassArgsWithDefaults(JSContext*, const Optional<int32_t>&,
                             TestInterface*, const Dict&, double,
