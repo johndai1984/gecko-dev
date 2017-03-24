@@ -203,15 +203,6 @@ function GetModuleEnvironment(module)
     return env;
 }
 
-function RecordInstantationFailure(module)
-{
-    // Set the module's state to 'failed' to indicate a failed module
-    // instantiation and reset the environment slot to 'undefined'.
-    assert(IsModule(module), "Non-module passed to RecordInstantationFailure");
-    SetModuleState(module, MODULE_STATE_FAILED);
-    UnsafeSetReservedSlot(module, MODULE_OBJECT_ENVIRONMENT_SLOT, undefined);
-}
-
 // 15.2.1.16.4 ModuleDeclarationInstantiation()
 function ModuleDeclarationInstantiation()
 {
@@ -276,7 +267,6 @@ function ModuleDeclarationInstantiation()
         // Step 17.a.iii
         InstantiateModuleFunctionDeclarations(module);
     } catch (e) {
-        RecordInstantationFailure(module);
         throw e;
     }
 }
