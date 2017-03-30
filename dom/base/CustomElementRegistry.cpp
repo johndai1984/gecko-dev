@@ -909,7 +909,10 @@ CustomElementReactionsStack::PopAndInvokeElementQueue()
              "Reaction stack shouldn't be empty");
 
   ElementQueue& elementQueue = mReactionsStack.LastElement();
-  InvokeReactions(elementQueue);
+  if (!elementQueue.IsEmpty()) {
+    InvokeReactions(elementQueue);
+  }
+
   DebugOnly<bool> isRemovedElement = mReactionsStack.RemoveElement(elementQueue);
   MOZ_ASSERT(isRemovedElement,
              "Reaction stack should have an element queue to remove");
@@ -958,7 +961,9 @@ CustomElementReactionsStack::Enqueue(Element* aElement,
 void
 CustomElementReactionsStack::InvokeBackupQueue()
 {
-  InvokeReactions(mBackupQueue);
+  if (!mBackupQueue.IsEmpty()) {
+    InvokeReactions(mBackupQueue);
+  }
 }
 
 void

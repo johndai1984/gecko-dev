@@ -180,7 +180,7 @@ public:
   // nsWeakPtr is a weak pointer of Element
   // The element reaction queues are stored in ElementReactionQueueMap.
   // We need to lookup ElementReactionQueueMap again to get relevant reaction queue.
-  typedef nsTArray<nsWeakPtr> ElementQueue;
+  typedef AutoTArray<nsWeakPtr, 1> ElementQueue;
 
   /**
    * Enqueue a custom element upgrade reaction
@@ -202,13 +202,13 @@ public:
 private:
   ~CustomElementReactionsStack() {};
 
-  typedef nsTArray<nsAutoPtr<CustomElementReaction>> ReactionQueue;
+  typedef AutoTArray<nsAutoPtr<CustomElementReaction>, 4> ReactionQueue;
   typedef nsClassHashtable<nsISupportsHashKey, ReactionQueue>
     ElementReactionQueueMap;
 
   ElementReactionQueueMap mElementReactionQueueMap;
 
-  nsTArray<ElementQueue> mReactionsStack;
+  AutoTArray<ElementQueue, 8> mReactionsStack;
   ElementQueue mBackupQueue;
   // https://html.spec.whatwg.org/#enqueue-an-element-on-the-appropriate-element-queue
   bool mIsBackupQueueProcessing;
