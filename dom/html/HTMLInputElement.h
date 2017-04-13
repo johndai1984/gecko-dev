@@ -27,6 +27,7 @@
 #include "mozilla/Decimal.h"
 #include "nsContentUtils.h"
 #include "nsTextEditorState.h"
+#include "nsContentList.h"
 
 class nsIRadioGroupContainer;
 class nsIRadioVisitor;
@@ -712,6 +713,8 @@ public:
   void GetValidationMessage(nsAString& aValidationMessage, ErrorResult& aRv);
 
   // XPCOM GetCustomVisibility() is OK
+
+  nsINodeList* GetLabels();
 
   // XPCOM Select() is OK
 
@@ -1638,6 +1641,7 @@ protected:
   bool                     mSelectionCached : 1;
 
 private:
+  RefPtr<nsSimpleContentList> mLabelNodes;
   static void MapAttributesIntoRule(const nsMappedAttributes* aAttributes,
                                     GenericSpecifiedValues* aGenericData);
 

@@ -98,6 +98,10 @@ public:
   // nsIConstraintValidation::CheckValidity() is fine.
   void SetCustomValidity(const nsAString& aError);
 
+  nsINodeList* Labels() const
+  {
+    return nullptr;
+  }
 protected:
   virtual ~HTMLOutputElement();
 

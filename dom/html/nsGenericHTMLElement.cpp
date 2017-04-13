@@ -1690,6 +1690,14 @@ nsGenericHTMLElement::IsLabelable() const
   return IsAnyOfHTMLElements(nsGkAtoms::progress, nsGkAtoms::meter);
 }
 
+// nsINodeList* Labels() const
+// {
+//   // if (IsLabelable()) {
+//   //   return new nsSimpleContentList(this);
+//   // }
+//   return nullptr;
+// }
+
 bool
 nsGenericHTMLElement::IsInteractiveHTMLContent(bool aIgnoreTabindex) const
 {

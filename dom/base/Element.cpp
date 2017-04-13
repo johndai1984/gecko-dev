@@ -1973,6 +1973,11 @@ Element::IsLabelable() const
   return false;
 }
 
+// nsINodeList* Labels() const
+// {
+//   return nullptr;
+// }
+
 bool
 Element::IsInteractiveHTMLContent(bool aIgnoreTabindex) const
 {

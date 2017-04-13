@@ -19,8 +19,5 @@ interface HTMLProgressElement : HTMLElement {
            attribute double max;
   readonly attribute double position;
 
-  /**
-   * The labels attribute will be done with bug 567740.
-   */
   //readonly attribute NodeList labels;
 };

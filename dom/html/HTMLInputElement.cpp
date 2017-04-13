@@ -122,6 +122,7 @@
 
 // input type=date
 #include "js/Date.h"
+#include "mozilla/dom/HTMLLabelElement.h"
 
 NS_IMPL_NS_NEW_HTML_ELEMENT_CHECK_PARSER(Input)
 
@@ -1177,6 +1178,7 @@ NS_IMPL_CYCLE_COLLECTION_TRAVERSE_BEGIN_INHERITED(HTMLInputElement,
 
   NS_IMPL_CYCLE_COLLECTION_TRAVERSE(mFileList)
   NS_IMPL_CYCLE_COLLECTION_TRAVERSE(mEntries)
+  NS_IMPL_CYCLE_COLLECTION_TRAVERSE(mLabelNodes)
 NS_IMPL_CYCLE_COLLECTION_TRAVERSE_END
 
 NS_IMPL_CYCLE_COLLECTION_UNLINK_BEGIN_INHERITED(HTMLInputElement,
@@ -1191,7 +1193,7 @@ NS_IMPL_CYCLE_COLLECTION_UNLINK_BEGIN_INHERITED(HTMLInputElement,
   }
 
   tmp->ClearGetFilesHelpers();
-
+  NS_IMPL_CYCLE_COLLECTION_UNLINK(mLabelNodes)
   //XXX should unlink more?
 NS_IMPL_CYCLE_COLLECTION_UNLINK_END
 
@@ -6227,6 +6229,32 @@ HTMLInputElement::SetValueFromSetRangeText(const nsAString& aValue)
                           nsTextEditorState::eSetValue_ByContent |
                           nsTextEditorState::eSetValue_Notify);
 }
+
+nsINodeList*
+HTMLInputElement::GetLabels()
+{
+    // TODO: v1: have a simple get nodelist each time.
+    // TODO: v2: have a cache to save data, and a dirty bit to get nodelist when user request labels.
+    // TODO: v3: integrate to all labels.
+    // if (!mLabelNodes) {
+    //   mLabelNodes = new nsSimpleContentList(nullptr);
+    // }
+
+    RefPtr<nsSimpleContentList> labelNodes = new nsSimpleContentList(nullptr);
+    // search by tree order
+    nsINode* root = OwnerDocAsNode();
+    MOZ_ASSERT(root, "Should always have a node here!");
+    for (nsIContent* cur = root->GetFirstChild(); cur;
+         cur = cur->GetNextNode()) {
+      if (cur->IsHTMLElement(nsGkAtoms::label)) {
+        HTMLLabelElement* lableElement = HTMLLabelElement::FromContent(cur);
+        if (lableElement && lableElement->GetControl() == this) {
+          labelNodes->AppendElement(cur);
+        }
+      }
+    }
+    return labelNodes;
+  }
 
 Nullable<uint32_t>
 HTMLInputElement::GetSelectionStart(ErrorResult& aRv)

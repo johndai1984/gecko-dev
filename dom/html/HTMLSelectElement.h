@@ -442,6 +442,10 @@ public:
   bool OpenInParentProcess();
   void SetOpenInParentProcess(bool aVal);
 
+  nsINodeList* Labels() const
+  {
+    return nullptr;
+  }
 protected:
   virtual ~HTMLSelectElement();
 
