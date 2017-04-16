@@ -73,10 +73,10 @@ public:
     SetDoubleAttr(nsGkAtoms::optimum, aValue, aRv);
   }
 
-  nsINodeList* Labels() const
-  {
-    return nullptr;
-  }
+  // nsINodeList* Labels()
+  // {
+  //   return nullptr;
+  // }
 protected:
   virtual ~HTMLMeterElement();
 

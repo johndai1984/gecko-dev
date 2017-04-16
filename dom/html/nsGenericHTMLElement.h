@@ -862,7 +862,7 @@ public:
   }
 
   virtual bool IsLabelable() const override;
-  // virtual nsINodeList* Labels() const override;
+  virtual nsINodeList* Labels() override;
   virtual bool IsInteractiveHTMLContent(bool aIgnoreTabindex) const override;
 
   static bool TouchEventsEnabled(JSContext* /* unused */, JSObject* /* unused */);

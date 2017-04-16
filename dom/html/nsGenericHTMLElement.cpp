@@ -107,6 +107,7 @@
 #include "mozilla/StyleSetHandle.h"
 #include "mozilla/StyleSetHandleInlines.h"
 #include "ReferrerPolicy.h"
+#include "mozilla/dom/HTMLLabelElement.h"
 
 using namespace mozilla;
 using namespace mozilla::dom;
@@ -1690,13 +1691,32 @@ nsGenericHTMLElement::IsLabelable() const
   return IsAnyOfHTMLElements(nsGkAtoms::progress, nsGkAtoms::meter);
 }
 
-// nsINodeList* Labels() const
-// {
-//   // if (IsLabelable()) {
-//   //   return new nsSimpleContentList(this);
-//   // }
-//   return nullptr;
-// }
+nsINodeList*
+nsGenericHTMLElement::Labels()
+{
+  // TODO: v1: have a simple get nodelist each time.(done)
+  // TODO: v2: have a cache to save data, and a dirty bit to get nodelist when user request labels.
+  // TODO: v3: integrate to all labels.(done)
+  // TODO: v4: change to const return function.
+  // if (!mLabelNodes) {
+  //   mLabelNodes = new nsSimpleContentList(nullptr);
+  // }
+
+  RefPtr<nsSimpleContentList> labelNodes = new nsSimpleContentList(nullptr);
+  // search by tree order
+  nsINode* root = OwnerDocAsNode();
+  MOZ_ASSERT(root, "Should always have a node here!");
+  for (nsIContent* cur = root->GetFirstChild(); cur;
+        cur = cur->GetNextNode()) {
+    if (cur->IsHTMLElement(nsGkAtoms::label)) {
+      HTMLLabelElement* lableElement = HTMLLabelElement::FromContent(cur);
+      if (lableElement && lableElement->GetControl() == this) {
+        labelNodes->AppendElement(cur);
+      }
+    }
+  }
+  return labelNodes;
+}
 
 bool
 nsGenericHTMLElement::IsInteractiveHTMLContent(bool aIgnoreTabindex) const

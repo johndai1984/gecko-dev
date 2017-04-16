@@ -714,7 +714,14 @@ public:
 
   // XPCOM GetCustomVisibility() is OK
 
-  nsINodeList* GetLabels();
+  nsINodeList* GetLabels()
+  {
+    if (!IsLabelable()) {
+      return nullptr;
+    }
+
+    return Labels();
+  }
 
   // XPCOM Select() is OK
 
@@ -1641,7 +1648,7 @@ protected:
   bool                     mSelectionCached : 1;
 
 private:
-  RefPtr<nsSimpleContentList> mLabelNodes;
+  // RefPtr<nsSimpleContentList> mLabelNodes;
   static void MapAttributesIntoRule(const nsMappedAttributes* aAttributes,
                                     GenericSpecifiedValues* aGenericData);
 

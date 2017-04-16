@@ -34,5 +34,5 @@ interface HTMLOutputElement : HTMLElement {
   boolean reportValidity();
   void setCustomValidity(DOMString error);
 
-  //readonly attribute NodeList labels;
+  readonly attribute NodeList labels;
 };

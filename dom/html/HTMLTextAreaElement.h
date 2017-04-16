@@ -296,10 +296,10 @@ public:
     return mState.GetEditor();
   }
 
-  nsINodeList* Labels() const
-  {
-    return nullptr;
-  }
+  // nsINodeList* Labels() const
+  // {
+  //   return nullptr;
+  // }
 protected:
   virtual ~HTMLTextAreaElement() {}
 

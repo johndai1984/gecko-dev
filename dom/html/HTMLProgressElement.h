@@ -41,10 +41,10 @@ public:
   }
   double Position() const;
 
-  nsINodeList* Labels() const
-  {
-    return nullptr;
-  }
+  // nsINodeList* Labels()
+  // {
+  //   return nullptr;
+  // }
 protected:
   virtual ~HTMLProgressElement();
 

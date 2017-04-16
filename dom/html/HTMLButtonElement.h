@@ -97,10 +97,10 @@ public:
                                bool* aIsFocusable,
                                int32_t* aTabIndex) override;
 
-  nsINodeList* Labels() const
-  {
-    return nullptr;
-  }
+  // nsINodeList* Labels() const
+  // {
+  //   return nullptr;
+  // }
   // WebIDL
   bool Autofocus() const
   {

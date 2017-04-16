@@ -26,5 +26,5 @@ interface HTMLMeterElement : HTMLElement {
            attribute double high;
            [SetterThrows]
            attribute double optimum;
-           //readonly attribute NodeList labels;
+           readonly attribute NodeList labels;
 };
