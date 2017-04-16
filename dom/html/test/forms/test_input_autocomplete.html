@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <!--
-Test @autocomplete on <input>
+Test @autocomplete on <input>, <select>
 -->
 <head>
   <title>Test for &lt;input autocomplete='…'&gt;</title>
@@ -9,6 +9,18 @@ Test @autocomplete on <input>
   <link rel="stylesheet" href="/tests/SimpleTest/test.css"/>
 <script>
 "use strict";
+var section = "section-blue";
+var modes = ["shipping", "billing"];
+var contacts = ["home", "work", "mobile", "fax"]; // page not support
+var telFields = ["tel", "tel-country-code", "tel-national", "tel-area-code", "tel-local",
+                "tel-local-prefix", "tel-local-suffix", "tel-extension", "email"];// impp not support
+var nameFields = ["name", "given-name", "additional-name", "family-name"];
+var loginFields = ["username", "new-password", "current-password"];
+var addressFields = ["organization", "street-address", "address-line1", "address-line2", "address-line3",
+                    "address-level4", "address-level3", "address-level2", "address-level1", "country",
+                    "country", "country-name", "postal-code"];
+// Credit card fields not support now.
+// Additional field types not support now.
 
 var values = [
   // @autocomplete content attribute, expected IDL attribute value
@@ -22,7 +34,6 @@ var values = [
   ["On", "on"],
   ["off", "off"],
   ["OFF", "off"],
-  ["username", "username"],
   [" username ", "username"],
   ["foobar", ""],
 
@@ -34,9 +45,7 @@ var values = [
   [" username tel ", ""],
   ["tel mobile", ""],
   ["tel shipping", ""],
-  ["shipping tel", "shipping tel"],
   ["shipPING tel", "shipping tel"],
-  ["mobile tel", "mobile tel"],
   ["  MoBiLe  TeL  ", "mobile tel"],
   ["XXX tel", ""],
   ["XXX username", ""],
@@ -47,11 +56,11 @@ var values = [
   ["mobile foo tel", ""],
   ["mobile tel foo", ""],
   ["tel mobile billing", ""],
-  ["billing mobile tel", "billing mobile tel"],
   ["  BILLing   MoBiLE   tEl  ", "billing mobile tel"],
-  ["billing home tel", "billing home tel"],
+  ["section-blue home address-level2", ""],
 
   // Four tokens (invalid)
+  ["section-blue shipping home name", ""],
   ["billing billing mobile tel", ""],
 
   // Five tokens (invalid)
@@ -60,14 +69,63 @@ var values = [
 
 var types = [undefined, "hidden", "text", "search"]; // Valid types for all non-multiline hints.
 
+function checkAutocompleteTypesValues(field, type, data) {
+  field.setAttribute("autocomplete", data);
+  is(field.autocomplete, data, "Checking @autocomplete for @type=" + type + " of: " + data);
+}
+
 function checkAutocompleteValues(field, type) {
-  for (var test of values) {
+  for (let test of values) {
     if (typeof(test[0]) === "undefined")
       field.removeAttribute("autocomplete");
     else
       field.setAttribute("autocomplete", test[0]);
     is(field.autocomplete, test[1], "Checking @autocomplete for @type=" + type + " of: " + test[0]);
     is(field.autocomplete, test[1], "Checking cached @autocomplete for @type=" + type + " of: " + test[0]);
+  }
+
+  // One token, field
+  // Two tokens, 1) section-* field, 2) mode field, 3) contact telField
+  // Three tokens, 1) section-* mode field, 2) section-* contact telField, 3) mode contact telField
+  // Four tokens, section-* mode contact telField
+  for (let fields of [telFields, nameFields, loginFields, addressFields]) {
+    for (let test of fields) {
+      // One token, field
+      checkAutocompleteTypesValues(field, type, test);
+      // Two tokens, section-* field
+      checkAutocompleteTypesValues(field, type, section + " " + test);
+    }
+  }
+
+  for (let mode of modes) {
+    for (let fields of [telFields, nameFields, loginFields, addressFields]) {
+      for (let test of fields) {
+        // Two tokens, mode field
+        checkAutocompleteTypesValues(field, type, mode + " "+ test);
+        // Three tokens, section-* mode field
+        checkAutocompleteTypesValues(field, type, section + " " + mode + " "+ test);
+      }
+    }
+  }
+
+  for (let contact of contacts) {
+    for (let tel of telFields) {
+      // Two tokens, contact telField
+      checkAutocompleteTypesValues(field, type, contact + " "+ tel);
+      // Three tokens, section-* contact telField
+      checkAutocompleteTypesValues(field, type, section + " " + contact + " "+ tel);
+    }
+  }
+
+  for (let mode of modes) {
+    for (let contact of contacts) {
+      for (let tel of telFields) {
+        // Three tokens, mode contact telField
+        checkAutocompleteTypesValues(field, type, mode + " " + contact + " "+ tel);
+        // Four tokens, section-* mode contact telField
+        checkAutocompleteTypesValues(field, type, section + " " + mode + " " + contact + " "+ tel);
+      }
+    }
   }
 }
 
