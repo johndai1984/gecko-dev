@@ -1692,7 +1692,7 @@ nsGenericHTMLElement::IsLabelable() const
 }
 
 nsINodeList*
-nsGenericHTMLElement::Labels()
+nsGenericHTMLElement::Labels() const
 {
   // TODO: v1: have a simple get nodelist each time.(done)
   // TODO: v2: have a cache to save data, and a dirty bit to get nodelist when user request labels.
@@ -1702,6 +1702,7 @@ nsGenericHTMLElement::Labels()
   //   mLabelNodes = new nsSimpleContentList(nullptr);
   // }
 
+  // RefPtr<nsSimpleContentList> labelNodes = new nsSimpleContentList(const_cast<nsGenericHTMLElement *>(this));
   RefPtr<nsSimpleContentList> labelNodes = new nsSimpleContentList(nullptr);
   // search by tree order
   nsINode* root = OwnerDocAsNode();

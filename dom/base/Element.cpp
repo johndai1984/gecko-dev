@@ -1974,7 +1974,7 @@ Element::IsLabelable() const
 }
 
 nsINodeList*
-Element::Labels()
+Element::Labels() const
 {
   return nullptr;
 }

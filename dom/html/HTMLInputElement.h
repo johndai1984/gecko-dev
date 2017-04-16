@@ -714,7 +714,7 @@ public:
 
   // XPCOM GetCustomVisibility() is OK
 
-  nsINodeList* GetLabels()
+  nsINodeList* GetLabels() const
   {
     if (!IsLabelable()) {
       return nullptr;

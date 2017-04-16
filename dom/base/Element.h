@@ -340,7 +340,7 @@ public:
    */
   virtual bool IsLabelable() const;
 
-  virtual nsINodeList* Labels();
+  virtual nsINodeList* Labels() const;
   /**
    * Returns if the element is interactive content as per HTML specification.
    */
