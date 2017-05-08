@@ -39,9 +39,9 @@ function open_preferences(aCallback) {
 
 function openAndLoadSubDialog(aURL, aFeatures = null, aParams = null, aClosingCallback = null) {
   let promise = promiseLoadSubDialog(aURL);
-  executeSoon(() => {
+  // executeSoon(() => {
     content.gSubDialog.open(aURL, aFeatures, aParams, aClosingCallback);
-  });
+  // });
   return promise;
 }
 
