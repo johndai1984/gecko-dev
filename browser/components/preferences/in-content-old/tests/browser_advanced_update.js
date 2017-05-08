@@ -116,15 +116,16 @@ add_task(function*() {
   let doc = gBrowser.selectedBrowser.contentDocument;
 
   let showBtn = doc.getElementById("showUpdateHistory");
-  let dialogOverlay = doc.getElementById("dialogOverlay");
+  let dialogOverlay = doc.getElementById("dialogOverlay-0");
 
   // Test the dialog window opens
   is(dialogOverlay.style.visibility, "", "The dialog should be invisible");
+  let promiseSubDialogLoaded = promiseLoadSubDialog("chrome://mozapps/content/update/history.xul");
   showBtn.doCommand();
-  yield promiseLoadSubDialog("chrome://mozapps/content/update/history.xul");
+  yield promiseSubDialogLoaded;
   is(dialogOverlay.style.visibility, "visible", "The dialog should be visible");
 
-  let dialogFrame = doc.getElementById("dialogFrame");
+  let dialogFrame = dialogOverlay.querySelector(".dialogFrame");
   let frameDoc = dialogFrame.contentDocument;
   let updates = frameDoc.querySelectorAll("update");
 
@@ -146,7 +147,7 @@ add_task(function*() {
   }
 
   // Test the dialog window closes
-  let closeBtn = doc.getElementById("dialogClose");
+  let closeBtn = dialogOverlay.querySelector(".dialogClose");
   closeBtn.doCommand();
   is(dialogOverlay.style.visibility, "", "The dialog should be invisible");
 

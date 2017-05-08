@@ -290,8 +290,8 @@ add_task(function* () {
   yield updatePromise;
   yield openSiteDataSettingsDialog();
 
-  let doc = gBrowser.selectedBrowser.contentDocument;
-  let dialogFrame = doc.getElementById("dialogFrame");
+  let dialog = content.gSubDialog._topDialog;
+  let dialogFrame = dialog._frame;
   let frameDoc = dialogFrame.contentDocument;
   let hostCol = frameDoc.getElementById("hostCol");
   let usageCol = frameDoc.getElementById("usageCol");
@@ -382,7 +382,7 @@ add_task(function* () {
   yield openSiteDataSettingsDialog();
 
   let doc = gBrowser.selectedBrowser.contentDocument;
-  let frameDoc = doc.getElementById("dialogFrame").contentDocument;
+  let frameDoc = content.gSubDialog._topDialog._frame.contentDocument;
   let searchBox = frameDoc.getElementById("searchBox");
   let mockOrigins = Array.from(mockSiteDataManager.sites.keys());
 
