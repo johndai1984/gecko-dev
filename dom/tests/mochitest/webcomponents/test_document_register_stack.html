@@ -28,7 +28,7 @@ function testChangeAttributeInCreatedCallback() {
     createdCallbackCalled = true;
     is(attributeChangedCallbackCalled, false, "Attribute changed callback should not have been called prior to setting the attribute.");
     this.setAttribute("foo", "bar");
-    is(attributeChangedCallbackCalled, false, "While element is being created, element should not be added to the current element callback queue.");
+    is(attributeChangedCallbackCalled, true, "While element is being created, element should be added to the current element callback queue.");
   };
 
   p.attributeChangedCallback = function(name, oldValue, newValue) {
