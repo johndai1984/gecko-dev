@@ -48,7 +48,7 @@ CustomElementCallback::Call()
             extType.IsEmpty() ? nullptr : &extType);
 
         nsContentUtils::EnqueueLifecycleCallback(
-          document, nsIDocument::eConnected, mThisObject, nullptr, definition);
+          nsIDocument::eConnected, mThisObject, nullptr, definition);
       }
 
       static_cast<LifecycleCreatedCallback *>(mCallback.get())->Call(mThisObject, rv);
@@ -320,7 +320,7 @@ CustomElementRegistry::SetupCustomElement(Element* aElement,
   SyncInvokeReactions(nsIDocument::eCreated, aElement, definition);
 }
 
-UniquePtr<CustomElementCallback>
+/* static */ UniquePtr<CustomElementCallback>
 CustomElementRegistry::CreateCustomElementCallback(
   nsIDocument::ElementCallbackType aType, Element* aCustomElement,
   LifecycleCallbackArgs* aArgs, CustomElementDefinition* aDefinition)
@@ -394,7 +394,7 @@ CustomElementRegistry::SyncInvokeReactions(nsIDocument::ElementCallbackType aTyp
   }
 
   UniquePtr<CustomElementReaction> reaction(Move(
-    MakeUnique<CustomElementCallbackReaction>(this, aDefinition,
+    MakeUnique<CustomElementCallbackReaction>(aDefinition,
                                               Move(callback))));
 
   RefPtr<SyncInvokeReactionRunnable> runnable =
@@ -403,7 +403,7 @@ CustomElementRegistry::SyncInvokeReactions(nsIDocument::ElementCallbackType aTyp
   nsContentUtils::AddScriptRunner(runnable);
 }
 
-void
+/* static */ void
 CustomElementRegistry::EnqueueLifecycleCallback(nsIDocument::ElementCallbackType aType,
                                                 Element* aCustomElement,
                                                 LifecycleCallbackArgs* aArgs,
@@ -424,7 +424,7 @@ CustomElementRegistry::EnqueueLifecycleCallback(nsIDocument::ElementCallbackType
     return;
   }
 
-  DocGroup* docGroup = mWindow->GetDocGroup();
+  DocGroup* docGroup = aCustomElement->OwnerDoc()->GetDocGroup();
   if (!docGroup) {
     return;
   }
@@ -439,7 +439,7 @@ CustomElementRegistry::EnqueueLifecycleCallback(nsIDocument::ElementCallbackType
 
   CustomElementReactionsStack* reactionsStack =
     docGroup->CustomElementReactionsStack();
-  reactionsStack->EnqueueCallbackReaction(this, aCustomElement, definition,
+  reactionsStack->EnqueueCallbackReaction(aCustomElement, definition,
                                           Move(callback));
 }
 
@@ -479,7 +479,7 @@ CustomElementRegistry::UpgradeCandidates(nsIAtom* aKey,
         continue;
       }
 
-      reactionsStack->EnqueueUpgradeReaction(this, elem, aDefinition);
+      reactionsStack->EnqueueUpgradeReaction(elem, aDefinition);
     }
   }
 }
@@ -930,8 +930,7 @@ CustomElementRegistry::Upgrade(Element* aElement,
           (attrValue.IsEmpty() ? NullString() : attrValue),
           (namespaceURI.IsEmpty() ? NullString() : namespaceURI)
         };
-        nsContentUtils::EnqueueLifecycleCallback(aElement->OwnerDoc(),
-                                                 nsIDocument::eAttributeChanged,
+        nsContentUtils::EnqueueLifecycleCallback(nsIDocument::eAttributeChanged,
                                                  aElement,
                                                  &args, aDefinition);
       }
@@ -961,8 +960,7 @@ CustomElementRegistry::Upgrade(Element* aElement,
   aElement->SetCustomElementDefinition(aDefinition);
 
   // This is for old spec.
-  nsContentUtils::EnqueueLifecycleCallback(aElement->OwnerDoc(),
-                                           nsIDocument::eCreated,
+  nsContentUtils::EnqueueLifecycleCallback(nsIDocument::eCreated,
                                            aElement, nullptr, aDefinition);
 }
 
@@ -1006,20 +1004,18 @@ CustomElementReactionsStack::PopAndInvokeElementQueue()
 }
 
 void
-CustomElementReactionsStack::EnqueueUpgradeReaction(CustomElementRegistry* aRegistry,
-                                                    Element* aElement,
+CustomElementReactionsStack::EnqueueUpgradeReaction(Element* aElement,
                                                     CustomElementDefinition* aDefinition)
 {
-  Enqueue(aElement, new CustomElementUpgradeReaction(aRegistry, aDefinition));
+  Enqueue(aElement, new CustomElementUpgradeReaction(aDefinition));
 }
 
 void
-CustomElementReactionsStack::EnqueueCallbackReaction(CustomElementRegistry* aRegistry,
-                                                     Element* aElement,
+CustomElementReactionsStack::EnqueueCallbackReaction(Element* aElement,
                                                      CustomElementDefinition* aDefinition,
                                                      UniquePtr<CustomElementCallback> aCustomElementCallback)
 {
-  Enqueue(aElement, new CustomElementCallbackReaction(aRegistry, aDefinition,
+  Enqueue(aElement, new CustomElementCallbackReaction(aDefinition,
                                                       Move(aCustomElementCallback)));
 }
 
@@ -1180,7 +1176,7 @@ CustomElementDefinition::CustomElementDefinition(nsIAtom* aType,
 /* virtual */ void
 CustomElementUpgradeReaction::Invoke(Element* aElement, ErrorResult& aRv)
 {
-  mRegistry->Upgrade(aElement, mDefinition, aRv);
+  CustomElementRegistry::Upgrade(aElement, mDefinition, aRv);
 }
 
 //-----------------------------------------------------

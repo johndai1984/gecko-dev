@@ -10138,18 +10138,14 @@ nsContentUtils::SyncInvokeReactions(nsIDocument::ElementCallbackType aType,
 {
   MOZ_ASSERT(aElement);
 
-  nsIDocument* doc = aElement->OwnerDoc();
-  nsPIDOMWindowInner* window(doc->GetInnerWindow());
-  if (!window) {
+  // No DocGroup means no custom element reactions stack.
+  if (!doc->GetDocGroup()) {
     return;
   }
 
-  RefPtr<CustomElementRegistry> registry(window->CustomElements());
-  if (!registry) {
-    return;
-  }
-
-  registry->SyncInvokeReactions(aType, aElement, aDefinition);
+  CustomElementReactionsStack* stack =
+    doc->GetDocGroup()->CustomElementReactionsStack();
+  stack->SyncInvokeReactions(aType, aElement, aDefinition);
 }
 
 /* static */ void
@@ -10159,19 +10155,14 @@ nsContentUtils::EnqueueUpgradeReaction(Element* aElement,
   MOZ_ASSERT(aElement);
 
   nsIDocument* doc = aElement->OwnerDoc();
-  nsPIDOMWindowInner* window(doc->GetInnerWindow());
-  if (!window) {
-    return;
-  }
-
-  RefPtr<CustomElementRegistry> registry(window->CustomElements());
-  if (!registry) {
+  // No DocGroup means no custom element reactions stack.
+  if (!doc->GetDocGroup()) {
     return;
   }
 
   CustomElementReactionsStack* stack =
     doc->GetDocGroup()->CustomElementReactionsStack();
-  stack->EnqueueUpgradeReaction(registry, aElement, aDefinition);
+  stack->EnqueueUpgradeReaction(aElement, aDefinition);
 }
 
 /* static */ void
@@ -10181,23 +10172,12 @@ nsContentUtils::EnqueueLifecycleCallback(nsIDocument* aDoc,
                                          LifecycleCallbackArgs* aArgs,
                                          CustomElementDefinition* aDefinition)
 {
-  MOZ_ASSERT(aDoc);
-
-  if (!aDoc->GetDocShell()) {
+  // No DocGroup means no custom element reactions stack.
+  if (!aCustomElement->OwnerDoc()->GetDocGroup()) {
     return;
   }
 
-  nsCOMPtr<nsPIDOMWindowInner> window(aDoc->GetInnerWindow());
-  if (!window) {
-    return;
-  }
-
-  RefPtr<CustomElementRegistry> registry(window->CustomElements());
-  if (!registry) {
-    return;
-  }
-
-  registry->EnqueueLifecycleCallback(aType, aCustomElement, aArgs, aDefinition);
+  CustomElementRegistry::EnqueueLifecycleCallback(aType, aCustomElement, aArgs, aDefinition);
 }
 
 /* static */ void
