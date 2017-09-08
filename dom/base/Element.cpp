@@ -2645,7 +2645,7 @@ Element::SetAttrAndNotify(int32_t aNamespaceID,
         };
 
         nsContentUtils::EnqueueLifecycleCallback(nsIDocument::eAttributeChanged,
-          this, &args, definition);
+          this, &args, nullptr, definition);
       }
     }
   }
@@ -2940,7 +2940,7 @@ Element::UnsetAttr(int32_t aNameSpaceID, nsIAtom* aName,
         };
 
         nsContentUtils::EnqueueLifecycleCallback(nsIDocument::eAttributeChanged,
-          this, &args, definition);
+          this, &args, nullptr, definition);
       }
     }
   }
