@@ -10138,14 +10138,18 @@ nsContentUtils::SyncInvokeReactions(nsIDocument::ElementCallbackType aType,
 {
   MOZ_ASSERT(aElement);
 
-  // No DocGroup means no custom element reactions stack.
-  if (!doc->GetDocGroup()) {
+  nsIDocument* doc = aElement->OwnerDoc();
+  nsPIDOMWindowInner* window(doc->GetInnerWindow());
+  if (!window) {
     return;
   }
 
-  CustomElementReactionsStack* stack =
-    doc->GetDocGroup()->CustomElementReactionsStack();
-  stack->SyncInvokeReactions(aType, aElement, aDefinition);
+  RefPtr<CustomElementRegistry> registry(window->CustomElements());
+  if (!registry) {
+    return;
+  }
+
+  return registry->SyncInvokeReactions(aType, aElement, aDefinition);
 }
 
 /* static */ void
@@ -10166,8 +10170,7 @@ nsContentUtils::EnqueueUpgradeReaction(Element* aElement,
 }
 
 /* static */ void
-nsContentUtils::EnqueueLifecycleCallback(nsIDocument* aDoc,
-                                         nsIDocument::ElementCallbackType aType,
+nsContentUtils::EnqueueLifecycleCallback(nsIDocument::ElementCallbackType aType,
                                          Element* aCustomElement,
                                          LifecycleCallbackArgs* aArgs,
                                          CustomElementDefinition* aDefinition)
