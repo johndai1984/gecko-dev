@@ -938,7 +938,10 @@ CustomElementRegistry::Upgrade(Element* aElement,
   }
 
   // Step 4.
-  // TODO: Bug 1334043 - Implement connected lifecycle callbacks for custom elements
+  if (aElement->GetComposedDoc()) {
+    nsContentUtils::EnqueueLifecycleCallback(nsIDocument::eConnected, aElement,
+      nullptr, aDefinition);
+  }
 
   // Step 5.
   AutoConstructionStackEntry acs(aDefinition->mConstructionStack,
