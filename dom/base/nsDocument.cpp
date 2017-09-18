@@ -279,6 +279,7 @@
 #include "mozilla/DocumentStyleRootIterator.h"
 #include "mozilla/ServoRestyleManager.h"
 #include "mozilla/ClearOnShutdown.h"
+#include "nsHTMLTags.h"
 
 using namespace mozilla;
 using namespace mozilla::dom;
@@ -6369,12 +6370,7 @@ nsDocument::CustomElementConstructor(JSContext* aCx, unsigned aArgc, JS::Value* 
                                                kNameSpaceID_XHTML,
                                                nsIDOMNode::ELEMENT_NODE);
 
-    nsIParserService* parserService = nsContentUtils::GetParserService();
-    if (!parserService) {
-      return false;
-    }
-
-    int32_t tag = parserService->HTMLCaseSensitiveAtomTagToId(definition->mLocalName);
+    int32_t tag = nsHTMLTags::CaseSensitiveAtomTagToId(definition->mLocalName);
     if (tag == eHTMLTag_userdefined &&
         nsContentUtils::IsCustomElementName(definition->mType)) {
       element = NS_NewHTMLElement(nodeInfo.forget(), NOT_FROM_PARSER);
