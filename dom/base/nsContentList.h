@@ -230,6 +230,12 @@ struct nsContentListKey
   const uint32_t mHash;
 };
 
+class ContentListHolderNotifier
+{
+public:
+  virtual void OnDestroy() = 0;
+};
+
 /**
  * LIST_UP_TO_DATE means that the list is up to date and need not do
  * any walking to be able to answer any questions anyone may have.
@@ -318,6 +324,12 @@ public:
   using nsWrapperCache::GetWrapperPreserveColor;
   using nsWrapperCache::PreserveWrapper;
   virtual JSObject* WrapObject(JSContext* aCx, JS::Handle<JSObject*> aGivenProto) override;
+
+  void SetupHolderNotifier(ContentListHolderNotifier* aNotifier)
+  {
+    mHolderNotifier = aNotifier;
+  }
+
 protected:
   virtual ~nsContentList();
 
@@ -527,6 +539,8 @@ protected:
    * Whether the list observes mutations to the DOM tree.
    */
   const uint8_t mIsLiveList : 1;
+
+  ContentListHolderNotifier* mHolderNotifier;
 
 #ifdef DEBUG_CONTENT_LIST
   void AssertInSync();

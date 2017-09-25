@@ -79,7 +79,7 @@ public:
 
   nsContentList* GetExistingForms() const
   {
-    return mForms;
+    return mForms.GetList();
   }
 
   // nsIDOMDocument interface
@@ -268,6 +268,7 @@ public:
 
   void GetFormsAndFormControls(nsContentList** aFormList,
                                nsContentList** aFormControlList);
+
 protected:
   ~nsHTMLDocument();
 
@@ -345,13 +346,72 @@ protected:
   friend class ContentListHolder;
   ContentListHolder* mContentListHolder;
 
-  RefPtr<nsContentList> mImages;
+  class ContentListHelper : public ContentListHolderNotifier
+  {
+  public:
+    ContentListHelper()
+      : mContentList(nullptr)
+    {
+    }
+
+    ~ContentListHelper()
+    {
+      Reset();
+    }
+
+    void CreateList(nsContentList* aList)
+    {
+      MOZ_ASSERT(aList && !mContentList);
+      mContentList = aList;
+      mContentList->SetupHolderNotifier(this);
+    }
+
+    nsContentList* GetList() const
+    {
+      return mContentList;
+    }
+
+    void Reset()
+    {
+      if (mContentList) {
+        mContentList->SetupHolderNotifier(nullptr);
+        mContentList = nullptr;
+      }
+    }
+
+    void OnDestroy() override
+    {
+      MOZ_ASSERT(mContentList);
+      mContentList = nullptr;
+    }
+
+    inline void
+    ImplCycleCollectionTraverse(nsCycleCollectionTraversalCallback& aCallback,
+                                ContentListHelper& aField,
+                                const char* aName,
+                                uint32_t aFlags = 0)
+    {
+      CycleCollectionNoteChild(aCallback, aField.mContentList, aName,
+                               aFlags);
+    }
+
+    inline void
+    ImplCycleCollectionUnlink(ContentListHelper& aField)
+    {
+      aField.mContentList = nullptr;
+    }
+
+    nsContentList* MOZ_NON_OWNING_REF mContentList;
+  };
+
+  ContentListHelper mImages;
+  ContentListHelper mEmbeds;
+  ContentListHelper mLinks;
+  ContentListHelper mAnchors;
+  ContentListHelper mScripts;
+
   RefPtr<nsEmptyContentList> mApplets;
-  RefPtr<nsContentList> mEmbeds;
-  RefPtr<nsContentList> mLinks;
-  RefPtr<nsContentList> mAnchors;
-  RefPtr<nsContentList> mScripts;
-  RefPtr<nsContentList> mForms;
+  ContentListHelper mForms;
 
   RefPtr<mozilla::dom::HTMLAllCollection> mAll;
 

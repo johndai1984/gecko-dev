@@ -436,7 +436,8 @@ nsContentList::nsContentList(nsINode* aRootNode,
     mDeep(aDeep),
     mFuncMayDependOnAttr(false),
     mIsHTMLDocument(aRootNode->OwnerDoc()->IsHTMLDocument()),
-    mIsLiveList(aLiveList)
+    mIsLiveList(aLiveList),
+    mHolderNotifier(nullptr)
 {
   NS_ASSERTION(mRootNode, "Must have root");
   if (nsGkAtoms::_asterisk == mHTMLMatchAtom) {
@@ -481,7 +482,8 @@ nsContentList::nsContentList(nsINode* aRootNode,
     mDeep(aDeep),
     mFuncMayDependOnAttr(aFuncMayDependOnAttr),
     mIsHTMLDocument(false),
-    mIsLiveList(aLiveList)
+    mIsLiveList(aLiveList),
+    mHolderNotifier(nullptr)
 {
   NS_ASSERTION(mRootNode, "Must have root");
   if (mIsLiveList) {
@@ -1010,6 +1012,11 @@ nsContentList::PopulateSelf(uint32_t aNeededLength)
 void
 nsContentList::RemoveFromHashtable()
 {
+  if (mHolderNotifier) {
+    mHolderNotifier->OnDestroy();
+    mHolderNotifier = nullptr;
+  }
+
   if (mFunc) {
     // This can't be in the table anyway
     return;

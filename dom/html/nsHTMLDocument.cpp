@@ -197,13 +197,7 @@ nsHTMLDocument::~nsHTMLDocument()
 
 NS_IMPL_CYCLE_COLLECTION_INHERITED(nsHTMLDocument, nsDocument,
                                    mAll,
-                                   mImages,
                                    mApplets,
-                                   mEmbeds,
-                                   mLinks,
-                                   mAnchors,
-                                   mScripts,
-                                   mForms,
                                    mWyciwygChannel,
                                    mMidasCommandManager)
 
@@ -250,14 +244,14 @@ nsHTMLDocument::ResetToURI(nsIURI *aURI, nsILoadGroup *aLoadGroup,
 
   nsDocument::ResetToURI(aURI, aLoadGroup, aPrincipal);
 
-  mImages = nullptr;
+  mImages.Reset();
   mApplets = nullptr;
-  mEmbeds = nullptr;
-  mLinks = nullptr;
-  mAnchors = nullptr;
-  mScripts = nullptr;
+  mEmbeds.Reset();
+  mLinks.Reset();
+  mAnchors.Reset();
+  mScripts.Reset();
 
-  mForms = nullptr;
+  mForms.Reset();
 
   NS_ASSERTION(!mWyciwygChannel,
                "nsHTMLDocument::Reset() - Wyciwyg Channel  still exists!");
@@ -1157,10 +1151,11 @@ nsHTMLDocument::GetImages(nsIDOMHTMLCollection** aImages)
 nsIHTMLCollection*
 nsHTMLDocument::Images()
 {
-  if (!mImages) {
-    mImages = new nsContentList(this, kNameSpaceID_XHTML, nsGkAtoms::img, nsGkAtoms::img);
+  if (!mImages.GetList()) {
+    mImages.CreateList(new nsContentList(this, kNameSpaceID_XHTML,
+                                         nsGkAtoms::img, nsGkAtoms::img));
   }
-  return mImages;
+  return mImages.GetList();
 }
 
 NS_IMETHODIMP
@@ -1221,10 +1216,10 @@ nsHTMLDocument::GetLinks(nsIDOMHTMLCollection** aLinks)
 nsIHTMLCollection*
 nsHTMLDocument::Links()
 {
-  if (!mLinks) {
-    mLinks = new nsContentList(this, MatchLinks, nullptr, nullptr);
+  if (!mLinks.GetList()) {
+    mLinks.CreateList(new nsContentList(this, MatchLinks, nullptr, nullptr));
   }
-  return mLinks;
+  return mLinks.GetList();
 }
 
 bool
@@ -1261,10 +1256,10 @@ nsHTMLDocument::GetAnchors(nsIDOMHTMLCollection** aAnchors)
 nsIHTMLCollection*
 nsHTMLDocument::Anchors()
 {
-  if (!mAnchors) {
-    mAnchors = new nsContentList(this, MatchAnchors, nullptr, nullptr);
+  if (!mAnchors.GetList()) {
+    mAnchors.CreateList(new nsContentList(this, MatchAnchors, nullptr, nullptr));
   }
-  return mAnchors;
+  return mAnchors.GetList();
 }
 
 NS_IMETHODIMP
@@ -1277,10 +1272,11 @@ nsHTMLDocument::GetScripts(nsIDOMHTMLCollection** aScripts)
 nsIHTMLCollection*
 nsHTMLDocument::Scripts()
 {
-  if (!mScripts) {
-    mScripts = new nsContentList(this, kNameSpaceID_XHTML, nsGkAtoms::script, nsGkAtoms::script);
+  if (!mScripts.GetList()) {
+    mScripts.CreateList(new nsContentList(this, kNameSpaceID_XHTML,
+                                          nsGkAtoms::script, nsGkAtoms::script));
   }
-  return mScripts;
+  return mScripts.GetList();
 }
 
 NS_IMETHODIMP
@@ -2216,10 +2212,11 @@ nsHTMLDocument::GetEmbeds(nsIDOMHTMLCollection** aEmbeds)
 nsIHTMLCollection*
 nsHTMLDocument::Embeds()
 {
-  if (!mEmbeds) {
-    mEmbeds = new nsContentList(this, kNameSpaceID_XHTML, nsGkAtoms::embed, nsGkAtoms::embed);
+  if (!mEmbeds.GetList()) {
+    mEmbeds.CreateList(new nsContentList(this, kNameSpaceID_XHTML,
+                                         nsGkAtoms::embed, nsGkAtoms::embed));
   }
-  return mEmbeds;
+  return mEmbeds.GetList();
 }
 
 NS_IMETHODIMP
@@ -2345,12 +2342,12 @@ nsHTMLDocument::GetForms(nsIDOMHTMLCollection** aForms)
 nsContentList*
 nsHTMLDocument::GetForms()
 {
-  if (!mForms) {
+  if (!mForms.GetList()) {
     // Please keep this in sync with nsContentUtils::GenerateStateKey().
-    mForms = new nsContentList(this, kNameSpaceID_XHTML, nsGkAtoms::form, nsGkAtoms::form);
+    mForms.CreateList(new nsContentList(this, kNameSpaceID_XHTML,
+                                        nsGkAtoms::form, nsGkAtoms::form));
   }
-
-  return mForms;
+  return mForms.GetList();
 }
 
 bool
