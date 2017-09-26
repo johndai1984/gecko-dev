@@ -37,7 +37,6 @@ typedef bool (*nsContentListMatchFunc)(mozilla::dom::Element* aElement,
 
 typedef void (*nsContentListDestroyFunc)(void* aData);
 
-typedef void (nsINode::*HolderCleanupFunction)();
 /**
  * A function that allocates the matching data for this
  * FuncStringContentList.  Returning aString is perfectly fine; in
