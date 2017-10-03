@@ -197,7 +197,13 @@ nsHTMLDocument::~nsHTMLDocument()
 
 NS_IMPL_CYCLE_COLLECTION_INHERITED(nsHTMLDocument, nsDocument,
                                    mAll,
+                                   mImages,
                                    mApplets,
+                                   mEmbeds,
+                                   mLinks,
+                                   mAnchors,
+                                   mScripts,
+                                   mForms,
                                    mWyciwygChannel,
                                    mMidasCommandManager)
 
