@@ -467,33 +467,21 @@ nsNodeUtils::CloneAndAdopt(nsINode *aNode, bool aClone, bool aDeep,
       // The cloned node may be a custom element that may require
       // enqueing upgrade reaction.
       Element* elem = clone->AsElement();
-      CustomElementDefinition* definition = nullptr;
       RefPtr<nsAtom> tagAtom = nodeInfo->NameAtom();
-      if (nsContentUtils::IsCustomElementName(tagAtom)) {
-        elem->SetCustomElementData(new CustomElementData(tagAtom));
-        definition =
+      // Check if node may be custom element by type extension.
+      // ex. <button is="x-button">
+      nsAutoString extension;
+      elem->GetAttr(kNameSpaceID_None, nsGkAtoms::is, extension);
+      RefPtr<nsAtom> typeAtom = extension.IsEmpty() ? tagAtom : NS_Atomize(extension);
+      if (nsContentUtils::IsCustomElementName(tagAtom) || !extension.IsEmpty()) {
+        elem->SetCustomElementData(new CustomElementData(typeAtom));
+        CustomElementDefinition* definition =
           nsContentUtils::LookupCustomElementDefinition(nodeInfo->GetDocument(),
                                                         nodeInfo->LocalName(),
-                                                        nodeInfo->NamespaceID());
+                                                        nodeInfo->NamespaceID(),
+                                                        extension.IsEmpty() ? nullptr : &extension);
         if (definition) {
           nsContentUtils::EnqueueUpgradeReaction(elem, definition);
-        }
-      } else {
-        // Check if node may be custom element by type extension.
-        // ex. <button is="x-button">
-        nsAutoString extension;
-        if (elem->GetAttr(kNameSpaceID_None, nsGkAtoms::is, extension) &&
-            !extension.IsEmpty()) {
-          RefPtr<nsAtom> typeAtom = NS_Atomize(extension);
-          elem->SetCustomElementData(new CustomElementData(typeAtom));
-          definition =
-            nsContentUtils::LookupCustomElementDefinition(nodeInfo->GetDocument(),
-                                                          nodeInfo->LocalName(),
-                                                          nodeInfo->NamespaceID(),
-                                                          &extension);
-          if (definition) {
-            nsContentUtils::EnqueueUpgradeReaction(elem, definition);
-          }
         }
       }
     }
