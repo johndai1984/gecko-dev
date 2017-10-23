@@ -1662,6 +1662,9 @@ Element::BindToTree(nsIDocument* aDocument, nsIContent* aParent,
     CustomElementData* data = GetCustomElementData();
     if (data && data->mState == CustomElementData::State::eCustom) {
       nsContentUtils::EnqueueLifecycleCallback(nsIDocument::eConnected, this);
+    } else {
+      // Step 7.7.2.2 https://dom.spec.whatwg.org/#concept-node-insert
+      nsContentUtils::TryToUpgradeElement(this);
     }
   }
 
@@ -1992,6 +1995,8 @@ Element::UnbindFromTree(bool aDeep, bool aNullParent)
       if (data && data->mState == CustomElementData::State::eCustom) {
         nsContentUtils::EnqueueLifecycleCallback(nsIDocument::eDisconnected,
                                                  this);
+      } else {
+        nsContentUtils::UnRegistUnresolvedElement(this);
       }
     }
   }

@@ -8,6 +8,7 @@ function test_upgrade(f, msg) {
   // Run upgrading test on an element created by document.createElement.
   test_with_new_window(function(testWindow, testMsg) {
     let element = testWindow.document.createElement('unresolved-element');
+    testWindow.document.documentElement.appendChild(element);
     f(testWindow, element, testMsg);
   }, msg + ' (document.createElement)');
 }
