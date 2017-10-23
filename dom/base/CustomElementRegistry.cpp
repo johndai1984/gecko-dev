@@ -280,6 +280,22 @@ CustomElementRegistry::RegisterUnresolvedElement(Element* aElement, nsAtom* aTyp
 }
 
 void
+CustomElementRegistry::UnRegistUnresolvedElement(Element* aElement,
+                                                 nsAtom* aTypeName)
+{
+  nsTArray<nsWeakPtr>* candidates;
+  if (mCandidatesMap.Get(aTypeName, &candidates)) {
+    MOZ_ASSERT(candidates);
+    for (size_t i = 0; i < candidates->Length(); ++i) {
+      nsCOMPtr<Element> elem = do_QueryReferent(candidates->ElementAt(i));
+      if (elem && elem.get() == aElement) {
+        candidates->RemoveElementAt(i);
+      }
+    }
+  }
+}
+
+void
 CustomElementRegistry::SetupCustomElement(Element* aElement,
                                           const nsAString* aTypeExtension)
 {

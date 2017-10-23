@@ -408,16 +408,7 @@ public:
    */
   static void Upgrade(Element* aElement, CustomElementDefinition* aDefinition, ErrorResult& aRv);
 
-private:
-  ~CustomElementRegistry();
-
-  static UniquePtr<CustomElementCallback> CreateCustomElementCallback(
-    nsIDocument::ElementCallbackType aType, Element* aCustomElement,
-    LifecycleCallbackArgs* aArgs,
-    LifecycleAdoptedCallbackArgs* aAdoptedCallbackArgs,
-    CustomElementDefinition* aDefinition);
-
-  /**
+   /**
    * Registers an unresolved custom element that is a candidate for
    * upgrade when the definition is registered via registerElement.
    * |aTypeName| is the name of the custom element type, if it is not
@@ -427,6 +418,17 @@ private:
    */
   void RegisterUnresolvedElement(Element* aElement,
                                  nsAtom* aTypeName = nullptr);
+
+  void UnRegistUnresolvedElement(Element* aElement,
+                                 nsAtom* aTypeName = nullptr);
+private:
+  ~CustomElementRegistry();
+
+  static UniquePtr<CustomElementCallback> CreateCustomElementCallback(
+    nsIDocument::ElementCallbackType aType, Element* aCustomElement,
+    LifecycleCallbackArgs* aArgs,
+    LifecycleAdoptedCallbackArgs* aAdoptedCallbackArgs,
+    CustomElementDefinition* aDefinition);
 
   void UpgradeCandidates(nsAtom* aKey,
                          CustomElementDefinition* aDefinition,
