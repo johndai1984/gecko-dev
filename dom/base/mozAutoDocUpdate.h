@@ -88,4 +88,23 @@ private:
   nsCOMPtr<nsIDocument> mDocument;
 };
 
+class MOZ_RAII mozAutoPauseContentUpdate final
+{
+public:
+  explicit mozAutoPauseContentUpdate(nsIDocument* aDocument)
+    : mDocument(aDocument)
+  {
+    MOZ_ASSERT(mDocument);
+    mDocument->EndUpdate(UPDATE_CONTENT_MODEL);
+  }
+
+  ~mozAutoPauseContentUpdate()
+  {
+    mDocument->BeginUpdate(UPDATE_CONTENT_MODEL);
+  }
+
+private:
+  nsCOMPtr<nsIDocument> mDocument;
+};
+
 #endif
