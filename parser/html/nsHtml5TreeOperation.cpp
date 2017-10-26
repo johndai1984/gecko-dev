@@ -393,7 +393,7 @@ nsHtml5TreeOperation::CreateHTMLElement(
   nsIDocument* document = nodeInfo->GetDocument();
   bool willExecuteScript = false;
   nsString isValue;
-  dom::CustomElementDefinition* definition;
+  dom::CustomElementDefinition* definition = nullptr;
 
   // Avoid overhead by checking if custom elements pref is enabled or not.
   if (nsContentUtils::IsCustomElementsEnabled()) {
