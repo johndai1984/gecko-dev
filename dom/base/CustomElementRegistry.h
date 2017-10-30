@@ -134,6 +134,8 @@ struct CustomElementData
 
   RefPtr<CustomElementDefinition> mCustomElementDefinition;
 
+  RefPtr<nsAtom> mIs;
+
   void
   SetCustomElementDefinition(CustomElementDefinition* aDefinition)
   {
@@ -377,7 +379,7 @@ public:
    * https://html.spec.whatwg.org/#look-up-a-custom-element-definition
    */
   CustomElementDefinition* LookupCustomElementDefinition(
-    const nsAString& aLocalName, const nsAString* aIs = nullptr) const;
+    const nsAString& aLocalName, nsAtom* aTypeAtom) const;
 
   CustomElementDefinition* LookupCustomElementDefinition(
     JSContext* aCx, JSObject *aConstructor) const;

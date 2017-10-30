@@ -481,7 +481,7 @@ nsNodeUtils::CloneAndAdopt(nsINode *aNode, bool aClone, bool aDeep,
           nsContentUtils::LookupCustomElementDefinition(nodeInfo->GetDocument(),
                                                         nodeInfo->LocalName(),
                                                         nodeInfo->NamespaceID(),
-                                                        extension.IsEmpty() ? nullptr : &extension);
+                                                        typeAtom);
         if (definition) {
           nsContentUtils::EnqueueUpgradeReaction(elem, definition);
         }

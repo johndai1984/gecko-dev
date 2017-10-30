@@ -277,7 +277,7 @@ NS_NewHTMLElement(Element** aResult, already_AddRefed<mozilla::dom::NodeInfo>&& 
       nsContentUtils::LookupCustomElementDefinition(nodeInfo->GetDocument(),
                                                     nodeInfo->LocalName(),
                                                     nodeInfo->NamespaceID(),
-                                                    aIs);
+                                                    typeAtom);
   }
 
   // It might be a problem that parser synchronously calls constructor, so filed
@@ -318,6 +318,7 @@ NS_NewHTMLElement(Element** aResult, already_AddRefed<mozilla::dom::NodeInfo>&& 
       // Built-in element
       *aResult = CreateHTMLElement(tag, nodeInfo.forget(), aFromParser).take();
       (*aResult)->SetCustomElementData(new CustomElementData(typeAtom));
+      (*aResult)->SetCustomElementIsValue(typeAtom);
       if (synchronousCustomElements) {
         CustomElementRegistry::Upgrade(*aResult, definition, rv);
         if (rv.MaybeSetPendingException(cx)) {
@@ -336,6 +337,7 @@ NS_NewHTMLElement(Element** aResult, already_AddRefed<mozilla::dom::NodeInfo>&& 
                             nodeInfo->NameAtom(),
                             definition->mConstructor, rv);
       if (rv.MaybeSetPendingException(cx)) {
+        (*aResult)->SetCustomElementIsValue(nullptr);
         NS_IF_ADDREF(*aResult = NS_NewHTMLUnknownElement(nodeInfo.forget(), aFromParser));
       }
       return NS_OK;
@@ -344,6 +346,7 @@ NS_NewHTMLElement(Element** aResult, already_AddRefed<mozilla::dom::NodeInfo>&& 
     // Step 6.2.
     NS_IF_ADDREF(*aResult = NS_NewHTMLElement(nodeInfo.forget(), aFromParser));
     (*aResult)->SetCustomElementData(new CustomElementData(definition->mType));
+    (*aResult)->SetCustomElementIsValue(nullptr);
     nsContentUtils::EnqueueUpgradeReaction(*aResult, definition);
     return NS_OK;
   }
@@ -365,6 +368,7 @@ NS_NewHTMLElement(Element** aResult, already_AddRefed<mozilla::dom::NodeInfo>&& 
   if (CustomElementRegistry::IsCustomElementEnabled() &&
       (isCustomElementName || aIs)) {
     (*aResult)->SetCustomElementData(new CustomElementData(typeAtom));
+    (*aResult)->SetCustomElementIsValue(typeAtom);
   }
 
   return NS_OK;

@@ -406,9 +406,11 @@ nsHtml5TreeOperation::CreateHTMLElement(
 
     if (aFromParser != dom::FROM_PARSER_FRAGMENT &&
         (aCreator == NS_NewCustomElement || !isValue.IsEmpty())) {
+      RefPtr<nsAtom> tagAtom = nodeInfo->NameAtom();
+      RefPtr<nsAtom> typeAtom = isValue.IsEmpty() ? NS_Atomize(isValue) : tagAtom;
+
       definition = nsContentUtils::LookupCustomElementDefinition(document,
-        nodeInfo->LocalName(), nodeInfo->NamespaceID(),
-        (isValue.IsEmpty() ? nullptr : &isValue));
+        nodeInfo->LocalName(), nodeInfo->NamespaceID(), typeAtom);
 
       if (definition) {
         willExecuteScript = true;

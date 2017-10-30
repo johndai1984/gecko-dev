@@ -38,6 +38,8 @@ CustomElementCallback::Call()
       if (document) {
         NodeInfo* ni = mThisObject->NodeInfo();
         nsDependentAtomString extType(mOwnerData->mType);
+        RefPtr<nsAtom> tagAtom = ni->NameAtom();
+        RefPtr<nsAtom> typeAtom = extType.IsEmpty() ? NS_Atomize(extType) : tagAtom;
 
         // We need to do this because at this point, CustomElementDefinition is
         // not set to CustomElementData yet, so EnqueueLifecycleCallback will
@@ -45,8 +47,7 @@ CustomElementCallback::Call()
         // This will go away eventually since there is no created callback in v1.
         CustomElementDefinition* definition =
           nsContentUtils::LookupCustomElementDefinition(document,
-            ni->LocalName(), ni->NamespaceID(),
-            extType.IsEmpty() ? nullptr : &extType);
+            ni->LocalName(), ni->NamespaceID(), typeAtom);
 
         nsContentUtils::EnqueueLifecycleCallback(
           nsIDocument::eConnected, mThisObject, nullptr, nullptr, definition);
@@ -226,12 +227,10 @@ CustomElementRegistry::~CustomElementRegistry()
 
 CustomElementDefinition*
 CustomElementRegistry::LookupCustomElementDefinition(const nsAString& aLocalName,
-                                                     const nsAString* aIs) const
+                                                     nsAtom* aTypeAtom) const
 {
   RefPtr<nsAtom> localNameAtom = NS_Atomize(aLocalName);
-  RefPtr<nsAtom> typeAtom = aIs ? NS_Atomize(*aIs) : localNameAtom;
-
-  CustomElementDefinition* data = mCustomDefinitions.GetWeak(typeAtom);
+  CustomElementDefinition* data = mCustomDefinitions.GetWeak(aTypeAtom);
   if (data && data->mLocalName == localNameAtom) {
     return data;
   }
@@ -315,7 +314,7 @@ CustomElementRegistry::SetupCustomElement(Element* aElement,
   aElement->SetCustomElementData(new CustomElementData(typeAtom));
 
   CustomElementDefinition* definition = LookupCustomElementDefinition(
-    aElement->NodeInfo()->LocalName(), aTypeExtension);
+    aElement->NodeInfo()->LocalName(), typeAtom);
 
   if (!definition) {
     // The type extension doesn't exist in the registry,

@@ -10115,14 +10115,13 @@ nsContentUtils::TryToUpgradeElement(Element* aElement)
 {
   NodeInfo* nodeInfo = aElement->NodeInfo();
   RefPtr<nsAtom> tagAtom = nodeInfo->NameAtom();
-  nsAutoString extension;
-  aElement->GetAttr(kNameSpaceID_None, nsGkAtoms::is, extension);
-  RefPtr<nsAtom> typeAtom = extension.IsEmpty() ? tagAtom : NS_Atomize(extension);
+  RefPtr<nsAtom> extension = aElement->GetCustomElementIsValue();
+  RefPtr<nsAtom> typeAtom = !extension ? tagAtom : extension;
   CustomElementDefinition* definition =
     nsContentUtils::LookupCustomElementDefinition(nodeInfo->GetDocument(),
                                                   nodeInfo->LocalName(),
                                                   nodeInfo->NamespaceID(),
-                                                  extension.IsEmpty() ? nullptr : &extension);
+                                                  typeAtom);
   if (definition) {
     nsContentUtils::EnqueueUpgradeReaction(aElement, definition);
   } else {
@@ -10134,7 +10133,7 @@ nsContentUtils::TryToUpgradeElement(Element* aElement)
 nsContentUtils::LookupCustomElementDefinition(nsIDocument* aDoc,
                                               const nsAString& aLocalName,
                                               uint32_t aNameSpaceID,
-                                              const nsAString* aIs)
+                                              nsAtom* aTypeAtom)
 {
   MOZ_ASSERT(aDoc);
 
@@ -10153,7 +10152,7 @@ nsContentUtils::LookupCustomElementDefinition(nsIDocument* aDoc,
     return nullptr;
   }
 
-  return registry->LookupCustomElementDefinition(aLocalName, aIs);
+  return registry->LookupCustomElementDefinition(aLocalName, aTypeAtom);
 }
 
 /* static */ void
@@ -10212,10 +10211,9 @@ nsContentUtils::UnRegistUnresolvedElement(Element* aElement)
 
   NodeInfo* nodeInfo = aElement->NodeInfo();
   RefPtr<nsAtom> tagAtom = nodeInfo->NameAtom();
-  nsAutoString extension;
-  aElement->GetAttr(kNameSpaceID_None, nsGkAtoms::is, extension);
-  RefPtr<nsAtom> typeAtom = extension.IsEmpty() ? tagAtom : NS_Atomize(extension);
-  if (nsContentUtils::IsCustomElementName(tagAtom) || !extension.IsEmpty()) {
+  RefPtr<nsAtom> extension = aElement->GetCustomElementIsValue();
+  RefPtr<nsAtom> typeAtom = !extension ? tagAtom : extension;
+  if (nsContentUtils::IsCustomElementName(tagAtom) || extension) {
     nsIDocument* doc = aElement->OwnerDoc();
     nsPIDOMWindowInner* window(doc->GetInnerWindow());
     if (!window) {

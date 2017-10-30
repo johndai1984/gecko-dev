@@ -575,6 +575,9 @@ public:
    */
   void SetCustomElementDefinition(CustomElementDefinition* aDefinition);
 
+  nsAtom* GetCustomElementIsValue() const;
+  void SetCustomElementIsValue(nsAtom* aIs);
+
 protected:
   /**
    * Method to get the _intrinsic_ content state of this element.  This is the

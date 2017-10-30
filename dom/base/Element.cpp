@@ -4347,6 +4347,26 @@ Element::SetCustomElementDefinition(CustomElementDefinition* aDefinition)
   data->SetCustomElementDefinition(aDefinition);
 }
 
+nsAtom*
+Element::GetCustomElementIsValue() const
+{
+  CustomElementData* data = GetCustomElementData();
+  if (!data) {
+    return nullptr;
+  }
+
+  return data->mIs;
+}
+
+void
+Element::SetCustomElementIsValue(nsAtom* aIs)
+{
+  CustomElementData* data = GetCustomElementData();
+  MOZ_ASSERT(data);
+
+  data->mIs = aIs;
+}
+
 MOZ_DEFINE_MALLOC_SIZE_OF(ServoElementMallocSizeOf)
 MOZ_DEFINE_MALLOC_ENCLOSING_SIZE_OF(ServoElementMallocEnclosingSizeOf)
 
