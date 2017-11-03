@@ -521,7 +521,7 @@ Element::WrapObject(JSContext *aCx, JS::Handle<JSObject*> aGivenProto)
     if (data) {
       // If this is a registered custom element then fix the prototype.
       nsContentUtils::GetCustomPrototype(OwnerDoc(), NodeInfo()->NamespaceID(),
-                                         data->mType, &customProto);
+                                         data->GetCustomElementType(), &customProto);
       if (customProto &&
           NodePrincipal()->SubsumesConsideringDomain(nsContentUtils::ObjectPrincipal(customProto))) {
         // Just go ahead and create with the right proto up front.  Set
@@ -2768,7 +2768,7 @@ Element::SetAttrAndNotify(int32_t aNamespaceID,
     if (CustomElementData* data = GetCustomElementData()) {
       if (CustomElementDefinition* definition =
             nsContentUtils::GetElementDefinitionIfObservingAttr(this,
-                                                                data->mType,
+                                                                data->GetCustomElementType(),
                                                                 aName)) {
         MOZ_ASSERT(data->mState == CustomElementData::State::eCustom,
                    "AttributeChanged callback should fire only if "
@@ -3075,7 +3075,7 @@ Element::UnsetAttr(int32_t aNameSpaceID, nsAtom* aName,
     if (CustomElementData* data = GetCustomElementData()) {
       if (CustomElementDefinition* definition =
             nsContentUtils::GetElementDefinitionIfObservingAttr(this,
-                                                                data->mType,
+                                                                data->GetCustomElementType(),
                                                                 aName)) {
         MOZ_ASSERT(data->mState == CustomElementData::State::eCustom,
                    "AttributeChanged callback should fire only if "
