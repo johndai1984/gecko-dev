@@ -408,7 +408,7 @@ public:
                                  nsAtom* aTypeName = nullptr);
 
   /**
-   * Unregist an unresolved custom element that is a candidate for
+   * Unregister an unresolved custom element that is a candidate for
    * upgrade when a custom element is removed from tree.
    */
   void UnregisterUnresolvedElement(Element* aElement,
