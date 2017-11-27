@@ -1,0 +1,50 @@
+<!DOCTYPE HTML>
+<html>
+<!--
+https://bugzilla.mozilla.org/show_bug.cgi?id=783129
+-->
+<head>
+  <title>Test for customElements.define for elements created by the parser</title>
+  <script type="text/javascript" src="/tests/SimpleTest/SimpleTest.js"></script>
+<link rel="stylesheet" type="text/css" href="/tests/SimpleTest/test.css" />
+<script>
+
+var uncaughtError;
+window.onerror = function(message, url, lineNumber, columnNumber, error) {
+  uncaughtError = error;
+};
+
+class XButton extends HTMLButtonElement {
+  connectedCallback() {
+    is(this.tagName, "BUTTON", "Only the <button> element should be upgraded.");
+    ok(uncaughtError instanceof TypeError,
+       "TpyeError should be filed for upgrading <x-div> element.");
+    SimpleTest.finish();
+  }
+};
+
+customElements.define("x-button", XButton, { extends: "button" });
+
+class XDiv extends HTMLDivElement {
+  connectedCallback() {
+    ok(false, "Connected callback for x-div should not be called.");
+  }
+};
+
+customElements.define("x-div", XDiv);
+
+SimpleTest.waitForExplicitFinish();
+
+</script>
+</head>
+<body>
+<a target="_blank" href="https://bugzilla.mozilla.org/show_bug.cgi?id=783129">Bug 783129</a>
+<button is="x-button"></button><!-- should be upgraded -->
+<x-button></x-button><!-- should not be upgraded -->
+<span is="x-button"></span><!-- should not be upgraded -->
+<div is="x-div"></div><!-- should not be upgraded -->
+<x-div></x-div><!-- should be upgraded, but failed -->
+<script>
+</script>
+</body>
+</html>
