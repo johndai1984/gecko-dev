@@ -28,7 +28,7 @@ def generate(output, idlFilename, preprocessorHeader):
             continue
         # Unfortunately, even some of the getters here are fallible
         # (e.g. on nsComputedDOMStyle).
-        extendedAttrs = ["Throws", "TreatNullAs=EmptyString",
+        extendedAttrs = ["CEReactions", "Throws", "TreatNullAs=EmptyString",
                          "SetterNeedsSubjectPrincipal"]
         if pref is not "":
             extendedAttrs.append('Pref="%s"' % pref)
@@ -61,6 +61,7 @@ def generate(output, idlFilename, preprocessorHeader):
         # for all the cases where "name" doesn't match "prop", that will cover
         # "float" and (2).
         if prop != name:
+            extendedAttrs.remove("CEReactions")
             extendedAttrs.append('BinaryName="%s"' % prop)
             # Throw in a '_' before the attribute name, because some of these
             # property names collide with IDL reserved words.

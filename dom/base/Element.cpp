@@ -2723,7 +2723,7 @@ Element::SetAttrAndNotify(int32_t aNamespaceID,
   // Copy aParsedValue for later use since it will be lost when we call
   // SetAndSwapMappedAttr below
   nsAttrValue valueForAfterSetAttr;
-  if (aCallAfterSetAttr) {
+  if (aCallAfterSetAttr || CustomElementRegistry::IsCustomElementEnabled()) {
     valueForAfterSetAttr.SetTo(aParsedValue);
   }
 
@@ -2778,7 +2778,7 @@ Element::SetAttrAndNotify(int32_t aNamespaceID,
     }
   }
 
-  if (CustomElementRegistry::IsCustomElementEnabled()) {
+  if (aNotify && CustomElementRegistry::IsCustomElementEnabled()) {
     CustomElementDefinition* definition = GetCustomElementDefinition();
     // Only custom element which is in `custom` state could get the
     // CustomElementDefinition.
