@@ -2778,7 +2778,7 @@ Element::SetAttrAndNotify(int32_t aNamespaceID,
     }
   }
 
-  if (aNotify && CustomElementRegistry::IsCustomElementEnabled()) {
+  if (CustomElementRegistry::IsCustomElementEnabled()) {
     CustomElementDefinition* definition = GetCustomElementDefinition();
     // Only custom element which is in `custom` state could get the
     // CustomElementDefinition.
