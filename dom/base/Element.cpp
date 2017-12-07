@@ -2741,7 +2741,7 @@ Element::SetAttrAndNotify(int32_t aNamespaceID,
     // stuff to Element?
     if (!IsAttributeMapped(aName) ||
         !SetAndSwapMappedAttribute(aName, aParsedValue, &oldValueSet, &rv)) {
-      rv = mAttrsAndChildren.SetAndSwapAttr(aName, aParsedValue, &oldValueSet);
+      // rv = mAttrsAndChildren.SetAndSwapAttr(aName, aParsedValue, &oldValueSet);
     }
   }
   else {
