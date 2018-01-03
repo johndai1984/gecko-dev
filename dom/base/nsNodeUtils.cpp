@@ -505,6 +505,11 @@ nsNodeUtils::CloneAndAdopt(nsINode *aNode, bool aClone, bool aDeep,
       }
 
       if (data || !extension.IsEmpty()) {
+        // The typeAtom can be determined by extension, beccause we only need to
+        // consider two cases: 1) Original node has CustomElementData and it's a
+        // built-in custom element. 2) Original node doesn't have CustomElementData
+        // which means it's not a custom element and it appends an is value
+        // after node created.
         RefPtr<nsAtom> typeAtom = extension.IsEmpty() ? tagAtom : NS_Atomize(extension);
         cloneElem->SetCustomElementData(new CustomElementData(typeAtom));
         CustomElementDefinition* definition =

@@ -408,8 +408,12 @@ nsHtml5TreeOperation::CreateHTMLElement(
     isCustomElement = (aCreator == NS_NewCustomElement || !isValue.IsEmpty());
     if (isCustomElement && aFromParser != dom::FROM_PARSER_FRAGMENT) {
       RefPtr<nsAtom> tagAtom = nodeInfo->NameAtom();
-      RefPtr<nsAtom> typeAtom =
-        isValue.IsEmpty() ? tagAtom : NS_Atomize(isValue);
+      RefPtr<nsAtom> typeAtom;
+      if (isCustomElement) {
+        typeAtom = aCreator == NS_NewCustomElement ? tagAtom : NS_Atomize(isValue);
+      }
+
+      MOZ_ASSERT_IF(typeAtom, isCustomElement);
 
       definition = nsContentUtils::LookupCustomElementDefinition(document,
         nodeInfo->LocalName(), nodeInfo->NamespaceID(), typeAtom);
