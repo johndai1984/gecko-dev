@@ -1,0 +1,87 @@
+<!DOCTYPE HTML>
+<html>
+<!--
+https://bugzilla.mozilla.org/show_bug.cgi?id=1427542
+-->
+<head>
+  <title>Test for Bug 1427542</title>
+  <script type="application/javascript" src="/tests/SimpleTest/SimpleTest.js"></script>
+  <link rel="stylesheet" type="text/css" href="/tests/SimpleTest/test.css"/>
+  <style>
+    input, textarea, fieldset, button, select, keygen, output, object { background-color: rgb(0,0,0) !important; }
+    :valid   { background-color: rgb(0,255,0) !important; }
+    :invalid { background-color: rgb(255,0,0) !important; }
+  </style>
+</head>
+<body>
+<a target="_blank" href="https://bugzilla.mozilla.org/show_bug.cgi?id=1088761">Mozilla Bug 1427542</a>
+<p id="display"></p>
+<div id="content" style="display: none">
+  <form>
+    <textarea required></textarea>
+    <input required>
+    <select required></select>
+    <button type='submit'></button>
+  </form>
+
+  <table>
+    <form>
+    <tr>
+      <textarea required></textarea>
+      <input required>
+      <select required></select>
+      <button type='submit'></button>
+    </tr>
+    </form>
+  </table>
+</div>
+<pre id="test">
+<script type="application/javascript">
+
+/** Test for Bug 1427542 **/
+
+function checkPseudoClass(aElement, aExpected)
+{
+  is(aElement.matches(":-moz-ui-invalid"), aExpected,
+     "matches(':-moz-ui-invalid') should return " + aExpected + " for " + aElement);
+}
+
+var os = SpecialPowers.Cc['@mozilla.org/observer-service;1']
+                      .getService(SpecialPowers.Ci.nsIObserverService);
+var observers = os.enumerateObservers("invalidformsubmit");
+
+if (observers.hasMoreElements()) {
+  var textarea = document.getElementsByTagName('textarea')[0];
+  var input = document.getElementsByTagName('input')[0];
+  var select = document.getElementsByTagName('select')[0];
+  var button = document.getElementsByTagName('button')[0];
+  var form = document.forms[0];
+
+  checkPseudoClass(textarea, false);
+  checkPseudoClass(input, false);
+  checkPseudoClass(select, false);
+
+  // Try to submit.
+//   button.click();
+//   checkPseudoClass(textarea, true);
+//   checkPseudoClass(input, true);
+//   checkPseudoClass(select, true);
+
+//   // Try to reset
+//   form.reset();
+//   checkPseudoClass(textarea, false);
+//   checkPseudoClass(input, false);
+//   checkPseudoClass(select, false);
+
+    ok(!input.reportValidity(), "reportValidity() should return false when the element is not valid");
+    checkPseudoClass(input, true);
+
+    input.reset();
+    checkPseudoClass(input, false);
+} else {
+  todo(false, "No 'invalidformsubmit' observers. Skip test.");
+}
+</script>
+</pre>
+</body>
+</html>
