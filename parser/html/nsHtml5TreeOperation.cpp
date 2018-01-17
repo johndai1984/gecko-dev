@@ -459,6 +459,10 @@ nsHtml5TreeOperation::CreateHTMLElement(
                         aFromParser, isAtom, definition);
     } else {
       newElement = aCreator(nodeInfo.forget(), aFromParser);
+
+      if (nsContentUtils::IsCustomElementsEnabled() && newElement) {
+        newElement->SetCustomElementDefinedState();
+      }
     }
 
     MOZ_ASSERT(newElement, "Element creation created null pointer.");

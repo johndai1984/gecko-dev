@@ -967,6 +967,7 @@ CustomElementRegistry::Upgrade(Element* aElement,
 
   // Step 9.
   aElement->SetCustomElementDefinition(aDefinition);
+  aElement->SetCustomElementDefinedState(true);
 }
 
 //-----------------------------------------------------

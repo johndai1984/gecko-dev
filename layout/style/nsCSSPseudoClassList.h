@@ -89,6 +89,13 @@ CSS_PSEUDO_CLASS(nthLastOfType, ":nth-last-of-type", 0, "")
 // Match nodes that are HTML but not XHTML
 CSS_PSEUDO_CLASS(mozIsHTML, ":-moz-is-html", 0, "")
 
+
+// Match all custom elements that is defined.
+CSS_STATE_PSEUDO_CLASS(defined, ":defined", 0,
+                       "dom.webcomponents.customelements.enabled",
+                       NS_EVENT_STATE_DEFINED)
+
+
 // Matches nodes that are in a native-anonymous subtree (i.e., nodes in
 // a subtree of C++ anonymous content constructed by Gecko for its own
 // purposes).

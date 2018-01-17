@@ -10104,6 +10104,10 @@ nsContentUtils::NewXULOrHTMLElement(Element** aResult, mozilla::dom::NodeInfo* a
     } else {
       *aResult = CreateHTMLElement(tag, nodeInfo.forget(), aFromParser).take();
     }
+
+    if (CustomElementRegistry::IsCustomElementEnabled() && !isCustomElement) {
+      (*aResult)->SetCustomElementDefinedState();
+    }
   } else {
     NS_IF_ADDREF(*aResult = new nsXULElement(nodeInfo.forget()));
   }

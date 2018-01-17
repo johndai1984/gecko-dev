@@ -4401,6 +4401,11 @@ Element::SetCustomElementData(CustomElementData* aData)
 {
   nsExtendedDOMSlots *slots = ExtendedDOMSlots();
   MOZ_ASSERT(!slots->mCustomElementData, "Custom element data may not be changed once set.");
+  // https://dom.spec.whatwg.org/#concept-element-defined
+  if (aData->mState == CustomElementData::State::eCustom) {
+    SetCustomElementDefinedState();
+  }
+
   #if DEBUG
     nsAtom* name = NodeInfo()->NameAtom();
     nsAtom* type = aData->GetCustomElementType();

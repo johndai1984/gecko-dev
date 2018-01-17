@@ -580,6 +580,18 @@ public:
     return slots ? slots->mCustomElementData.get() : nullptr;
   }
 
+  /**
+   *  An element whose custom element state is "uncustomized" or "custom" is
+   *  said to be defined. https://dom.spec.whatwg.org/#concept-element-defined
+   */
+  void SetCustomElementDefinedState(bool aNotify = false)
+  {
+    if (aNotify) {
+      AddStates(NS_EVENT_STATE_DEFINED);
+    } else {
+      AddStatesSilently(NS_EVENT_STATE_DEFINED);
+    }
+  }
 
   /**
    * Sets the custom element data, ownership of the

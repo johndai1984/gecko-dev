@@ -43,6 +43,7 @@ macro_rules! apply_non_ts_list {
     ($apply_macro:ident) => {
         $apply_macro! {
             bare: [
+                ("defined", Defined, defined, IN_DEFINED_STATE, _),
                 ("-moz-table-border-nonzero", MozTableBorderNonzero, mozTableBorderNonzero, _, PSEUDO_CLASS_ENABLED_IN_UA_SHEETS),
                 ("-moz-browser-frame", MozBrowserFrame, mozBrowserFrame, _, PSEUDO_CLASS_ENABLED_IN_UA_SHEETS_AND_CHROME),
                 ("link", Link, link, IN_UNVISITED_STATE, _),
