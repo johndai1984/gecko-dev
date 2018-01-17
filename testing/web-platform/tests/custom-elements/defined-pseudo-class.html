@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Custom Elements: Enqueue a custom element upgrade reaction</title>
+<meta name="author" title="John Dai" href="mailto:jdai@mozilla.com">
+<meta name="assert" content="Enqueue a custom element upgrade reaction must upgrade a custom element">
+<link rel="help" href="https://dom.spec.whatwg.org/#concept-create-element">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/scripting.html#concept-try-upgrade">
+<link rel="help" href="https://html.spec.whatwg.org/multipage/scripting.html#enqueue-a-custom-element-upgrade-reaction">
+<script src="/resources/testharness.js"></script>
+<script src="/resources/testharnessreport.js"></script>
+<script src="resources/custom-elements-helpers.js"></script>
+<style>
+// :defined {
+// 	color: rgb(0, 0, 0);
+// 	background-color: rgb(0, 0, 0);
+// }
+// * {
+//     color:rgb(255, 0, 0);
+// }
+// :defined {
+//     color: rgb(255, 165, 0);
+// }
+// :not(:defined) {
+//     color:rgb(0, 0, 255);
+// }
+</style>
+</head>
+<body>
+<div id="log"></div>
+<script>
+
+class PredefinedCustomElement extends HTMLElement {}
+customElements.define('predefined-custom-element', PredefinedCustomElement);
+
+var customElementNumber = 1;
+function generateNextCustomElementName() { return 'custom-' + customElementNumber++; }
+
+// test normal element
+// test autonomous custom element with/without definition
+// test built-in custom element with/without definition
+
+// test using document.createElement/createElementNS create a normal element
+// test using document.createElement/createElementNS create a autonomous element with/without definition
+// test using document.createElement/createElementNS create a built-in element with/without definition
+// test parser created custom element(tag/document.write/innerHTML) with/without definition
+// test cloning a normal element
+// test cloning a autonomous element with/without definition
+// test cloning a built-in element with/without definition
+// test upgrade a autonomous element success/fail
+// test upgrade a built-in element success/fail
+// test create a svg element should not have :defined
+
+function assert_defined(element, expected) {
+	assert_equals(element.matches(':defined'), expected, 'matches(":defined")');
+	assert_equals(element.matches(':not(:defined)'), !expected, 'matches(":not(:defined")');
+	const view = element.ownerDocument.defaultView;
+	if (!view)
+		return;
+	const style = view.getComputedStyle(element);
+	// assert_equals(style.color, expected ? "rgb(255, 165, 0)" : "rgb(0, 0, 255)", 'getComputedStyle');
+}
+
+// var matchInsideConstructor;
+// var called;
+// class MyElement extends HTMLElement {
+// 	constructor() {
+// 		super();
+// 		called = true;
+// 		matchInsideConstructor = this.matches(':defined');
+// 	}
+// }
+// customElements.define('my-element', MyElement);
+
+// test(function () {
+// 	document.documentElement.appendChild(upgradeCandidate);
+// 	assert_true(upgradeCandidate.matches(':defined'));
+// 	assert_false(matchInsideConstructor, 'Upgrading a custom element must set defined flag after invoking the constructor');
+// }, 'The defined flag of a custom element must be set when a custom element is successfully upgraded');
+
+// test(function () {
+// 	matchInsideConstructor = false;
+// 	var definedElement = document.createElement('my-element');
+// 	//document.documentElement.appendChild(definedElement);
+// 	assert_true(definedElement.matches(':defined'));
+// 	assert_true(called);
+// 	// assert_false(matchInsideConstructor, 'Creating a custom element must set defined flag after invoking the constructor');
+// }, 'The defined flag of a custom element must be set if there is a matching definition');
+
+// document.write('<my-other-element></my-other-element>');
+
+// test(function () {
+// 	var parserCreatedUnfefinedElement = document.querySelector('my-other-element');
+// 	assert_false(parserCreatedUnfefinedElement.matches(':defined'));
+// }, 'The defined flag of a custom element created by HTML parser must be unset if there is no matching definition');
+
+// document.write('<my-element></my-element>');
+
+// test(function () {
+// 	var parserCreatedDefinedElement = document.querySelector('my-element');
+// 	assert_true(parserCreatedDefinedElement.matches(':defined'));
+// }, 'The defined flag of a custom element created by HTML parser must be set if there is a matching definition');
+
+// matchInsideConstructor = false;
+// class ReturnsAnotherNode extends HTMLElement {
+// 	constructor() {
+// 		super();
+// 		matchInsideConstructor = this.matches(':defined');
+// 		return document.createTextNode('');
+// 	}
+// }
+
+// customElements.define('returns-another-node', ReturnsAnotherNode);
+// document.write('<returns-another-node></returns-another-node>');
+
+// test(function () {
+// 	assert_true(document.querySelector('returns-another-node').matches(':defined'));
+// 	assert_false(matchInsideConstructor,
+// 		'HTML parser must create a custom element with the defined flag initially unset');
+// }, 'The defined flag of a custom element created by HTML parser must be set after checking the returned result is an instance of HTMLElement');
+
+// test(function () {
+// 	var instance = document.createElement('returns-another-node-2');
+// 	try {
+// 		customElements.define('returns-another-node-2', class extends ReturnsAnotherNode {});
+// 	} catch (e) { }
+// 	assert_false(instance.matches(':defined'));
+// 	assert_false(matchInsideConstructor,
+// 		'Creating a custom element must leave the defined flag unset when synchronous custom elements flag is not set');
+// }, 'The defined flag of a custom element must be set after checking the returned result is an instance of HTMLElement when upgrading a custom element');
+
+
+
+var customElementNumber = 1;
+function generateNextCustomElementName() { return 'custom-' + customElementNumber++; }
+
+
+// var iframe = document.createElement('iframe');
+// document.body.appendChild(iframe);
+
+// iframe.srcdoc = `<style>
+//   * { color:rgb(255, 0, 0); }
+//   :defined { color:rgb(255, 165, 0); }
+//   :not(:defined) { color:rgb(0, 0, 255); }
+// </style>`;
+
+
+// test(function () {
+//     let doc = iframe.contentDocument;
+//         assert_defined(doc.createElement('span'), true);
+//         assert_defined(doc.createElement('my-element'), false);
+//         assert_defined(doc.createElement("p", { is: "is-element" }), false);
+// }, 'undefined from iframe');
+
+// Tests for documents without a browsing context.
+// document_types().filter(function (entry) { return !entry.isOwner && !entry.hasBrowsingContext; }).forEach(function (entry) {
+// 	var documentName = entry.name;
+//     var getDocument = entry.create;
+
+// 	promise_test(function () {
+//         return getDocument().then(function (doc) {
+//             // assert_defined(doc.createElement('predefined-custom-element'), false);
+//             // assert_defined(doc.createElement('span'), true);
+//             // assert_true(doc.createElement('span').matches(":defined"));
+//             // assert_defined(doc.createElement('my-element'), false);
+//             // assert_defined(doc.createElement("p", { is: "is-element" }), false);
+//         });
+//     }, 'without a browsing context from ' + documentName);
+// });
+
+
+// Tests for documents with a browsing context.
+document_types().filter(function (entry) { return !entry.isOwner && entry.hasBrowsingContext; }).forEach(function (entry) {
+    var documentName = entry.name;
+    var getDocument = entry.create;
+
+
+	promise_test(function () {
+        return getDocument().then(function (doc) {
+            assert_defined(doc.createElement('span'), true);
+        });
+    }, 'Create a normal element from ' + documentName + ' must be :defined');
+
+    // If the element namespace is not HTML, it should be "uncustomized"; i.e., "defined".
+	promise_test(function () {
+        var name = generateNextCustomElementName();
+
+	    return getDocument().then(function (doc) {
+			assert_defined(doc.createElementNS('http://www.w3.org/2000/svg', name), true);
+		});
+	}, 'Create a svg element from ' + documentName + ' must be :defined');
+
+    promise_test(function () {
+        return getDocument().then(function (doc) {
+            assert_defined(doc.createElement('my-element'), false);
+        });
+    }, 'Create a autonomous custom element from ' + documentName + ' must not be :defined');
+
+    promise_test(function () {
+        return getDocument().then(function (doc) {
+            assert_defined(doc.createElement("p", { is: "is-element" }), false);
+        });
+    }, 'Create a built-in custom element from ' + documentName + ' must not be :defined');
+
+    promise_test(function () {
+        var name = generateNextCustomElementName();
+
+        return getDocument().then(function (doc) {
+            let docWindow = doc.defaultView;
+            docWindow.customElements.define(name, class extends docWindow.HTMLElement {});
+            assert_defined(doc.createElement(name), true);
+        });
+    }, 'Create a defined autonomous custom element from ' + documentName + ' must be :defined');
+
+    promise_test(function () {
+        var name = generateNextCustomElementName();
+        //jdai todo!!!
+        return getDocument().then(function (doc) {
+            let docWindow = doc.defaultView;
+            docWindow.customElements.define(name, class extends docWindow.HTMLDivElement {}, { extends: "div" });
+            assert_defined(document.createElement("div", { is: name }), true);
+        });
+    }, 'Create a defined built-in custom element from ' + documentName + ' must be :defined');
+/*
+	// Test document.createElement().
+    promise_test(function () {
+        var name = generateNextCustomElementName();
+
+        unresolvedElementreturn getDocument().then(function (doc) {
+            var someCustomElement = class extends HTMLElement {};
+            customElements.define(name, someCustomElement);
+            var unresolvedElementInDoc = doc.createElement(name);
+			var docWindow = doc.defaultView;
+			docWindow.customElements.define('my-custom-element', class extends HTMLElement {});
+
+            // var instance = doc.createElement('my-custom-element');
+            doc.documentElement.appendChild(unresolvedElementInDoc);
+			assert_defined(unresolvedElementInDoc, true);
+        });
+    }, 'defined from ' + documentName);
+
+	// Test document.createElementNS().
+	promise_test(function () {
+        return getDocument().then(function (doc) {
+			var docWindow = doc.defaultView;
+			docWindow.customElements.define('my-custom-element', class extends HTMLElement {});
+            var instance = doc.createElementNS('http://www.w3.org/1999/xhtml', 'my-custom-element');
+            doc.documentElement.appendChild(instance);
+			assert_defined(instance, true);
+        });
+    }, 'document.createElementNS defined from ' + documentName);
+
+	// If the element namespace is not HTML, it should be "uncustomized"; i.e., "defined".
+	promise_test(function () {
+	return getDocument().then(function (doc) {
+			// var docWindow = doc.defaultView;
+			// docWindow.customElements.define('my-custom-element', class extends HTMLElement {});
+
+			let svg_element = doc.createElementNS('http://www.w3.org/2000/svg', 'my-custom-element');
+			doc.documentElement.appendChild(svg_element);
+			assert_defined(svg_element, true);
+		});
+	}, 'document.createElementNS svg element defined from ' + documentName);
+
+	// test upgrade
+    promise_test(function () {
+        var unresolvedElement = document.createElement('unresolved-element');
+        return getDocument().then(function (doc) {
+                var docWindow = doc.defaultView;
+                class UnresolvedElement extends docWindow.HTMLElement { };
+                var unresolvedElementInDoc = doc.createElement('unresolved-element');
+                docWindow.customElements.define('unresolved-element', UnresolvedElement);
+                doc.documentElement.appendChild(unresolvedElementInDoc);
+
+                assert_defined(unresolvedElement, true);
+                assert_defined(unresolvedElementInDoc, false);
+            });
+	}, 'Inserting an unresolved custom element into ' + documentName + ' must have :defined.');
+    // test try to upgrade
+    promise_test(function () {
+        var unresolvedElement = document.createElement('unresolved-element');
+        return getDocument().then(function (doc) {
+            var docWindow = doc.defaultView;
+            class UnresolvedElement extends docWindow.HTMLElement { };
+            var unresolvedElementInDoc = doc.createElement('unresolved-element');
+            doc.documentElement.appendChild(unresolvedElementInDoc);
+            docWindow.customElements.define('unresolved-element', UnresolvedElement);
+            assert_defined(unresolvedElement, true);
+            assert_defined(unresolvedElementInDoc, false);
+        });
+    }, '"define" in ' + documentName + ' must enqueue a custom element upgrade reaction on a connected unresolved custom element');
+
+    promise_test(function () {
+        var unresolvedElement = document.createElement('unresolved-element');
+        return getDocument().then(function (doc) {
+            var docWindow = doc.defaultView;
+            class UnresolvedElement extends docWindow.HTMLElement { };
+            assert_false(unresolvedElement instanceof UnresolvedElement);
+            docWindow.customElements.define('unresolved-element', UnresolvedElement);
+            doc.adoptNode(unresolvedElement);
+            assert_false(unresolvedElement instanceof UnresolvedElement);
+            assert_defined(unresolvedElement, false);
+        });
+    }, 'Adopting (and leaving disconnceted) an unresolved custom element into ' + documentName + ' must not enqueue a custom element upgrade reaction');
+
+    promise_test(function () {
+        var unresolvedElement = document.createElement('unresolved-element');
+        return getDocument().then(function (doc) {
+            var docWindow = doc.defaultView;
+            class UnresolvedElement extends docWindow.HTMLElement { };
+            assert_false(unresolvedElement instanceof UnresolvedElement);
+            docWindow.customElements.define('unresolved-element', UnresolvedElement);
+            doc.documentElement.appendChild(unresolvedElement);
+            assert_true(unresolvedElement instanceof UnresolvedElement);
+            assert_defined(unresolvedElement, true);
+        });
+    }, 'Adopting and inserting an unresolved custom element into ' + documentName + ' must enqueue a custom element upgrade reaction');
+    // test parser
+    // test innerhtml
+    // test clone
+    */
+});
+
+
+/*
+document_types().forEach(function (entry) {
+    var documentName = entry.name;
+    var getDocument = entry.create;
+
+    promise_test(function () {
+        return getDocument().then(function (doc) {
+            var instance = document.createElement('my-custom-element');
+            doc.documentElement.appendChild(instance);
+            calls = [];
+            doc.documentElement.removeChild(instance);
+            assert_array_equals(calls, ['disconnected', instance]);
+        });
+    }, 'Removing a custom element from ' + documentName + ' must enqueue and invoke disconnectedCallback');
+
+    promise_test(function () {
+        return getDocument().then(function (doc) {
+            var instance = document.createElement('my-custom-element');
+            var parent = document.createElement('div');
+            parent.appendChild(instance);
+            doc.documentElement.appendChild(parent);
+            calls = [];
+            doc.documentElement.removeChild(parent);
+            assert_array_equals(calls, ['disconnected', instance]);
+        });
+    }, 'Removing an ancestor of custom element from ' + documentName + ' must enqueue and invoke disconnectedCallback');
+
+    promise_test(function () {
+        return getDocument().then(function (doc) {
+            var instance = document.createElement('my-custom-element');
+            var host = doc.createElementNS('http://www.w3.org/1999/xhtml', 'div');
+            var shadowRoot = host.attachShadow({mode: 'closed'});
+            doc.documentElement.appendChild(host);
+            shadowRoot.appendChild(instance);
+
+            calls = [];
+            shadowRoot.removeChild(instance);
+            assert_array_equals(calls, ['disconnected', instance]);
+        });
+    }, 'Removing a custom element from a shadow tree in ' + documentName + ' must enqueue and invoke disconnectedCallback');
+
+    promise_test(function () {
+        return getDocument().then(function (doc) {
+            var instance = document.createElement('my-custom-element');
+            var host = doc.createElementNS('http://www.w3.org/1999/xhtml', 'div');
+            var shadowRoot = host.attachShadow({mode: 'closed'});
+            shadowRoot.appendChild(instance);
+            doc.documentElement.appendChild(host);
+
+            calls = [];
+            doc.documentElement.removeChild(host);
+            assert_array_equals(calls, ['disconnected', instance]);
+        });
+    }, 'Removing the shadow host of a custom element from a' + documentName + ' must enqueue and invoke disconnectedCallback');
+
+    promise_test(function () {
+        return getDocument().then(function (doc) {
+            var instance = document.createElement('my-custom-element');
+            var host = doc.createElementNS('http://www.w3.org/1999/xhtml', 'div');
+            var shadowRoot = host.attachShadow({mode: 'closed'});
+            shadowRoot.appendChild(instance);
+
+            calls = [];
+            shadowRoot.removeChild(instance);
+            assert_array_equals(calls, []);
+        });
+    }, 'Removing a custom element from a detached shadow tree that belongs to ' + documentName + ' must not enqueue and invoke disconnectedCallback');
+});
+*/
+
+/*
+// Tests for documents without a browsing context.
+document_types().filter(function (entry) { return !entry.isOwner && !entry.hasBrowsingContext; }).forEach(function (entry) {
+    var documentName = entry.name;
+    var getDocument = entry.create;
+
+    promise_test(function () {
+        return getDocument().then(function (doc) {
+            assert_false(doc.createElement('predefined-custom-element') instanceof PredefinedCustomElement);
+        });
+    }, 'Creating an element in ' + documentName + ' must not enqueue a custom element upgrade reaction'
+        + ' because the document does not have a browsing context');
+
+    promise_test(function () {
+        var name = generateNextCustomElementName();
+        var unresolvedElement = document.createElement(name);
+
+        assert_equals(unresolvedElement.__proto__, HTMLElement.prototype,
+            '[[Prototype]] internal slot of the unresolved custom element must be the HTMLElement prototype');
+
+        return getDocument().then(function (doc) {
+            var unresolvedElementInDoc = doc.createElement(name);
+            var prototype = (unresolvedElementInDoc.namespaceURI == 'http://www.w3.org/1999/xhtml' ? HTMLElement : Element).prototype;
+
+            assert_equals(unresolvedElementInDoc.__proto__, prototype,
+                '[[Prototype]] internal slot of the unresolved custom element must be the ' + prototype.toString() + ' prototype');
+            var someCustomElement = class extends HTMLElement {};
+            customElements.define(name, someCustomElement);
+            assert_equals(unresolvedElementInDoc.__proto__, prototype, '"define" must not upgrade a disconnected unresolved custom elements');
+            doc.documentElement.appendChild(unresolvedElementInDoc);
+            assert_equals(unresolvedElementInDoc.__proto__, prototype,
+                'Inserting an element into a document without a browsing context must not enqueue a custom element upgrade reaction');
+        });
+    }, 'Creating an element in ' + documentName + ' and inserting into the document must not enqueue a custom element upgrade reaction');
+
+    promise_test(function () {
+        var name = generateNextCustomElementName();
+        var unresolvedElement = document.createElement(name);
+
+        assert_equals(unresolvedElement.__proto__, HTMLElement.prototype,
+            '[[Prototype]] internal slot of the unresolved custom element must be the HTMLElement prototype');
+
+        return getDocument().then(function (doc) {
+            var unresolvedElementInDoc = doc.createElement(name);
+            var prototype = (unresolvedElementInDoc.namespaceURI == 'http://www.w3.org/1999/xhtml' ? HTMLElement : Element).prototype;
+
+            assert_equals(unresolvedElementInDoc.__proto__, prototype,
+                '[[Prototype]] internal slot of the unresolved custom element must be the ' + prototype.toString() + ' prototype');
+            var someCustomElement = class extends HTMLElement {};
+            customElements.define(name, someCustomElement);
+            assert_equals(unresolvedElementInDoc.__proto__, prototype, '"define" must not upgrade a disconnected unresolved custom elements');
+            document.body.appendChild(unresolvedElementInDoc);
+
+            if (unresolvedElementInDoc.namespaceURI == 'http://www.w3.org/1999/xhtml') {
+                assert_equals(unresolvedElementInDoc.__proto__, someCustomElement.prototype,
+                    'Inserting an element into a document with a browsing context must enqueue a custom element upgrade reaction');
+            } else {
+                assert_equals(unresolvedElementInDoc.__proto__, prototype,
+                    'Looking up a custom element definition must return null if the element is not in the HTML namespace');
+            }
+        });
+    }, 'Creating an element in ' + documentName + ' and adopting back to a document with browsing context must enqueue a custom element upgrade reaction');
+
+});
+
+// Tests for documents with a browsing context.
+document_types().filter(function (entry) { return !entry.isOwner && entry.hasBrowsingContext; }).forEach(function (entry) {
+    var documentName = entry.name;
+    var getDocument = entry.create;
+
+    promise_test(function () {
+        return getDocument().then(function (doc) {
+            assert_false(doc.createElement('predefined-custom-element') instanceof PredefinedCustomElement);
+        });
+    }, 'Creating an element in ' + documentName + ' must not enqueue a custom element upgrade reaction if there is no matching definition');
+
+    promise_test(function () {
+        return getDocument().then(function (doc) {
+            var docWindow = doc.defaultView;
+            class DistinctPredefinedCustomElement extends docWindow.HTMLElement { };
+            docWindow.customElements.define('predefined-custom-element', DistinctPredefinedCustomElement);
+            assert_true(doc.createElement('predefined-custom-element') instanceof DistinctPredefinedCustomElement);
+        });
+    }, 'Creating an element in ' + documentName + ' must enqueue a custom element upgrade reaction if there is a matching definition');
+
+    promise_test(function () {
+        var unresolvedElement = document.createElement('unresolved-element');
+        return getDocument().then(function (doc) {
+            var docWindow = doc.defaultView;
+            class UnresolvedElement extends docWindow.HTMLElement { };
+            var unresolvedElementInDoc = doc.createElement('unresolved-element');
+
+            assert_equals(unresolvedElement.__proto__, HTMLElement.prototype);
+            assert_equals(unresolvedElementInDoc.__proto__, docWindow.HTMLElement.prototype);
+
+            docWindow.customElements.define('unresolved-element', UnresolvedElement);
+
+            assert_equals(unresolvedElement.__proto__, HTMLElement.prototype);
+            assert_equals(unresolvedElementInDoc.__proto__, docWindow.HTMLElement.prototype);
+
+        });
+    }, '"define" in ' + documentName + ' must not enqueue a custom element upgrade reaction on a disconnected unresolved custom element');
+
+    promise_test(function () {
+        var unresolvedElement = document.createElement('unresolved-element');
+        return getDocument().then(function (doc) {
+            var docWindow = doc.defaultView;
+            class UnresolvedElement extends docWindow.HTMLElement { };
+            var unresolvedElementInDoc = doc.createElement('unresolved-element');
+
+            assert_equals(unresolvedElement.__proto__, HTMLElement.prototype);
+            assert_equals(unresolvedElementInDoc.__proto__, docWindow.HTMLElement.prototype);
+
+            docWindow.customElements.define('unresolved-element', UnresolvedElement);
+            doc.documentElement.appendChild(unresolvedElementInDoc);
+
+            assert_equals(unresolvedElement.__proto__, HTMLElement.prototype);
+            assert_equals(unresolvedElementInDoc.__proto__, UnresolvedElement.prototype);
+        });
+    }, 'Inserting an unresolved custom element into ' + documentName + ' must enqueue a custom element upgrade reaction');
+
+    promise_test(function () {
+        var unresolvedElement = document.createElement('unresolved-element');
+        return getDocument().then(function (doc) {
+            var docWindow = doc.defaultView;
+            class UnresolvedElement extends docWindow.HTMLElement { };
+            var unresolvedElementInDoc = doc.createElement('unresolved-element');
+            doc.documentElement.appendChild(unresolvedElementInDoc);
+
+            assert_equals(unresolvedElement.__proto__, HTMLElement.prototype);
+            assert_equals(unresolvedElementInDoc.__proto__, docWindow.HTMLElement.prototype);
+
+            docWindow.customElements.define('unresolved-element', UnresolvedElement);
+
+            assert_equals(unresolvedElement.__proto__, HTMLElement.prototype);
+            assert_equals(unresolvedElementInDoc.__proto__, UnresolvedElement.prototype);
+        });
+    }, '"define" in ' + documentName + ' must enqueue a custom element upgrade reaction on a connected unresolved custom element');
+
+    promise_test(function () {
+        var unresolvedElement = document.createElement('unresolved-element');
+        return getDocument().then(function (doc) {
+            var docWindow = doc.defaultView;
+            class UnresolvedElement extends docWindow.HTMLElement { };
+            assert_false(unresolvedElement instanceof UnresolvedElement);
+            docWindow.customElements.define('unresolved-element', UnresolvedElement);
+            doc.adoptNode(unresolvedElement);
+            assert_false(unresolvedElement instanceof UnresolvedElement);
+        });
+    }, 'Adopting (and leaving disconnceted) an unresolved custom element into ' + documentName + ' must not enqueue a custom element upgrade reaction');
+
+    promise_test(function () {
+        var unresolvedElement = document.createElement('unresolved-element');
+        return getDocument().then(function (doc) {
+            var docWindow = doc.defaultView;
+            class UnresolvedElement extends docWindow.HTMLElement { };
+            assert_false(unresolvedElement instanceof UnresolvedElement);
+            docWindow.customElements.define('unresolved-element', UnresolvedElement);
+            doc.documentElement.appendChild(unresolvedElement);
+            assert_true(unresolvedElement instanceof UnresolvedElement);
+        });
+    }, 'Adopting and inserting an unresolved custom element into ' + documentName + ' must enqueue a custom element upgrade reaction');
+
+});
+*/
+</script>
+</body>
+</html>
